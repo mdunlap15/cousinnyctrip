@@ -87,5 +87,38 @@ else if (r4.status === 502 || r4.status === 200) ok('a request from the app reac
 else bad(`a legitimate request got ${r4.status}: ${JSON.stringify(b4)}`);
 
 child.kill();
-console.log(failures ? `\nFAIL — ${failures} problem(s)` : '\nPASS — the origin check and both rate limits hold');
+
+// ---- the workspace header reaches the wire ----
+// An org-level API key is refused unless the request names a workspace. Point
+// the SDK at a local stand-in for the API and check what actually arrives.
+console.log('workspace header:');
+const http = await import('node:http');
+let seenHeaders = null;
+const fakeApi = http.createServer((req, res) => {
+  seenHeaders = req.headers;
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ id: 'msg_x', type: 'message', role: 'assistant', model: 'claude-opus-5', stop_reason: 'end_turn',
+    content: [{ type: 'text', text: 'hello from the stand-in' }], usage: { input_tokens: 1, output_tokens: 1 } }));
+});
+await new Promise((r) => fakeApi.listen(8083, r));
+const ws = spawn(process.execPath, [path.join(here, 'index.js')], {
+  env: { ...process.env, PORT: '8082', TRIP_KEY: KEY, ANTHROPIC_API_KEY: 'sk-ant-org-level', ANTHROPIC_WORKSPACE_ID: 'wrkspc_test123',
+         ANTHROPIC_BASE_URL: 'http://127.0.0.1:8083', ALLOW_ORIGINS: GOOD },
+  stdio: ['ignore', 'pipe', 'pipe'],
+});
+let wsBoot = ''; ws.stdout.on('data', (d) => { wsBoot += d; }); ws.stderr.on('data', (d) => { wsBoot += d; });
+await new Promise((r) => { const t = setInterval(() => { if (/listening on/.test(wsBoot)) { clearInterval(t); r(); } }, 50); setTimeout(() => { clearInterval(t); r(); }, 6000); });
+const wr = await fetch('http://127.0.0.1:8082/chat', { method: 'POST',
+  headers: { 'Content-Type': 'application/json', Origin: GOOD, 'X-Trip-Key': KEY },
+  body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }] }) });
+const wj = await wr.json().catch(() => ({}));
+if (!seenHeaders) bad('the proxy never called the API stand-in');
+else if (seenHeaders['anthropic-workspace-id'] !== 'wrkspc_test123') bad(`the API got no workspace header (saw: ${seenHeaders['anthropic-workspace-id'] || 'none'})`);
+else ok('with ANTHROPIC_WORKSPACE_ID set, every API call carries anthropic-workspace-id');
+if (wj.reply !== 'hello from the stand-in') bad('the reply did not come back through: ' + JSON.stringify(wj));
+else ok('and the reply comes back through to the app');
+if (!/workspace\s+:\s+wrkspc_test123/.test(wsBoot)) bad('the boot log does not say which workspace is pinned');
+ws.kill(); fakeApi.close();
+
+console.log(failures ? `\nFAIL — ${failures} problem(s)` : '\nPASS — the origin check and both rate limits hold, and the workspace header is sent');
 process.exit(failures ? 1 : 0);

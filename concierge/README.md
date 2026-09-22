@@ -15,6 +15,24 @@ Endpoints (all need the `X-Trip-Key` header):
 3. Variables: `ANTHROPIC_API_KEY` (required), `TRIP_KEY` = `nyc-2026` (must match `TRIP_KEY` in the app's `config.js`). Optional: `MODEL` (default `claude-opus-5`), plus the guard settings below.
 4. Settings → Networking → **Generate Domain**, target port **3000**. Paste that URL into `config.js` → `CONCIERGE_URL` in the app repo and push.
 
+## "This API key is not scoped to a workspace"
+
+Anthropic API keys come in two kinds. A key created **inside a workspace** needs
+nothing extra. An **organisation-level** key is refused until each request names
+the workspace to bill. Either fix works:
+
+- **Simplest:** in the Anthropic Console, open a workspace, create a key there,
+  and put that in `ANTHROPIC_API_KEY` instead.
+- **Keep the key you have:** add `ANTHROPIC_WORKSPACE_ID` with the workspace's id
+  (Console → Workspaces → the workspace → its id, starting `wrkspc_`). The proxy
+  then sends it on every call.
+
+`/health` and the boot log both say whether a workspace is pinned.
+
+The travellers never see an API error verbatim. They get a sentence; the full
+upstream message goes to the Railway log, which is where to look when the chat
+says the concierge is misconfigured.
+
 ## Checking a deploy
 
 `GET /health` is open, free and never touches the model. It reports the port it

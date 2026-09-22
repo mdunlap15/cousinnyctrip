@@ -6,7 +6,12 @@ import Anthropic from '@anthropic-ai/sdk';
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.MODEL || 'claude-opus-5';
 const TRIP_KEY = process.env.TRIP_KEY || 'nyc-2026';
-const client = new Anthropic();
+// An organisation-level API key is not tied to a workspace, and the API then
+// refuses the request unless it is told which workspace to bill. Setting
+// ANTHROPIC_WORKSPACE_ID supplies that; a key created inside a workspace needs
+// nothing here.
+const WORKSPACE_ID = (process.env.ANTHROPIC_WORKSPACE_ID || '').trim();
+const client = new Anthropic(WORKSPACE_ID ? { defaultHeaders: { 'anthropic-workspace-id': WORKSPACE_ID } } : {});
 
 // ---------------------------------------------------------------- guards
 // The trip key is not a secret: it ships in the app's public config, so anyone
@@ -138,11 +143,22 @@ async function ask(params) {
     throw e;
   }
 }
+// The travellers see a sentence; the full upstream payload goes to the server
+// log, where whoever runs this can read it. Showing them raw JSON is both
+// useless to them and a way to leak configuration detail.
 function apiError(res, e, req) {
-  if (e instanceof Anthropic.AuthenticationError) return send(res, 502, { error: 'concierge key rejected — check ANTHROPIC_API_KEY' }, {}, req);
-  if (e instanceof Anthropic.RateLimitError) return send(res, 429, { error: 'busy — try again in a moment' }, {}, req);
-  if (e instanceof Anthropic.APIError) return send(res, 502, { error: e.message || 'upstream error' }, {}, req);
-  return send(res, 500, { error: 'server error' }, {}, req);
+  console.error('[upstream] ' + (e && e.status ? e.status + ' ' : '') + (e && e.message ? e.message : String(e)));
+  if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) {
+    return send(res, 502, { error: 'The concierge is not set up right — its API key was refused.' }, {}, req);
+  }
+  if (e instanceof Anthropic.RateLimitError) return send(res, 429, { error: 'Busy for a second — ask me again.' }, {}, req);
+  if (e instanceof Anthropic.BadRequestError) {
+    // A 400 here is a server misconfiguration, not anything the traveller did.
+    return send(res, 502, { error: 'The concierge is misconfigured — the trip organiser needs to check the server log.' }, {}, req);
+  }
+  if (e instanceof Anthropic.APIConnectionError) return send(res, 502, { error: 'Could not reach the concierge — try again in a moment.' }, {}, req);
+  if (e instanceof Anthropic.APIError) return send(res, 502, { error: 'The concierge had a problem — try again in a moment.' }, {}, req);
+  return send(res, 500, { error: 'Something went wrong on the concierge.' }, {}, req);
 }
 
 const server = http.createServer(async (req, res) => {
@@ -161,6 +177,7 @@ const server = http.createServer(async (req, res) => {
       ok: true,
       model: MODEL,
       key: process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — /chat and /plan will fail',
+      workspace: WORKSPACE_ID || 'not pinned (fine for a workspace-scoped key)',
       port: String(PORT),
       origins: ORIGIN_OPEN ? 'any' : ALLOW_ORIGINS,
       limits: { perAddress: RATE_PER_IP + ' / ' + RATE_WINDOW_S + 's', perDay: RATE_PER_DAY, usedToday: dayHits.length },
@@ -226,6 +243,7 @@ function announce() {
   console.log('  bound to      : ' + (a && typeof a === 'object' ? a.address + ' ' + a.family + ' port ' + a.port : String(a)));
   console.log('  PORT env      : ' + (process.env.PORT === undefined ? 'not set — using the 3000 fallback' : process.env.PORT));
   console.log('  anthropic key : ' + (process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — set ANTHROPIC_API_KEY'));
+  console.log('  workspace     : ' + (WORKSPACE_ID || 'not pinned'));
   console.log('  origins       : ' + (ORIGIN_OPEN ? 'any (ALLOW_ORIGINS=* or empty)' : ALLOW_ORIGINS.join(', ')));
   console.log('  rate limit    : ' + RATE_PER_IP + ' per ' + RATE_WINDOW_S + 's per address, ' + RATE_PER_DAY + ' per day total');
 }

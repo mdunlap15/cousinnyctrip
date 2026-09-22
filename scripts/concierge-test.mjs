@@ -82,15 +82,18 @@ if (!a.seen.some((s) => s.startsWith('POST'))) bad('the message never reached th
 else ok(`the preflight passes and the message reaches the proxy (${a.seen.filter((s) => s.startsWith('POST')).join(', ')})`);
 // the fake key means the upstream refuses; the point is the app READS the reply,
 // which it can only do if the CORS headers on the response are right
-if (/key rejected/.test(a.last)) ok(`the app reads the proxy's reply across origins: "${a.last}"`);
+if (/key was refused/.test(a.last)) ok(`the app reads the proxy's reply across origins: "${a.last}"`);
 else bad(`the app did not show the proxy's reply — it showed: "${a.last}"`);
+// the travellers must never be shown the upstream API's raw payload
+if (/[{}]|invalid_request_error|"type"/.test(a.last)) bad(`raw API detail leaked into the chat: "${a.last}"`);
+else ok('no raw API payload reaches the chat, only a sentence');
 
 console.log('from an origin that is not on the list (127.0.0.1:8081):');
 const b = await askFrom('http://127.0.0.1:8081/');
 const blocked = b.seen.every((s) => !s.startsWith('POST 200')) ;
 if (!blocked) bad('a disallowed origin got a successful POST through');
 else ok(`the browser is refused (${b.seen.join(', ') || 'blocked before any request'})`);
-if (/key rejected/.test(b.last)) bad('a disallowed origin could still read the proxy\'s reply');
+if (/key was refused/.test(b.last)) bad('a disallowed origin could still read the proxy\'s reply');
 else ok(`the app falls back to its own error text instead: "${b.last}"`);
 
 await browser.close(); allowed.close(); refused.close(); proxy.kill();

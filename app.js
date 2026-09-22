@@ -1296,7 +1296,7 @@ function tourPlace(el) {
   let x = Math.max(6, r.left - pad), w = Math.min(vw - 12, r.width + pad * 2);
   let y = r.top - pad, h = r.height + pad * 2;
   // never let the spotlight eat the room the card needs
-  h = Math.min(h, Math.max(90, b.usable - ch - gap * 2));
+  h = Math.min(h, Math.max(70, b.usable - ch - gap * 2));
   // an element pinned to the screen (the language pill, the sticky day strip)
   // sits where it sits — only page content gets pulled into the band
   const lo = tourPinned(el) ? 6 : b.top;
@@ -1310,8 +1310,8 @@ function tourPlace(el) {
   // Neither side fits the whole card — a small screen with a long paragraph.
   // Take the roomier side and let the text scroll rather than cover the thing
   // the step is pointing at.
-  else if (roomBelow >= roomAbove) { card.style.top = below + 'px'; card.style.maxHeight = Math.max(140, roomBelow) + 'px'; }
-  else { card.style.top = b.top + 'px'; card.style.maxHeight = Math.max(140, roomAbove) + 'px'; }
+  else if (roomBelow >= roomAbove) { card.style.top = below + 'px'; card.style.maxHeight = roomBelow + 'px'; }
+  else { card.style.top = b.top + 'px'; card.style.maxHeight = roomAbove + 'px'; }
   // a faded bottom edge says "there is more text here" rather than looking broken
   card.classList.toggle('clipped', !!card.style.maxHeight);
   card.style.bottom = '';

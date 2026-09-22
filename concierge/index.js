@@ -8,6 +8,62 @@ const MODEL = process.env.MODEL || 'claude-opus-5';
 const TRIP_KEY = process.env.TRIP_KEY || 'nyc-2026';
 const client = new Anthropic();
 
+// ---------------------------------------------------------------- guards
+// The trip key is not a secret: it ships in the app's public config, so anyone
+// who reads the repo has it. These two guards are what actually stands between
+// a stranger and the API bill.
+//
+// ORIGIN is hygiene, not security. A browser cannot lie about it, so it stops
+// another website from quietly using this proxy — but curl can send anything,
+// so it does not stop a determined caller. The rate limits below are the part
+// that bounds the spend.
+const ALLOW_ORIGINS = (process.env.ALLOW_ORIGINS === undefined
+  ? 'https://mdunlap15.github.io,http://localhost:8080,http://127.0.0.1:8080'
+  : process.env.ALLOW_ORIGINS)
+  .split(',').map((o) => o.trim().replace(/\/$/, '')).filter(Boolean);
+const ORIGIN_OPEN = ALLOW_ORIGINS.includes('*') || ALLOW_ORIGINS.length === 0;
+
+const RATE_PER_IP = Number(process.env.RATE_PER_IP || 20);      // requests…
+const RATE_WINDOW_S = Number(process.env.RATE_WINDOW_S || 300); // …per this many seconds, per address
+const RATE_PER_DAY = Number(process.env.RATE_PER_DAY || 250);   // authenticated calls to the model per rolling day
+
+const ipHits = new Map();   // address -> [timestamps]
+let dayHits = [];           // timestamps of calls that reached the model
+
+function clientIp(req) {
+  // Railway terminates TLS in front of us, so the caller is the first hop in
+  // x-forwarded-for. Trusting it is fine here: the worst a forged one can do is
+  // dodge the per-address limit, and the daily cap still holds.
+  const xff = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return xff || req.socket.remoteAddress || 'unknown';
+}
+function prune(list, windowMs, now) {
+  const cut = now - windowMs;
+  let i = 0; while (i < list.length && list[i] < cut) i++;
+  return i ? list.slice(i) : list;
+}
+// Per-address burst limit. Counts every POST, so a flood is throttled whether
+// or not it carries the right key.
+function ipLimited(req) {
+  if (!(RATE_PER_IP > 0)) return 0;
+  const now = Date.now(), win = RATE_WINDOW_S * 1000, ip = clientIp(req);
+  const list = prune(ipHits.get(ip) || [], win, now);
+  if (list.length >= RATE_PER_IP) { ipHits.set(ip, list); return Math.max(1, Math.ceil((list[0] + win - now) / 1000)); }
+  list.push(now); ipHits.set(ip, list);
+  if (ipHits.size > 5000) for (const [k, v] of ipHits) { if (!prune(v, win, now).length) ipHits.delete(k); }
+  return 0;
+}
+// Daily ceiling on calls that actually cost money. Checked after the key, so a
+// stranger guessing keys cannot burn the travellers' allowance.
+function dayLimited() {
+  if (!(RATE_PER_DAY > 0)) return 0;
+  const now = Date.now(), win = 86400 * 1000;
+  dayHits = prune(dayHits, win, now);
+  if (dayHits.length >= RATE_PER_DAY) return Math.max(1, Math.ceil((dayHits[0] + win - now) / 1000));
+  dayHits.push(now);
+  return 0;
+}
+
 // ════════════════════════════════════════════════════════════════════
 // ██  TRIP BRIEF — the only trip-specific part of this file.        ██
 // ════════════════════════════════════════════════════════════════════
@@ -34,13 +90,19 @@ RULES OF THUMB: Museums — Met closed Wed, Whitney closed Tue, Neue Galerie clo
 
 const PLAN_SYSTEM = `You are the day-planner engine inside a New York trip app. You receive one day of an itinerary as a list of stops, a library of candidate places (each with id, name, cat, hood, dur minutes, best time, closed weekdays, lat/lng), and a request in English or Russian. Rebuild the day's running order to satisfy the request while keeping it un-crammed: 3–6 anchors, realistic subway/walking gaps (assume 10–15 min between nearby stops, 30–50 min across the river), a café or drink break in the afternoon, dinner around 7 pm, home by ~11 pm, and never schedule a place on a weekday it is closed. Locked stops (lock:true) keep their times. Prefer the same neighborhood cluster. Reply with ONLY a JSON object, no markdown fences: {"stops":[{"ref":"p:<id>" or "x:<key>" or "c:<existing custom id>","t":"HH:MM","d":<minutes>}],"note":"one or two sentences, in the request's language, saying what changed and why"}. Only use refs that exist in the input (stops or library).`;
 
-function send(res, code, body, headers = {}) {
+function originOf(req) { return String(req.headers.origin || '').trim().replace(/\/$/, ''); }
+function originOk(req) { return ORIGIN_OPEN || ALLOW_ORIGINS.includes(originOf(req)); }
+function send(res, code, body, headers = {}, req = null) {
   const data = typeof body === 'string' ? body : JSON.stringify(body);
+  // Echo one specific origin rather than a blanket *, so a browser on another
+  // site cannot read a reply even if it manages to send the request.
+  const o = req ? originOf(req) : '';
   res.writeHead(code, {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': ORIGIN_OPEN ? '*' : (ALLOW_ORIGINS.includes(o) ? o : ALLOW_ORIGINS[0]),
     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-Trip-Key',
+    'Vary': 'Origin',
     ...headers,
   });
   res.end(data);
@@ -70,18 +132,42 @@ async function ask(params) {
     throw e;
   }
 }
-function apiError(res, e) {
-  if (e instanceof Anthropic.AuthenticationError) return send(res, 502, { error: 'concierge key rejected' });
-  if (e instanceof Anthropic.RateLimitError) return send(res, 429, { error: 'busy — try again in a moment' });
-  if (e instanceof Anthropic.APIError) return send(res, 502, { error: e.message || 'upstream error' });
-  return send(res, 500, { error: 'server error' });
+function apiError(res, e, req) {
+  if (e instanceof Anthropic.AuthenticationError) return send(res, 502, { error: 'concierge key rejected — check ANTHROPIC_API_KEY' }, {}, req);
+  if (e instanceof Anthropic.RateLimitError) return send(res, 429, { error: 'busy — try again in a moment' }, {}, req);
+  if (e instanceof Anthropic.APIError) return send(res, 502, { error: e.message || 'upstream error' }, {}, req);
+  return send(res, 500, { error: 'server error' }, {}, req);
 }
 
 const server = http.createServer(async (req, res) => {
-  if (req.method === 'OPTIONS') return send(res, 204, '');
-  if (req.method === 'GET' && req.url === '/health') return send(res, 200, { ok: true, model: MODEL });
-  if (req.method !== 'POST') return send(res, 404, { error: 'not found' });
-  if ((req.headers['x-trip-key'] || '') !== TRIP_KEY) return send(res, 401, { error: 'bad trip key' });
+  if (req.method === 'OPTIONS') {
+    // Refuse the preflight outright for a disallowed origin, so the browser
+    // never even sends the real request.
+    if (!originOk(req)) return send(res, 403, { error: 'origin not allowed' }, {}, req);
+    return send(res, 204, '', {}, req);
+  }
+  // /health is deliberately open and free: it is how you check the deploy from
+  // a browser or curl, and it never touches the model.
+  if (req.method === 'GET' && req.url === '/health') {
+    return send(res, 200, {
+      ok: true,
+      model: MODEL,
+      key: process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — /chat and /plan will fail',
+      port: String(PORT),
+      origins: ORIGIN_OPEN ? 'any' : ALLOW_ORIGINS,
+      limits: { perAddress: RATE_PER_IP + ' / ' + RATE_WINDOW_S + 's', perDay: RATE_PER_DAY, usedToday: dayHits.length },
+    }, {}, req);
+  }
+  if (req.method !== 'POST') return send(res, 404, { error: 'not found' }, {}, req);
+
+  if (!originOk(req)) return send(res, 403, { error: 'origin not allowed' }, {}, req);
+  // Burst limit first: it costs nothing and applies whether or not the key is right.
+  const ipWait = ipLimited(req);
+  if (ipWait) return send(res, 429, { error: 'too many requests — try again shortly' }, { 'Retry-After': String(ipWait) }, req);
+  if ((req.headers['x-trip-key'] || '') !== TRIP_KEY) return send(res, 401, { error: 'bad trip key' }, {}, req);
+  // Daily ceiling last, so only real calls count against the day's allowance.
+  const dayWait = dayLimited();
+  if (dayWait) return send(res, 429, { error: 'daily limit reached — the concierge is back tomorrow' }, { 'Retry-After': String(dayWait) }, req);
 
   if (req.url === '/chat') {
     try {
@@ -90,36 +176,41 @@ const server = http.createServer(async (req, res) => {
         .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
         .slice(-20)
         .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
-      if (!clean.length || clean[clean.length - 1].role !== 'user') return send(res, 400, { error: 'need a user message' });
+      if (!clean.length || clean[clean.length - 1].role !== 'user') return send(res, 400, { error: 'need a user message' }, {}, req);
       const system = [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }];
       const volatile = [today ? `Right now for the travelers it is: ${today}.` : '', context ? `LIVE APP STATE:\n${String(context).slice(0, 6000)}` : ''].filter(Boolean).join('\n\n');
       if (volatile) system.push({ type: 'text', text: volatile });
       const msg = await ask({ model: MODEL, max_tokens: 1200, output_config: { effort: 'medium' }, system, messages: clean });
-      if (msg.stop_reason === 'refusal') return send(res, 200, { reply: 'I can’t help with that one — ask me something about the trip.' });
-      return send(res, 200, { reply: textOf(msg) });
-    } catch (e) { return apiError(res, e); }
+      if (msg.stop_reason === 'refusal') return send(res, 200, { reply: 'I can’t help with that one — ask me something about the trip.' }, {}, req);
+      return send(res, 200, { reply: textOf(msg) }, {}, req);
+    } catch (e) { return apiError(res, e, req); }
   }
 
   if (req.url === '/plan') {
     try {
       const body = JSON.parse((await readBody(req, 400000)) || '{}');
       const { day = '', date = '', request = '', stops = [], library = [], lang = 'en', weather = '' } = body;
-      if (!Array.isArray(stops) || !request) return send(res, 400, { error: 'need stops + request' });
+      if (!Array.isArray(stops) || !request) return send(res, 400, { error: 'need stops + request' }, {}, req);
       const input = JSON.stringify({ day, date, weather, lang, stops: stops.slice(0, 40), library: library.slice(0, 400) });
       const msg = await ask({
         model: MODEL, max_tokens: 3000, output_config: { effort: 'medium' },
         system: [{ type: 'text', text: PLAN_SYSTEM, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: `REQUEST: ${String(request).slice(0, 1500)}\n\nINPUT:\n${input}` }],
       });
-      if (msg.stop_reason === 'refusal') return send(res, 200, { stops: null, note: 'The planner declined that request.' });
+      if (msg.stop_reason === 'refusal') return send(res, 200, { stops: null, note: 'The planner declined that request.' }, {}, req);
       const j = parseJson(textOf(msg));
-      if (!j || !Array.isArray(j.stops)) return send(res, 200, { stops: null, note: 'The planner could not draft that — try rephrasing.' });
+      if (!j || !Array.isArray(j.stops)) return send(res, 200, { stops: null, note: 'The planner could not draft that — try rephrasing.' }, {}, req);
       const known = new Set(stops.map((s) => s.ref).concat(library.map((p) => 'p:' + p.id)));
       const out = j.stops.filter((s) => s && known.has(s.ref) && /^\d{1,2}:\d{2}$/.test(String(s.t || ''))).map((s) => ({ ref: s.ref, t: s.t, d: Math.max(10, Math.min(600, Number(s.d) || 60)) }));
-      return send(res, 200, { stops: out, note: String(j.note || '').slice(0, 600) });
-    } catch (e) { return apiError(res, e); }
+      return send(res, 200, { stops: out, note: String(j.note || '').slice(0, 600) }, {}, req);
+    } catch (e) { return apiError(res, e, req); }
   }
-  send(res, 404, { error: 'not found' });
+  send(res, 404, { error: 'not found' }, {}, req);
 });
 
-server.listen(PORT, () => console.log('concierge on :' + PORT + ' (' + MODEL + ')'));
+server.listen(PORT, () => {
+  console.log('concierge listening on :' + PORT + ' (' + MODEL + ')');
+  console.log('  anthropic key : ' + (process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — set ANTHROPIC_API_KEY'));
+  console.log('  origins       : ' + (ORIGIN_OPEN ? 'any (ALLOW_ORIGINS=* or empty)' : ALLOW_ORIGINS.join(', ')));
+  console.log('  rate limit    : ' + RATE_PER_IP + ' per ' + RATE_WINDOW_S + 's per address, ' + RATE_PER_DAY + ' per day total');
+});

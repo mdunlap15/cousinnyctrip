@@ -110,6 +110,7 @@ const DOWL = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ru: ['вс
 const MON = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], ru: ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'], de: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'] };
 const LOCALE = { en: 'en-US', ru: 'ru-RU', de: 'de-DE' };
 const monthName = (date) => MON[lang][Number(String(date).split('-')[1]) - 1];
+const num = (n) => (lang === 'en' ? String(n) : String(n).replace('.', ','));
 const longDate = (date) => { const p = String(date).split('-').map(Number); const wd = new Date(p[0], p[1] - 1, p[2]).getDay(); return DOWL[lang][wd] + ' ' + p[2] + ' ' + MON[lang][p[1] - 1]; };
 // A stop's label in the current language; seeds carry en/ru/de, places carry nameRu/nameDe.
 const stopLabel = (it) => { if (!it) return ''; if (it.place) return placeName(it.place); return L(it.en, it.ru, it.de); };
@@ -224,12 +225,12 @@ function seedFor(ref) {
   }
   if (ref.startsWith('x:')) {
     const s = (T.STOPS || {})[ref.slice(2)]; if (!s) return null;
-    AGSEED[ref] = { id: ref, t: s.t, d: s.d || 30, lock: !!s.lock, en: s.en, ru: s.ru || s.en, p: s.p || null, q: s.q || null, link: s.link || null, x: true };
+    AGSEED[ref] = { id: ref, t: s.t, d: s.d || 30, lock: !!s.lock, en: s.en, ru: s.ru || s.en, de: s.de || s.en, p: s.p || null, q: s.q || null, link: s.link || null, x: true };
     return AGSEED[ref];
   }
   if (ref.startsWith('c:')) {
     const c = (state.custom || {})[ref.slice(2)]; if (!c || c.deleted) return null;
-    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, p: (c.lat != null) ? [c.lat, c.lng] : null, q: null, custom: true, cat: 'idea' };
+    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, de: c.name, p: (c.lat != null) ? [c.lat, c.lng] : null, q: null, custom: true, cat: 'idea' };
     return AGSEED[ref];
   }
   return null;
@@ -420,7 +421,7 @@ function renderAgenda(day) {
         '<span class="ag-t"><span class="ag-ico">' + ico + '</span> ' + rowTitleHtml(r.it) + rowSub(r.it, day) + '</span>' +
         '<button class="ag-mv" type="button" title="' + t('moveOrRemove') + '">⋯</button></div>';
     }).join('') +
-    '<div class="agsum">' + (st.homeBy != null ? '<b>' + t('homeBy') + ' ~' + agHM(st.homeBy) + '</b> · ' : '') + st.anchors + ' ' + t('anchors') + ' · ~' + st.travel + ' ' + t('minutes') + ' ' + t('transit') + ' · ' + Math.round(st.span / 6) / 10 + ' ' + L('h out', 'ч вне дома') + '</div>' +
+    '<div class="agsum">' + (st.homeBy != null ? '<b>' + t('homeBy') + ' ~' + agHM(st.homeBy) + '</b> · ' : '') + st.anchors + ' ' + t('anchors') + ' · ~' + st.travel + ' ' + t('minutes') + ' ' + t('transit') + ' · ' + num(Math.round(st.span / 6) / 10) + ' ' + L('h out', 'ч вне дома', 'h außer Haus') + '</div>' +
     '<div class="agfoot"><span>' + t('dragHint') + '</span>' + (touched ? '<button type="button" data-agreset>' + t('resetDay') + '</button>' : '') + '</div></div>';
   // pace pill + hint
   const pp = document.querySelector('[data-pace="' + day + '"]'); if (pp) { pp.className = 'pace p' + st.lvl; pp.textContent = paceLabel(st.lvl); }

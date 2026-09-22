@@ -302,6 +302,14 @@ body[data-deck="1"] #exfilters{display:none}
 .exform.three{grid-template-columns:1fr 1fr 1fr}
 .exform.resv{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
 .exform.resv button{grid-column:2}
+.exform.links{grid-template-columns:1fr;margin-top:-2px}
+.sheet .exform.links{grid-template-columns:1fr;gap:8px}
+.sheet .exform.links button{min-height:44px;justify-self:end;padding:0 22px}
+.custloc{margin:10px 0 4px}
+.custedit{margin:6px 0 12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--paper-2)}
+.custedit summary{cursor:pointer;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);padding:2px 0}
+.custedit[open] summary{margin-bottom:10px}
+.ag-t small.nolocation{color:var(--soft);font-style:italic}
 .exform input{padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--paper-2);font:inherit;font-size:15px;min-width:0}
 .exform button{border:0;border-radius:12px;background:var(--g-dark);color:#fff;padding:0 16px;font-family:"Space Mono",monospace;font-size:11px;cursor:pointer;min-height:44px}
 .voterow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 2px;border-bottom:1px dashed var(--line)}

@@ -73,7 +73,21 @@ const S = {
   buildTitle: ['Build my week', 'Собрать неделю', 'Meine Woche bauen'], buildIntro: ['Everything you both want (and nobody vetoed) that is not in the plan yet, slotted into the day that fits its neighborhood and pace. Nothing is saved until you tap Apply.', 'Всё, чего хотите обе (и никто не против), чего ещё нет в плане, — по дням, подходящим по району и темпу. Ничего не сохраняется, пока вы не нажмёте «Применить».', 'Alles, was ihr beide wollt (und niemand abgelehnt hat) und noch nicht im Plan steht — einsortiert in den Tag, der vom Viertel und vom Tempo her passt. Gespeichert wird erst, wenn du auf Übernehmen tippst.'],
   apply: ['✓ Apply to the plan', '✓ Применить', '✓ In den Plan übernehmen'], cancel: ['Cancel', 'Отмена', 'Abbrechen'], nothingToAdd: ['Nothing to add — everything you both want is already in the plan.', 'Добавлять нечего — всё, чего хотите обе, уже в плане.', 'Nichts hinzuzufügen — alles, was ihr beide wollt, steht schon im Plan.'], noFit: ['no free day fits', 'нет подходящего дня', 'kein freier Tag passt'],
   applied: ['Added to the plan', 'Добавлено в план', 'Zum Plan hinzugefügt'],
-  pickDay: ['Which day?', 'В какой день?', 'An welchem Tag?'], pickStop: ['Add a stop', 'Добавить пункт', 'Stopp hinzufügen'], custom: ['✎ Custom stop', '✎ Свой пункт', '✎ Eigener Stopp'], customName: ['What is it?', 'Что это?', 'Was ist es?'], customMin: ['min', 'мин', 'Min'], add: ['Add', 'Добавить', 'Hinzufügen'],
+  pickDay: ['Which day?', 'В какой день?', 'An welchem Tag?'], pickStop: ['Add a stop', 'Добавить пункт', 'Stopp hinzufügen'], custom: ['✎ Custom stop', '✎ Свой пункт', '✎ Eigener Stopp'], customName: ['What is it?', 'Что это?', 'Was ist es?'],
+  mapLink: ['Map link — optional', 'Ссылка на карту — по желанию', 'Kartenlink — optional'],
+  mapLinkPh: ['Map link — optional', 'Ссылка на карту — по желанию', 'Kartenlink — optional'],
+  mapLinkHow: ['In Google or Apple Maps, tap Share → Copy, and paste it here. It puts the stop on the map and makes the travel to and from it real.', 'В Google или Apple Картах нажмите «Поделиться» → «Скопировать» и вставьте сюда. Так место появится на карте, а время в пути будет настоящим.', 'In Google oder Apple Maps auf „Teilen“ → „Kopieren“ tippen und hier einfügen. So kommt der Stopp auf die Karte und die Fahrzeiten stimmen.'],
+  webLink: ['Website or menu — optional', 'Сайт или меню — по желанию', 'Website/Speisekarte — optional'],
+  pinned: ['📍 On the map — travel times to and from it are real', '📍 На карте — время в пути туда и обратно настоящее', '📍 Auf der Karte — Fahrzeiten hin und zurück stimmen'],
+  unpinned: ['No location yet — the app assumes you are already there. Add a map link for real travel times.', 'Места пока нет — приложение считает, что вы уже там. Добавьте ссылку на карту, чтобы время в пути было точным.', 'Noch kein Ort — die App nimmt an, ihr seid schon dort. Mit einem Kartenlink stimmen die Fahrzeiten.'],
+  noLocation: ['no location — travel not counted', 'нет места — дорога не учтена', 'kein Ort — Weg nicht gezählt'],
+  resolving: ['Finding it on the map…', 'Ищу на карте…', 'Suche auf der Karte…'],
+  resolvedOk: ['Found it — travel times updated', 'Найдено — время в пути обновлено', 'Gefunden — Fahrzeiten aktualisiert'],
+  resolvedNo: ['Link saved, but the exact spot could not be found', 'Ссылка сохранена, но точное место не найдено', 'Link gespeichert, aber der genaue Ort wurde nicht gefunden'],
+  badMapLink: ['That is not a Google or Apple Maps link', 'Это не ссылка Google или Apple Карт', 'Das ist kein Google- oder Apple-Maps-Link'],
+  badWebLink: ['That website link does not look right', 'Ссылка на сайт выглядит неверно', 'Der Website-Link sieht nicht richtig aus'],
+  editLinks: ['Links & location', 'Ссылки и место', 'Links & Ort'],
+  pinnedName: ['📍 Pinned place', '📍 Место на карте', '📍 Markierter Ort'], customMin: ['min', 'мин', 'Min'], add: ['Add', 'Добавить', 'Hinzufügen'],
   breakTitle: ['A break near', 'Пауза рядом с', 'Eine Pause in der Nähe von'], breakNone: ['No café or bar in the library near that stop — add one from Explore.', 'В библиотеке нет кафе или бара рядом — добавьте из раздела «Места».', 'Kein Café und keine Bar in der Nähe dieses Stopps — füge eine über „Entdecken“ hinzu.'],
   replanTitle: ['Replan this day', 'Перепланировать день', 'Diesen Tag neu planen'], later: ['☀️ Start an hour later', '☀️ Начать на час позже', '☀️ Eine Stunde später starten'], lighter: ['🪶 Make it lighter — drop a stop', '🪶 Сделать легче — убрать пункт', '🪶 Leichter machen — einen Stopp streichen'], rainSwap: ['🌧 Swap outdoor stops for the rain plan', '🌧 Заменить уличное на план для дождя', '🌧 Außenstopps gegen den Regenplan tauschen'], askAI: ['✨ Ask the concierge', '✨ Спросить консьержа', '✨ Den Concierge fragen'], askPlaceholder: ['e.g. We\'re tired — one museum, a long lunch, home by 9', 'например: мы устали — один музей, долгий обед, домой к 9', 'z. B.: Wir sind müde — ein Museum, langes Mittagessen, um 21 Uhr zu Hause'], thinking: ['Drafting…', 'Думаю…', 'Entwurf läuft…'], applyDraft: ['✓ Apply this draft', '✓ Применить', '✓ Entwurf übernehmen'],
   aiOff: ['The concierge is not connected yet (see the Chat tab).', 'Консьерж пока не подключён (см. вкладку «Чат»).', 'Der Concierge ist noch nicht verbunden (siehe Tab „Chat“).'], shifted: ['Day shifted an hour later', 'День сдвинут на час позже', 'Tag um eine Stunde nach hinten verschoben'], whichDrop: ['Which stop goes?', 'Какой пункт убрать?', 'Welcher Stopp fällt weg?'],
@@ -238,7 +252,8 @@ function seedFor(ref) {
   }
   if (ref.startsWith('c:')) {
     const c = (state.custom || {})[ref.slice(2)]; if (!c || c.deleted) return null;
-    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, de: c.name, p: (c.lat != null) ? [c.lat, c.lng] : null, q: null, custom: true, cat: 'idea' };
+    const la = coord(c.lat), ln = coord(c.lng);
+    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, de: c.name, p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea' };
     return AGSEED[ref];
   }
   return null;
@@ -400,6 +415,7 @@ function rowTitleHtml(it) {
   return esc(ttl);
 }
 function rowSub(it, day) {
+  if (it.custom && !it.p) return '<small class="nolocation">' + esc(t('noLocation')) + '</small>';
   const p = it.place; if (!p) return '';
   const bits = [placeSub(p), p.hood].filter(Boolean);
   const dow = dowOf(day);
@@ -614,6 +630,13 @@ function openSheet(html, after) {
   if (after) after();
 }
 function closeSheet() { const sh = $('#sheet'), bk = $('#sheetback'); if (!sh) return; sh.hidden = true; bk.hidden = true; document.body.style.overflow = ''; }
+// Anything that becomes an href passes through here. The shared table is
+// writable with the public key, so a stop's links are untrusted however they
+// were entered: only http(s) survives, never javascript: or data:.
+function safeHref(u) { const x = String(u || '').trim(); return /^https?:\/\/[^\s"'<>]+$/i.test(x) ? x : ''; }
+// Same for coordinates: a finite number or nothing, so a bad record cannot
+// turn a day's timings into NaN.
+function coord(v) { const n = typeof v === 'string' && v.trim() !== '' ? Number(v) : v; return (typeof n === 'number' && isFinite(n)) ? n : null; }
 function linkChips(p) {
   const chips = [];
   if (p.web) chips.push(['site', p.web, t('website')]);
@@ -621,12 +644,21 @@ function linkChips(p) {
   if (p.reserve) chips.push(['tix', p.reserve, t('reserve')]);
   if (p.menu) chips.push(['', p.menu, t('menu')]);
   if (p.ig) chips.push(['ig', p.ig, 'Instagram']);
-  if (p.lat != null) { chips.push(['', G.mapsSearch((p.name || '') + ', ' + (p.addr || 'New York')), t('map')]); chips.push(['', G.mapsDir(null, [p.lat, p.lng]), t('directions')]); }
-  return '<div class="linkrow">' + chips.map(c => '<a class="' + c[0] + '" href="' + esc(c[1]) + '" target="_blank" rel="noopener">' + esc(c[2]) + '</a>').join('') + '</div>';
+  if (p.mapUrl) chips.push(['', p.mapUrl, t('map')]);
+  else if (p.lat != null) chips.push(['', G.mapsSearch((p.name || '') + ', ' + (p.addr || 'New York')), t('map')]);
+  if (p.lat != null) chips.push(['', G.mapsDir(null, [p.lat, p.lng]), t('directions')]);
+  return '<div class="linkrow">' + chips.filter(c => safeHref(c[1])).map(c => '<a class="' + c[0] + '" href="' + esc(safeHref(c[1])) + '" target="_blank" rel="noopener">' + esc(c[2]) + '</a>').join('') + '</div>';
 }
 function openPlace(id) {
   let p = PL[id]; let ref = 'p:' + id; let custom = null;
-  if (!p && id.startsWith('c:')) { custom = (state.custom || {})[id.slice(2)]; if (!custom) return; ref = id; p = { id: id.slice(2), name: custom.name, cat: 'idea', hood: custom.hood || '', dur: custom.d || 60, why: '', tips: [], tags: [], custom: true }; }
+  if (!p && id.startsWith('c:')) {
+    custom = (state.custom || {})[id.slice(2)]; if (!custom) return; ref = id;
+    p = { id: id.slice(2), name: custom.name, cat: 'idea', hood: custom.hood || '', dur: custom.d || 60, why: '', tips: [], tags: [], custom: true,
+      lat: (coord(custom.lat) != null && coord(custom.lng) != null) ? coord(custom.lat) : null, lng: (coord(custom.lat) != null && coord(custom.lng) != null) ? coord(custom.lng) : null,
+      web: safeHref(custom.web), mapUrl: safeHref(custom.map) };
+    // a share link that never got expanded (offline at the time): try again now
+    if (custom.map && custom.lat == null) resolveCustom(id.slice(2), true);
+  }
   if (!p) return;
   const hm = fromHomeMin(p); const dow = scheduledDays(ref); const v = votesFor(ref);
   const closed = Array.isArray(p.closed) && p.closed.length ? p.closed.map(c => DOWL[lang][DOW.indexOf(c)]).join(', ') : '';
@@ -639,7 +671,7 @@ function openPlace(id) {
   if (p.addr) kv.push([t('address'), p.addr]);
   const html = '<div class="cat" style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--f)">' + catLabel(p.cat) + (p.sub ? ' · ' + esc(placeSub(p)) : '') + '</div>' +
     '<h3>' + esc(placeName(p)) + '</h3>' +
-    '<div class="meta">' + esc([p.hood, p.boro].filter(Boolean).join(', ')) + (hm != null ? ' · ~' + hm + ' ' + t('minutes') + ' ' + t('fromHome') : '') + (dow.length ? ' · <b style="color:var(--g-dark)">' + t('inPlan') + ': ' + dow.map(dayLabel).join(', ') + '</b>' : '') + '</div>' +
+    '<div class="meta">' + [esc([p.hood, p.boro].filter(Boolean).join(', ')), hm != null ? '~' + hm + ' ' + t('minutes') + ' ' + t('fromHome') : '', dow.length ? '<b style="color:var(--g-dark)">' + t('inPlan') + ': ' + dow.map(dayLabel).join(', ') + '</b>' : ''].filter(Boolean).join(' · ') + '</div>' +
     (placeWhy(p) ? '<p class="why">' + esc(placeWhy(p)) + '</p>' : '') +
     linkChips(p) +
     (kv.length ? '<div class="kv">' + kv.map(x => '<div class="k">' + esc(x[0]) + '</div><div>' + esc(x[1]) + '</div>').join('') + '</div>' : '') +
@@ -647,12 +679,28 @@ function openPlace(id) {
     (p.tags && p.tags.length ? '<div class="tags">' + p.tags.slice(0, 6).map(x => '<span class="tag">' + esc(tagLabel(x)) + '</span>').join('') + '</div>' : '') +
     '<div class="votebox"><div class="vl">' + t('yourVote') + (me ? ' · ' + esc(whoName(me)) : '') + '<small>' + TR.filter(tr => isVoter(tr[0])).map(tr => (v[tr[0]] ? (tr[3] || '') + ' ' + esc(whoName(tr[0])) + ': ' + (v[tr[0]] === 'yes' ? '❤️' : v[tr[0]] === 'maybe' ? '🤔' : '✕') : '')).filter(Boolean).join(' · ') + '</small></div>' +
     '<div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-vote="' + o[0] + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>' +
+    (custom ? '<p class="gsub custloc">' + (p.lat != null ? t('pinned') : t('unpinned')) + '</p>' +
+      '<details class="custedit"' + (p.lat == null ? ' open' : '') + '><summary>' + t('editLinks') + '</summary>' +
+      '<div class="exform links"><input id="sh-cmap" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" value="' + esc(safeHref(custom.map)) + '" />' +
+      '<input id="sh-cweb" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" value="' + esc(safeHref(custom.web)) + '" />' +
+      '<button type="button" id="sh-csave">' + t('save') + '</button></div><p class="gsub">' + esc(t('mapLinkHow')) + '</p></details>' : '') +
     '<div class="sheetacts"><button class="act go" type="button" id="sh-add">' + t('addToDay') + '</button>' + (custom ? '<button class="act" type="button" id="sh-del">' + t('delete') + '</button>' : '') + '</div>' +
     (p.conf && p.conf !== 'high' ? '<p class="gsub" style="margin-top:10px">' + t('confirm') + '</p>' : '');
   openSheet(html, () => {
     $$('#sheet [data-vote]').forEach(b => { b.onclick = () => { setVote(ref, b.dataset.vote); setTimeout(() => openPlace(id), 60); }; });
     $('#sh-add').onclick = () => pickDay(ref, p);
     const del = $('#sh-del'); if (del) del.onclick = () => { put('custom', id.slice(2), Object.assign({}, custom, { deleted: true })); closeSheet(); };
+    const csave = $('#sh-csave');
+    if (csave) csave.onclick = () => {
+      const k = id.slice(2), mapRaw = $('#sh-cmap').value, webRaw = $('#sh-cweb').value;
+      const L2 = customLinks(mapRaw, webRaw); if (L2.err) { toast(L2.err); return; }
+      // replacing the map link clears the old location, so a stale pin cannot survive an edit
+      const upd = Object.assign({}, custom, { map: '', web: '', lat: null, lng: null, needsResolve: false }, L2.fields);
+      delete upd.mapName; delete HOMEMIN[k];
+      put('custom', k, upd); refreshCustomSeeds();
+      if (upd.needsResolve) resolveCustom(k); else toast(t('saved'));
+      setTimeout(() => openPlace(id), 80);
+    };
   });
 }
 function tagLabel(x) { const tg = TAGS.find(z => z[0] === x); return tg ? L(tg[1], tg[2], tg[3]) : x.replace(/-/g, ' '); }
@@ -661,6 +709,71 @@ function pickDay(ref, p) {
   const html = '<h3>' + t('pickDay') + '</h3><p class="meta">' + esc(stopLabel(seedFor(ref))) + '</p>' +
     fits.map(f => { const d = DAYBYKEY[f.day]; const placed = agIds(f.day).indexOf(ref) >= 0; return '<div class="pkrow" data-pick="' + f.day + '"><div class="pn">' + dayLabel(f.day) + ' · ' + esc(dayTitle(d)) + '<small>' + (f.closed ? '⚠ ' + t('closedThatDay') : (f.why || '')) + '</small></div><button type="button" class="pk-b' + (f.rec ? ' rec' : '') + '" ' + (f.closed ? 'disabled' : '') + '>' + (placed ? '✓' : (f.rec ? '★ ' + t('recommended') : '📅')) + '</button></div>'; }).join('');
   openSheet(html, () => { $$('#sheet [data-pick]').forEach(r => { const b = r.querySelector('.pk-b'); if (b.disabled) return; r.onclick = () => { agInsert(r.dataset.pick, ref); closeSheet(); toast(t('applied') + ' · ' + dayLabel(r.dataset.pick)); }; }); });
+}
+// ---- your own stops: map links, website, and where they actually are ----
+// Reads the two optional link fields. Returns { fields } to merge into the
+// custom stop, or { err } with a message for the traveller.
+function customLinks(mapRaw, webRaw) {
+  const fields = {};
+  const m = String(mapRaw || '').trim(), w = String(webRaw || '').trim();
+  if (m) {
+    const got = G.parseMapsLink(m);
+    if (!got) return { err: t('badMapLink') };
+    // keep the link itself so Map opens exactly what they shared; a bare
+    // "lat, lng" has no link to keep
+    const isPair = /^\s*-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+\s*$/.test(m);
+    fields.map = isPair ? '' : (/^https?:\/\//i.test(m) ? m : 'https://' + m).slice(0, 2000);
+    if (got.lat != null) { fields.lat = got.lat; fields.lng = got.lng; }
+    if (got.name) fields.mapName = got.name;
+    fields.needsResolve = !!got.needsResolve;
+  }
+  if (w) {
+    const href = /^https?:\/\//i.test(w) ? w : 'https://' + w;
+    let u = null; try { u = new URL(href); } catch (e) {}
+    if (!u || !/\./.test(u.hostname) || /\s/.test(w)) return { err: t('badWebLink') };
+    fields.web = u.href.slice(0, 2000);
+  }
+  return { fields };
+}
+// Short share links carry no coordinates until someone follows the redirect,
+// which the browser cannot do across origins — so the concierge does it. If
+// that is unreachable the link is still kept (Map and Directions still work)
+// and the next time the stop is opened, it tries again.
+const RESOLVING = {};
+async function resolveCustom(k, quiet) {
+  const c = (state.custom || {})[k];
+  if (!c || !safeHref(c.map) || coord(c.lat) != null || RESOLVING[k] || !CFG.CONCIERGE_URL || !navigator.onLine) return;
+  RESOLVING[k] = true;
+  if (!quiet) toast(t('resolving'));
+  try {
+    const r = await fetch(CFG.CONCIERGE_URL.replace(/\/$/, '') + '/resolve', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trip-Key': CFG.TRIP_KEY || '' }, body: JSON.stringify({ url: c.map }) });
+    const j = await r.json().catch(() => ({}));
+    const got = j && j.url ? G.parseMapsLink(j.url) : null;
+    const now = (state.custom || {})[k]; if (!now) return;
+    if (got && got.lat != null) {
+      const upd = Object.assign({}, now, { lat: got.lat, lng: got.lng, needsResolve: false, map: j.url });
+      if (got.name && (now.name === t('pinnedName') || !now.name)) upd.name = got.name.slice(0, 120);
+      delete HOMEMIN[k];
+      put('custom', k, upd);
+      if (!quiet) toast(t('resolvedOk'));
+    } else if (!quiet) toast(t('resolvedNo'));
+  } catch (e) { if (!quiet) toast(t('resolvedNo')); }
+  finally { delete RESOLVING[k]; }
+}
+// Creates a custom stop from a name, a duration and the two optional links.
+// Returns its key, or null (with a toast) when a link is not usable.
+function makeCustom(name, mins, mapRaw, webRaw) {
+  const L2 = customLinks(mapRaw, webRaw);
+  if (L2.err) { toast(L2.err); return null; }
+  const f = L2.fields;
+  const nm = String(name || '').trim() || f.mapName || (f.map ? t('pinnedName') : '');
+  if (!nm) return null;
+  const k = String(Date.now());
+  const c = Object.assign({ name: nm.slice(0, 120), d: Math.max(15, Number(mins) || 60), who: me, t: '14:00' }, f);
+  delete c.mapName;
+  state.custom[k] = c; put('custom', k, c); refreshCustomSeeds();
+  if (c.needsResolve) resolveCustom(k);
+  return k;
 }
 function openAddStop(day) {
   const d = DAYBYKEY[day]; const hubs = d.hubs || [];
@@ -675,12 +788,18 @@ function openAddStop(day) {
   };
   const html = '<h3>' + t('pickStop') + ' · ' + dayLabel(day) + '</h3><input class="pksearch" id="pk-q" type="search" placeholder="' + t('searchPh') + '" />' +
     '<div class="vchips small" id="pk-cats"><button class="vchip" type="button" data-c="all" aria-pressed="true">' + L('All', 'Все') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park'].map(c => '<button class="vchip" type="button" data-c="' + c + '">' + catLabel(c) + '</button>').join('') + '</div>' +
-    '<div id="pk-list"></div><div class="grp"><h3 style="font-size:16px">' + t('custom') + '</h3><div class="exform"><input id="pk-cname" type="text" placeholder="' + t('customName') + '" /><input id="pk-cmin" type="number" inputmode="numeric" value="60" /><button type="button" id="pk-cadd">' + t('add') + '</button></div></div>';
+    '<div id="pk-list"></div><div class="grp"><h3 style="font-size:16px">' + t('custom') + '</h3><div class="exform"><input id="pk-cname" type="text" placeholder="' + t('customName') + '" /><input id="pk-cmin" type="number" inputmode="numeric" value="60" /><button type="button" id="pk-cadd">' + t('add') + '</button></div>' +
+    '<div class="exform links"><input id="pk-cmap" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" /><input id="pk-cweb" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" /></div><p class="gsub">' + esc(t('mapLinkHow')) + '</p></div>';
   openSheet(html, () => {
     render();
     $('#pk-q').oninput = (e) => { q = e.target.value.trim().toLowerCase(); render(); };
     $$('#pk-cats .vchip').forEach(b => { b.onclick = () => { cat = b.dataset.c; $$('#pk-cats .vchip').forEach(x => x.setAttribute('aria-pressed', String(x === b))); render(); }; });
-    $('#pk-cadd').onclick = () => { const name = $('#pk-cname').value.trim(); if (!name) return; const k = String(Date.now()); const c = { name: name.slice(0, 120), d: Math.max(15, Number($('#pk-cmin').value) || 60), who: me, t: '14:00' }; state.custom[k] = c; put('custom', k, c); refreshCustomSeeds(); agInsert(day, 'c:' + k); closeSheet(); toast(t('applied')); };
+    $('#pk-cadd').onclick = () => {
+      const k = makeCustom($('#pk-cname').value, $('#pk-cmin').value, $('#pk-cmap').value, $('#pk-cweb').value);
+      if (!k) return;
+      agInsert(day, 'c:' + k); closeSheet();
+      if (!(state.custom[k] || {}).needsResolve) toast(t('applied'));
+    };
   });
 }
 function suggestBreak(day) {
@@ -859,6 +978,9 @@ function deckDecide(val) {
 // ---------------------------------------------------------------- plan tab
 function renderPlan() {
   if (!$('#planstats')) return;
+  const pm = $('#propmap'), pw = $('#propweb');
+  if (pm) { pm.placeholder = t('mapLinkPh'); pm.setAttribute('aria-label', t('mapLink')); }
+  if (pw) { pw.placeholder = t('webLink'); pw.setAttribute('aria-label', t('webLink')); }
   const refs = PLACES.map(p => 'p:' + p.id).concat(Object.keys(state.custom || {}).filter(k => state.custom[k] && !state.custom[k].deleted).map(k => 'c:' + k));
   const both = refs.filter(bothWant), one = refs.filter(oneWants);
   const sched = new Set(); DAYKEYS.forEach(d => agIds(d).forEach(id => sched.add(id)));
@@ -1048,7 +1170,7 @@ function drawMarkers() {
     const color = x.p ? catColor(x.p.cat) : '#5D6170';
     const m = window.L.marker(x.pt, { icon: window.L.divIcon({ className: '', html: '<div class="pin" style="background:' + color + '"></div>', iconSize: [14, 14], iconAnchor: [7, 7] }) }).addTo(map);
     const name = x.p ? placeName(x.p) : stopLabel(x.it);
-    m.bindPopup('<b>' + esc(name) + '</b><br>' + (x.p ? esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + '<br><a href="#" data-mopen="' + esc(x.p.id) + '">' + L('Open', 'Открыть') + ' →</a>' : (x.start != null ? agHM(x.start) : '')));
+    m.bindPopup('<b>' + esc(name) + '</b><br>' + (x.p ? esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + '<br><a href="#" data-mopen="' + esc(x.p.id) + '">' + L('Open', 'Открыть') + ' →</a>' : (x.start != null ? agHM(x.start) : '') + (x.it && x.it.custom ? '<br><a href="#" data-mopen="' + esc(x.it.id) + '">' + L('Open', 'Открыть', 'Öffnen') + ' →</a>' : '')));
     m.on('popupopen', (e) => { const a = e.popup.getElement().querySelector('[data-mopen]'); if (a) a.onclick = (ev) => { ev.preventDefault(); openPlace(a.dataset.mopen); }; });
     markers.push(m);
   });
@@ -1402,7 +1524,12 @@ function init() {
   $('#swipebtn').onclick = () => { if (EX.deck) deckStop(); else deckStart(); };
   $('#gotoswipe').onclick = () => { setTab('explore'); deckStart(); };
   $('#buildweek').onclick = openBuildWeek;
-  $('#propadd').onclick = () => { const name = $('#propin').value.trim(); if (!name) return; const k = String(Date.now()); const c = { name: name.slice(0, 120), d: Math.max(15, Number($('#propmin').value) || 90), who: me, t: '14:00' }; state.custom[k] = c; put('custom', k, c); refreshCustomSeeds(); if (me) setVote('c:' + k, 'yes'); $('#propin').value = ''; };
+  $('#propadd').onclick = () => {
+    const k = makeCustom($('#propin').value, $('#propmin').value || 90, $('#propmap').value, $('#propweb').value);
+    if (!k) return;
+    if (me) setVote('c:' + k, 'yes');
+    ['#propin', '#propmap', '#propweb'].forEach(sel => { $(sel).value = ''; });
+  };
   $('#noteadd').onclick = () => { const v = $('#notein').value.trim(); if (!v) return; put('note', String(Date.now()), { who: me, text: v.slice(0, 500) }); $('#notein').value = ''; };
   $('#packadd').onclick = () => { const v = $('#packin').value.trim(); if (!v) return; put('pack', String(Date.now()), { text: v.slice(0, 120), who: me }); $('#packin').value = ''; };
   $('#resvadd').onclick = () => { const p = $('#resvplace').value.trim(); if (!p) return; put('resv', String(Date.now()), { place: p.slice(0, 120), when: $('#resvwhen').value, code: $('#resvcode').value.trim().slice(0, 120), who: me }); $('#resvplace').value = ''; $('#resvcode').value = ''; toast(t('saved')); };

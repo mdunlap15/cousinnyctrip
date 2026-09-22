@@ -112,5 +112,52 @@
   }
   function mapsSearch(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
 
-  root.GEO = { HOME, HUBS, HUB, PAIRS, haversine, nearestHub, hubToHub, travelMin, travelMode, fromHome, walkMin, mapsDir, mapsSearch };
+  // ---- map links pasted by hand ----
+  // Reads a location out of whatever someone pastes when adding their own stop:
+  // a Google or Apple Maps link, or a bare "40.7128, -74.0060". Returns null if
+  // it is not a map link at all, otherwise { lat, lng, name, needsResolve }.
+  // lat/lng are null when the link carries no coordinates. needsResolve means
+  // it is a share link (maps.app.goo.gl, maps.apple/p/…) whose coordinates only
+  // appear after following a redirect — which a browser cannot do across
+  // origins, so the concierge proxy does it.
+  function isGoogleMapsHost(h, path) {
+    return (/^(www\.)?google\.[a-z]{2,3}(\.[a-z]{2})?$/.test(h) && path.indexOf('/maps') === 0) || /^maps\.google\.[a-z]{2,3}(\.[a-z]{2})?$/.test(h);
+  }
+  function isShortMapHost(h, path) {
+    return h === 'maps.app.goo.gl' || (h === 'goo.gl' && path.indexOf('/maps') === 0) || h === 'maps.apple';
+  }
+  function parseMapsLink(input) {
+    const raw = String(input || '').trim();
+    if (!raw) return null;
+    const good = (a, b) => isFinite(a) && isFinite(b) && Math.abs(a) <= 90 && Math.abs(b) <= 180 && !(a === 0 && b === 0);
+    const pair = (str) => { const m = String(str || '').match(/^\s*(-?\d{1,3}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)/); return m && good(+m[1], +m[2]) ? [+m[1], +m[2]] : null; };
+    // a bare coordinate pair
+    const bare = raw.match(/^\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*$/);
+    if (bare) return good(+bare[1], +bare[2]) ? { lat: +bare[1], lng: +bare[2], name: '', needsResolve: false } : null;
+    let u; try { u = new URL(/^https?:\/\//i.test(raw) ? raw : 'https://' + raw); } catch (e) { return null; }
+    const h = u.hostname.toLowerCase(), path = u.pathname, q = u.searchParams;
+    const apple = h === 'maps.apple.com';
+    const google = isGoogleMapsHost(h, path);
+    const short = isShortMapHost(h, path);
+    if (!apple && !google && !short) return null;
+    const dec = (x) => { try { return decodeURIComponent(String(x).replace(/\+/g, ' ')).trim(); } catch (e) { return String(x).trim(); } };
+    let lat = null, lng = null, name = '';
+    const take = (c) => { if (c && lat == null) { lat = c[0]; lng = c[1]; } };
+    // Most precise first. Google's !3d…!4d… is the place itself; @lat,lng is only
+    // where the map happened to be centred.
+    const full = u.href;
+    const bang = full.match(/!3d(-?\d{1,3}\.\d+)!4d(-?\d{1,3}\.\d+)(?![\s\S]*!3d)/);
+    if (bang && good(+bang[1], +bang[2])) take([+bang[1], +bang[2]]);
+    ['coordinate', 'll', 'sll', 'q', 'query', 'destination', 'daddr', 'center'].forEach((k) => { if (q.has(k)) take(pair(q.get(k))); });
+    const at = path.match(/@(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/);
+    if (at && good(+at[1], +at[2])) take([+at[1], +at[2]]);
+    // a name, when the link carries one
+    const placeSeg = path.match(/\/maps\/place\/([^/@]+)/);
+    if (placeSeg) name = dec(placeSeg[1]);
+    ['name', 'q', 'query'].forEach((k) => { if (!name && q.has(k) && !pair(q.get(k))) name = dec(q.get(k)); });
+    if (apple && !name && q.has('address')) name = dec(q.get('address')).split(',')[0];
+    return { lat, lng, name: name.slice(0, 120), needsResolve: lat == null && short };
+  }
+
+  root.GEO = { HOME, HUBS, HUB, PAIRS, haversine, nearestHub, hubToHub, travelMin, travelMode, fromHome, walkMin, mapsDir, mapsSearch, parseMapsLink, isShortMapHost };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -128,6 +128,139 @@ if (booted) {
   if (!document.getElementById('tourreplay')) fail('no "run the tour again" button in More');
   while (document.body.dataset.lang !== 'en') click(lb);
 
+  // ---- your own stops, with a map link ----
+  console.log('custom stops with map links:');
+  const G = window.GEO;
+  const LUCALI = 'https://www.google.com/maps/place/Lucali/@40.6818,-73.9990,17z/data=!3d40.681801!4d-73.999012';
+  // the parser, on the shapes people actually paste
+  const shapes = [
+    ['Google place link', LUCALI, 40.681801, -73.999012],
+    ['Google, German domain', 'https://www.google.de/maps/place/Balthazar/@40.7226,-73.9981,17z', 40.7226, -73.9981],
+    ['Apple Maps', 'https://maps.apple.com/?ll=40.6818,-73.9990&q=Lucali', 40.6818, -73.999],
+    ['a bare "lat, lng"', '40.7128, -74.0060', 40.7128, -74.006],
+  ];
+  for (const [label, url, la, ln] of shapes) { const r = G.parseMapsLink(url); if (!r || r.lat !== la || r.lng !== ln) fail(`parser: ${label} gave ${JSON.stringify(r)}`); }
+  if (!(G.parseMapsLink('https://maps.app.goo.gl/AbC') || {}).needsResolve) fail('parser: a share link is not flagged for resolving');
+  for (const nope of ['https://example.com/?q=40.7,-74.0', 'https://google.com.evil.example/maps/@40.7,-74.0,17z', 'just some words']) if (G.parseMapsLink(nope)) fail(`parser accepted a non-map link: ${nope}`);
+  ok('the parser reads Google, Apple and bare coordinates, and refuses look-alikes');
+
+  const addViaDay = (day, name, mapLink, web) => {
+    click(document.querySelector('[data-addstop="' + day + '"]'));
+    document.getElementById('pk-cname').value = name;
+    document.getElementById('pk-cmin').value = '75';
+    document.getElementById('pk-cmap').value = mapLink || '';
+    document.getElementById('pk-cweb').value = web || '';
+    click(document.getElementById('pk-cadd'));
+  };
+  const customKeyNamed = (name) => Object.keys(NYC.state.custom || {}).find(k => NYC.state.custom[k] && NYC.state.custom[k].name === name && !NYC.state.custom[k].deleted);
+  const rowFor = (day, ref) => NYC.agReflow(day, NYC.agIds(day)).find(r => r.it.id === ref);
+  const DAY = T.DAYS[1].key;
+
+  // 1) with a long Google link: real coordinates, real travel
+  addViaDay(DAY, 'Pizza at Lucali', LUCALI, 'lucali.com');
+  const kPinned = customKeyNamed('Pizza at Lucali');
+  if (!kPinned) fail('adding a stop with a map link did not create it');
+  else {
+    const c = NYC.state.custom[kPinned];
+    if (c.lat !== 40.681801 || c.lng !== -73.999012) fail(`the map link did not set the location: ${c.lat},${c.lng}`);
+    if (c.web !== 'https://lucali.com/') fail(`a website typed without https:// was not tidied: ${c.web}`);
+    if (NYC.agIds(DAY).indexOf('c:' + kPinned) < 0) fail('the pinned stop did not land on the day');
+    const r = rowFor(DAY, 'c:' + kPinned);
+    if (!r || r.mode === 'same' || !r.mode) fail(`travel to the pinned stop is not being worked out (mode "${r && r.mode}", gap ${r && r.gap})`);
+    else ok(`a pasted Google link pins the stop, and getting there is costed as a ${r.gap}-min ${r.mode === 'walk' ? 'walk' : 'subway ride'}`);
+    await new Promise(r => setTimeout(r, 40));   // the running order repaints on the next frame
+    const rowEl = document.querySelector('.agwrap[data-agday="' + DAY + '"] .agrow[data-id="c:' + kPinned + '"]');
+    if (!rowEl) fail('the pinned stop is not in the day\'s running order on screen');
+    else if (rowEl.querySelector('.nolocation')) fail('a pinned stop is still labelled as having no location');
+  }
+
+  // 2) without a link: kept, but honestly flagged
+  addViaDay(DAY, 'Nails, somewhere', '', '');
+  await new Promise(r => setTimeout(r, 40));
+  const kLoose = customKeyNamed('Nails, somewhere');
+  const rl = kLoose && rowFor(DAY, 'c:' + kLoose);
+  if (!rl) fail('a stop with no link was not added');
+  else if (rl.mode !== 'same') fail(`a stop with no location is being given travel time (${rl.mode})`);
+  else {
+    const el = document.querySelector('.agwrap[data-agday="' + DAY + '"] .agrow[data-id="c:' + kLoose + '"] .nolocation');
+    if (!el || !el.textContent.trim()) fail('a stop with no location does not say its travel is not counted');
+    else ok(`a stop with no link is kept, and the running order says: "${el.textContent.trim()}"`);
+  }
+
+  // 3) bad input is refused, with nothing created
+  const before = Object.keys(NYC.state.custom).length;
+  addViaDay(DAY, 'Bad map', 'https://example.com/somewhere', '');
+  addViaDay(DAY, 'Bad web', LUCALI, 'not a website');
+  if (Object.keys(NYC.state.custom).length !== before) fail('a stop with an unusable link was created anyway');
+  else ok('a link that is not a map, or a website that is not one, is refused and nothing is created');
+  click(document.querySelector('#sheet .closebtn'));
+
+  // 4) a share link is resolved through the concierge, then pinned
+  const realFetch = window.fetch;
+  let resolveBody = null;
+  window.fetch = (url, opts) => {
+    if (String(url).endsWith('/resolve')) { resolveBody = JSON.parse(opts.body); return Promise.resolve({ ok: true, json: async () => ({ url: LUCALI }) }); }
+    return realFetch(url, opts);
+  };
+  addViaDay(DAY, '', 'https://maps.app.goo.gl/AbC123', '');
+  await new Promise(r => setTimeout(r, 60));
+  const kShort = Object.keys(NYC.state.custom).find(k => NYC.state.custom[k].map && /Lucali/.test(NYC.state.custom[k].map) && NYC.state.custom[k].name === 'Lucali');
+  window.fetch = realFetch;
+  if (!resolveBody || resolveBody.url !== 'https://maps.app.goo.gl/AbC123') fail('a share link was not sent to the concierge to be expanded');
+  else if (!kShort) fail('a resolved share link did not pin the stop or pick up its name: ' + JSON.stringify(Object.values(NYC.state.custom).slice(-1)));
+  else ok('a share link with no name is expanded by the concierge, pinned, and named from the link ("' + NYC.state.custom[kShort].name + '")');
+
+  // 5) a stop's own sheet: links shown, and a location can be added afterwards
+  NYC.openPlace('c:' + kPinned);
+  const hrefs = [...document.querySelectorAll('#sheet .linkrow a')].map(a => a.getAttribute('href'));
+  if (!hrefs.includes('https://lucali.com/')) fail('the stop sheet has no Website button');
+  if (!hrefs.includes(LUCALI)) fail('the stop sheet\'s Map button does not open the link that was shared');
+  if (!hrefs.some(h => /maps\/dir/.test(h))) fail('the stop sheet has no Directions button');
+  if (!/~\d+/.test(document.querySelector('#sheet .meta').textContent)) fail('the stop sheet does not say how far it is from home');
+  else ok('its sheet has Website, the shared Map link, Directions, and the time from home');
+  NYC.openPlace('c:' + kLoose);
+  document.getElementById('sh-cmap').value = '40.7033, -73.9881';
+  click(document.getElementById('sh-csave'));
+  await new Promise(r => setTimeout(r, 120));
+  if (NYC.state.custom[kLoose].lat !== 40.7033) fail('adding a location to an existing stop did not stick');
+  else if (rowFor(DAY, 'c:' + kLoose).mode === 'same') fail('after adding a location, travel to the stop is still not counted');
+  else ok('a stop added without a link can be given one later, and its travel is then counted');
+  click(document.querySelector('#sheet .closebtn'));
+
+  // 6) records written straight into the shared table, bypassing the form.
+  // The table is writable with the public key, so these are what a stranger
+  // could plant. Nothing from them may become a script URL or break a day.
+  const hostile = {
+    evil1: { name: 'Innocent café', d: 60, t: '15:00', web: 'javascript:alert(document.cookie)', map: 'javascript:alert(1)', lat: 40.72, lng: -73.99 },
+    evil2: { name: 'Bad coords', d: 60, t: '15:30', lat: '<img src=x onerror=alert(1)>', lng: 'nope', web: 'data:text/html,<script>alert(1)</script>' },
+    evil3: { name: '<img src=x onerror=alert(1)>', d: 60, t: '16:00', web: 'https://ok.example/"onmouseover="alert(1)' },
+  };
+  Object.assign(NYC.state.custom, hostile);
+  NYC.agIds(DAY); // make sure seeds are fresh
+  for (const k of Object.keys(hostile)) {
+    NYC.openPlace('c:' + k);
+    const html = document.getElementById('sheet').innerHTML;
+    const hrefs = [...document.querySelectorAll('#sheet a[href]')].map(a => a.getAttribute('href'));
+    if (hrefs.some(h => /^\s*(javascript|data|vbscript):/i.test(h))) fail(`a planted record (${k}) produced a script URL: ${hrefs.join(' ')}`);
+    if (/onerror=|onmouseover=/.test(html.replace(/&quot;|&lt;|&gt;|&amp;/g, ''))) {
+      // escaped text is fine; a live attribute is not
+      if (document.querySelector('#sheet [onerror], #sheet [onmouseover]')) fail(`a planted record (${k}) injected a live event handler`);
+    }
+  }
+  click(document.querySelector('#sheet .closebtn'));
+  // a planted record on a day must not turn its timings into nonsense
+  NYC.state.agenda[DAY] = { ids: NYC.agIds(DAY).concat(['c:evil2']), t: {}, d: {}, seen: [] };
+  const rows = NYC.agReflow(DAY, NYC.agIds(DAY));
+  if (rows.some(r => !Number.isFinite(r.start) || !Number.isFinite(r.end))) fail('a record with junk coordinates broke the day\'s timings');
+  else ok('records planted in the shared table cannot become script links, live HTML, or broken timings');
+  for (const k of Object.keys(hostile)) delete NYC.state.custom[k];
+
+  // tidy up so the rest of the suite sees the seeded plan
+  for (const k of [kPinned, kLoose, kShort].filter(Boolean)) {
+    NYC.state.custom[k] = Object.assign({}, NYC.state.custom[k], { deleted: true });
+  }
+  NYC.state.agenda = {};
+
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }

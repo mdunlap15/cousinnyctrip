@@ -6,7 +6,8 @@ Endpoints (all need the `X-Trip-Key` header):
 
 - `POST /chat` — trip-aware concierge. Body: `{ messages: [{role, content}], today, context }`. `context` is the text the app builds from the live plan (today's running order, the wishlist, who is on the phone).
 - `POST /plan` — structured replan of one day. Body: `{ day, date, request, stops: [...], library: [...], lang }` → `{ stops: [{ ref, t, d }], note }`. The app applies the returned running order after the user confirms.
-- `GET /health` → `{ ok: true, model }`.
+- `POST /resolve` — expands a map share link. Body: `{ url }` → `{ url }` (the long link, which carries the coordinates) or `{ error }`. The app calls this when someone pastes a `maps.app.goo.gl` or `maps.apple` link while adding their own stop, because a browser cannot follow that redirect across origins. It never calls the model and does not count against the daily allowance. It only ever follows https hops between known map hosts, matched by exact hostname, a few at a time, and returns a URL rather than any response body — so it cannot be turned into a general fetcher.
+- `GET /health` → `{ ok: true, model, … }`.
 
 ## Deploy on Railway (2 minutes)
 

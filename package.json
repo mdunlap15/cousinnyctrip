@@ -13,7 +13,8 @@
     "test:install": "node scripts/install-test.mjs",
     "test:tour": "node scripts/tour-test.mjs",
     "test:proxy": "node concierge/test.mjs",
-    "test:concierge": "node scripts/concierge-test.mjs"
+    "test:concierge": "node scripts/concierge-test.mjs",
+    "test:custom": "node scripts/custom-stop-test.mjs"
   },
   "devDependencies": {
     "jsdom": "^24.0.0",

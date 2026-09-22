@@ -2,6 +2,7 @@
 // Env: ANTHROPIC_API_KEY (required), MODEL (optional), TRIP_KEY (optional shared secret), PORT
 import http from 'node:http';
 import Anthropic from '@anthropic-ai/sdk';
+import { resolveMapsLink } from './resolve.js';
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.MODEL || 'claude-opus-5';
@@ -190,6 +191,19 @@ const server = http.createServer(async (req, res) => {
   const ipWait = ipLimited(req);
   if (ipWait) return send(res, 429, { error: 'too many requests — try again shortly' }, { 'Retry-After': String(ipWait) }, req);
   if ((req.headers['x-trip-key'] || '') !== TRIP_KEY) return send(res, 401, { error: 'bad trip key' }, {}, req);
+
+  // Expanding a map share link never touches the model, so it is served before
+  // the daily ceiling and does not spend the travellers' allowance. It still
+  // sits behind the origin check, the key and the per-address limit above.
+  if (req.url === '/resolve') {
+    try {
+      const { url = '' } = JSON.parse((await readBody(req, 4000)) || '{}');
+      const out = await resolveMapsLink(String(url).slice(0, 2000));
+      if (out.error) console.warn('[resolve] ' + out.error + ' — ' + String(url).slice(0, 120));
+      return send(res, out.url ? 200 : 422, out, {}, req);
+    } catch (e) { return send(res, 400, { error: 'bad request' }, {}, req); }
+  }
+
   // Daily ceiling last, so only real calls count against the day's allowance.
   const dayWait = dayLimited();
   if (dayWait) return send(res, 429, { error: 'daily limit reached — the concierge is back tomorrow' }, { 'Retry-After': String(dayWait) }, req);

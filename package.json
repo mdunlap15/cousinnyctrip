@@ -1,0 +1,16 @@
+{
+  "name": "cousinnyctrip",
+  "private": true,
+  "description": "Tatyana in New York — Sep 26 – Oct 4 2026 trip PWA for Yulia, Tatyana & Mike. Static app; this package.json exists for the smoke tests and data build scripts.",
+  "scripts": {
+    "test": "node test/smoke.mjs",
+    "test:strict": "node test/smoke.mjs --strict",
+    "build:data": "node scripts/build-data.mjs",
+    "build:ics": "node scripts/build-ics.mjs",
+    "serve": "npx http-server -p 8080 -c-1 ."
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0",
+    "playwright": "^1.56.1"
+  }
+}

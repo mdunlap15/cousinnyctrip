@@ -118,6 +118,7 @@ const stopLabel = (it) => { if (!it) return ''; if (it.place) return placeName(i
 // ---------------------------------------------------------------- travelers + state
 const TR = T.TRAVELERS || [];
 let me = null; try { me = localStorage.getItem(LSK + '-who'); } catch (e) {}
+// (validated against TRIP.VOTERS once the voter list is built, below)
 function whoName(k) { const o = ((state.settings.names || {}).v || state.settings.names || {})[k]; if (o) return o; const tr = TR.find(x => x[0] === k); return tr ? L(tr[1], tr[2], tr[4] || tr[1]) : k; }
 function whoEmoji(k) { const tr = TR.find(x => x[0] === k); return tr ? (tr[3] || '') : ''; }
 const state = { vote: {}, agenda: {}, custom: {}, mike: {}, daynote: {}, note: {}, check: {}, resv: {}, settings: {}, pack: {} };
@@ -192,10 +193,15 @@ function md(txt) {
 
 // ---------------------------------------------------------------- votes
 const VOTEV = { yes: 2, maybe: 1, no: -2 };
+// Only the people in TRIP.VOTERS rate places. Everyone else stays a traveler:
+// they still appear on the days they join and in the "with Mike" suggestions.
+const VOTERS = (Array.isArray(T.VOTERS) && T.VOTERS.length) ? T.VOTERS.filter(k => TR.some(t => t[0] === k)) : TR.map(t => t[0]);
+const isVoter = (k) => VOTERS.indexOf(k) >= 0;
+if (me && !isVoter(me)) { me = null; try { localStorage.removeItem(LSK + '-who'); } catch (e) {} }
 function votesFor(ref) { const v = state.vote[ref]; return (v && typeof v === 'object') ? v : {}; }
-function voteScore(ref) { const v = votesFor(ref); let s = 0; ['Y', 'T'].forEach(k => { s += VOTEV[v[k]] || 0; }); if (v.M === 'yes') s += 1; if (v.M === 'no') s -= 1; return s; }
-function bothWant(ref) { const v = votesFor(ref); return v.Y === 'yes' && v.T === 'yes'; }
-function oneWants(ref) { const v = votesFor(ref); return (v.Y === 'yes' || v.T === 'yes') && !bothWant(ref) && v.Y !== 'no' && v.T !== 'no'; }
+function voteScore(ref) { const v = votesFor(ref); return VOTERS.reduce((s, k) => s + (VOTEV[v[k]] || 0), 0); }
+function bothWant(ref) { const v = votesFor(ref); return VOTERS.length > 0 && VOTERS.every(k => v[k] === 'yes'); }
+function oneWants(ref) { const v = votesFor(ref); return VOTERS.some(k => v[k] === 'yes') && !bothWant(ref) && !VOTERS.some(k => v[k] === 'no'); }
 function setVote(ref, val) {
   if (!me) { toast(t('pickWhoFirst')); return; }
   const v = Object.assign({}, votesFor(ref));
@@ -204,7 +210,7 @@ function setVote(ref, val) {
 }
 function voteBadges(ref) {
   const v = votesFor(ref);
-  return TR.map(tr => { const x = v[tr[0]]; if (!x) return ''; const ico = x === 'yes' ? '❤️' : (x === 'maybe' ? '🤔' : '✕'); return '<span class="vb ' + x + '" title="' + esc(whoName(tr[0])) + '">' + (tr[3] || tr[0]) + ico + '</span>'; }).join('');
+  return TR.filter(tr => isVoter(tr[0])).map(tr => { const x = v[tr[0]]; if (!x) return ''; const ico = x === 'yes' ? '❤️' : (x === 'maybe' ? '🤔' : '✕'); return '<span class="vb ' + x + '" title="' + esc(whoName(tr[0])) + '">' + (tr[3] || tr[0]) + ico + '</span>'; }).join('');
 }
 function scheduledDays(ref) { const out = []; DAYKEYS.forEach(d => { if (agIds(d).indexOf(ref) >= 0) out.push(d); }); return out; }
 
@@ -631,7 +637,7 @@ function openPlace(id) {
     (kv.length ? '<div class="kv">' + kv.map(x => '<div class="k">' + esc(x[0]) + '</div><div>' + esc(x[1]) + '</div>').join('') + '</div>' : '') +
     (placeTips(p).length ? '<ul class="tips">' + placeTips(p).map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '') +
     (p.tags && p.tags.length ? '<div class="tags">' + p.tags.slice(0, 6).map(x => '<span class="tag">' + esc(tagLabel(x)) + '</span>').join('') + '</div>' : '') +
-    '<div class="votebox"><div class="vl">' + t('yourVote') + (me ? ' · ' + esc(whoName(me)) : '') + '<small>' + TR.map(tr => (v[tr[0]] ? (tr[3] || '') + ' ' + esc(whoName(tr[0])) + ': ' + (v[tr[0]] === 'yes' ? '❤️' : v[tr[0]] === 'maybe' ? '🤔' : '✕') : '')).filter(Boolean).join(' · ') + '</small></div>' +
+    '<div class="votebox"><div class="vl">' + t('yourVote') + (me ? ' · ' + esc(whoName(me)) : '') + '<small>' + TR.filter(tr => isVoter(tr[0])).map(tr => (v[tr[0]] ? (tr[3] || '') + ' ' + esc(whoName(tr[0])) + ': ' + (v[tr[0]] === 'yes' ? '❤️' : v[tr[0]] === 'maybe' ? '🤔' : '✕') : '')).filter(Boolean).join(' · ') + '</small></div>' +
     '<div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-vote="' + o[0] + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>' +
     '<div class="sheetacts"><button class="act go" type="button" id="sh-add">' + t('addToDay') + '</button>' + (custom ? '<button class="act" type="button" id="sh-del">' + t('delete') + '</button>' : '') + '</div>' +
     (p.conf && p.conf !== 'high' ? '<p class="gsub" style="margin-top:10px">' + t('confirm') + '</p>' : '');
@@ -870,7 +876,7 @@ function renderPlan() {
 // ---------------------------------------------------------------- who
 function renderWho() {
   $$('.whoslot').forEach(sl => {
-    sl.innerHTML = '<p class="gsub" style="margin:0 0 6px">' + t('pickWho') + '</p><div class="who">' + TR.map(tr => '<button type="button" data-who="' + tr[0] + '" aria-pressed="' + String(me === tr[0]) + '">' + (tr[3] || '') + ' ' + esc(whoName(tr[0])) + '</button>').join('') + '</div>';
+    sl.innerHTML = '<p class="gsub" style="margin:0 0 6px">' + t('pickWho') + '</p><div class="who">' + TR.filter(tr => isVoter(tr[0])).map(tr => '<button type="button" data-who="' + tr[0] + '" aria-pressed="' + String(me === tr[0]) + '">' + (tr[3] || '') + ' ' + esc(whoName(tr[0])) + '</button>').join('') + '</div>';
   });
   $$('.who button').forEach(b => { b.onclick = () => { me = b.dataset.who; try { localStorage.setItem(LSK + '-who', me); } catch (e) {} queueRender(); if (EX.deck) deckStart(); }; });
 }

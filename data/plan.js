@@ -24,6 +24,9 @@ window.TRIP = {
 
   // [key, name, russian name, emoji, german name]. Keys are stored in the shared votes/plan.
   TRAVELERS: [['Y', 'Yulia', 'Юля', '🌸', 'Yulia'], ['T', 'Tatyana', 'Таня', '🌻', 'Tatyana'], ['M', 'Mike', 'Майк', '🎷', 'Mike']],
+  // Who actually votes on places. Mike is in TRAVELERS because he joins evenings
+  // and days can be marked "Mike joins" — but the wishlist is the two of them.
+  VOTERS: ['Y', 'T'],
 
   FLIGHTS: [
     { key: 'out', who: 'Tatyana', date: '2026-09-26', legs: [

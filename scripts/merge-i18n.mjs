@@ -45,8 +45,11 @@ for (const p of places) {
   // Prices must keep their dollar amounts: a translation that changes a number is a bug.
   for (const [src, dst] of [['price', 'priceRu'], ['price', 'priceDe']]) {
     if (p[src] && p[dst]) {
-      const a = (p[src].match(/\$[\d,.]+/g) || []).join('|');
-      const b = (p[dst].match(/\$[\d,.]+/g) || []).join('|');
+      // Compare the numbers only: a comma that belongs to the sentence ("$20, or…")
+      // is not a change to the amount, and the naive match swallowed it.
+      const amounts = (t) => (t.match(/\$\s?[\d][\d,.]*/g) || []).map(x => x.replace(/[.,]+$/, '').replace(/\s/g, '')).join('|');
+      const a = amounts(p[src]);
+      const b = amounts(p[dst]);
       if (a !== b) { problems.push(`${p.id}: ${dst} changed the amounts (${a} → ${b}) — reverted`); delete p[dst]; }
     }
   }

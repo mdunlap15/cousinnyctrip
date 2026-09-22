@@ -1,0 +1,21 @@
+# Runs the smoke test on every push so a broken build never reaches the phones.
+# Publishing itself is plain GitHub Pages "deploy from a branch" (main / root),
+# the same arrangement as the Montreal and Japan trip apps — no deploy job here.
+name: Smoke test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run test:strict

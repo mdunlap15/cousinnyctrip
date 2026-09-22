@@ -27,6 +27,12 @@ const RATE_PER_IP = Number(process.env.RATE_PER_IP || 20);      // requests…
 const RATE_WINDOW_S = Number(process.env.RATE_WINDOW_S || 300); // …per this many seconds, per address
 const RATE_PER_DAY = Number(process.env.RATE_PER_DAY || 250);   // authenticated calls to the model per rolling day
 
+// How long a browser may reuse one preflight. Without it every message costs an
+// extra round trip, which is felt on a phone with one bar. Browsers clamp this
+// to their own ceiling (Chrome two hours, Safari rather less), so a day just
+// means "as long as you allow". A refused preflight is never cached.
+const PREFLIGHT_TTL = Number(process.env.PREFLIGHT_TTL || 86400);
+
 const ipHits = new Map();   // address -> [timestamps]
 let dayHits = [];           // timestamps of calls that reached the model
 
@@ -144,7 +150,7 @@ const server = http.createServer(async (req, res) => {
     // Refuse the preflight outright for a disallowed origin, so the browser
     // never even sends the real request.
     if (!originOk(req)) return send(res, 403, { error: 'origin not allowed' }, {}, req);
-    return send(res, 204, '', {}, req);
+    return send(res, 204, '', { 'Access-Control-Max-Age': String(PREFLIGHT_TTL) }, req);
   }
   // /health is deliberately open and free: it is how you check the deploy from
   // a browser or curl, and it never touches the model. The bare root answers the

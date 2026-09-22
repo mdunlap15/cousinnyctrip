@@ -49,6 +49,10 @@ const preOk = await fetch(BASE + '/chat', { method: 'OPTIONS', headers: { Origin
 if (preOk.status !== 204) bad(`the preflight from the app got ${preOk.status}, expected 204`);
 else if (preOk.headers.get('access-control-allow-origin') !== GOOD) bad('the preflight did not echo the app origin back');
 else ok('the app\'s own preflight passes and is echoed a single origin, not *');
+const maxAge = Number(preOk.headers.get('access-control-max-age') || 0);
+if (!(maxAge > 0)) bad('the preflight is not cacheable — every message will pay for an extra round trip');
+else ok(`the browser may reuse that preflight for ${maxAge}s instead of repeating it per message`);
+if (pre.headers.get('access-control-max-age')) bad('a refused preflight is being cached');
 const r2 = await post(null, KEY);
 if (r2.status !== 403) bad(`a request with no Origin got ${r2.status}, expected 403`); else ok('a request with no Origin at all is refused');
 

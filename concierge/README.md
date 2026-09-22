@@ -51,6 +51,7 @@ who reads the repo has it. These bound the damage:
 | `RATE_PER_IP` | `20` | Requests per address per window, counted before the key check so a flood is throttled either way. |
 | `RATE_WINDOW_S` | `300` | The window, in seconds. |
 | `RATE_PER_DAY` | `250` | Calls that reach the model, per rolling day, across everyone. This is the spend ceiling. |
+| `PREFLIGHT_TTL` | `86400` | Seconds a browser may reuse one CORS preflight. Without it every chat message pays for an extra round trip. Browsers clamp it to their own ceiling, so this is a request, not a promise. |
 
 The origin check is hygiene, not security: a browser cannot lie about `Origin`,
 so it stops another website using this proxy, but `curl` can send anything. The
@@ -60,8 +61,15 @@ exhaust it and lock the travellers out until it rolls off. That is the trade for
 a hard ceiling on spend. For a limit nothing can talk its way past, set a spend
 limit on the Anthropic key itself.
 
+Tightening `ALLOW_ORIGINS` is not instant: a browser that was allowed may reuse
+its cached preflight until `PREFLIGHT_TTL` or its own ceiling runs out, whichever
+is shorter. Removing an origin you actually need to lock out quickly means
+setting `PREFLIGHT_TTL` to `0` as well. A refused preflight is never cached, so
+this never works in the other direction.
+
 `npm run test:proxy` boots the proxy with tiny limits and checks all of it
-without spending anything.
+without spending anything. `npm run test:concierge` drives the app against it in
+a real browser.
 
 The model runs with server-side refusal fallbacks enabled (`fallbacks: "default"`), so a rare safety decline is retried on a sibling model inside the same call; remove `betas`/`fallbacks` in `index.js` if you would rather not.
 

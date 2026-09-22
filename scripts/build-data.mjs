@@ -46,7 +46,8 @@ const header = `// =============================================================
 // extracts and are NOT live-verified: "conf" says how sure we were. Edit freely.
 // ============================================================================
 `;
-fs.writeFileSync(path.join(root, 'data', 'places.js'), header + 'window.PLACES = ' + JSON.stringify(out, null, 1).replace(/\n {1}/g, '\n ') + ';\n');
+const body = '[\n' + out.map(p => JSON.stringify(p)).join(',\n') + '\n]';
+fs.writeFileSync(path.join(root, 'data', 'places.js'), header + 'window.PLACES = ' + body + ';\n');
 console.log(`wrote data/places.js with ${out.length} places from ${Object.keys(lanes).length} lanes`);
 const byCat = {}; out.forEach(p => { byCat[p.cat] = (byCat[p.cat] || 0) + 1; }); console.log(byCat);
 if (problems.length) { console.log('\nproblems:'); problems.forEach(p => console.log(' - ' + p)); }

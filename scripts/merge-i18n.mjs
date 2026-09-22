@@ -64,7 +64,8 @@ const header = `// =============================================================
 // are NOT live-verified: "conf" says how sure we were. Edit freely.
 // ============================================================================
 `;
-fs.writeFileSync(path.join(root, 'data', 'places.js'), header + 'window.PLACES = ' + JSON.stringify(places, null, 1) + ';\n');
+const body = '[\n' + places.map(p => JSON.stringify(p)).join(',\n') + '\n]';
+fs.writeFileSync(path.join(root, 'data', 'places.js'), header + 'window.PLACES = ' + body + ';\n');
 
 const cov = (f) => places.filter(p => p[f] && String(p[f]).trim()).length;
 console.log(`merged ${files} batch files into ${places.length} places (${touched} touched)`);

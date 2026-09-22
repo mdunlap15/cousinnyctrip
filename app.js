@@ -39,8 +39,11 @@ const L = (en, ru, de) => (lang === 'ru' ? (ru || en) : (lang === 'de' ? (de || 
 // pick a per-language field off an object: fld(p,'why') -> p.whyDe / p.whyRu / p.why
 const fld = (o, base) => {
   if (!o) return '';
-  const suffix = lang === 'ru' ? 'Ru' : (lang === 'de' ? 'De' : '');
-  return (suffix && o[base + suffix]) || o[base] || '';
+  if (lang === 'en') return o[base] || '';
+  const suffix = lang === 'ru' ? 'Ru' : 'De';
+  // Two naming conventions live side by side: camelCase fields on places and days
+  // (whyDe), SHOUTY ones on the trip object (CHAT_HELLO_DE). Try both.
+  return o[base + suffix] || o[base + suffix.toUpperCase()] || o[base] || '';
 };
 const S = {
   runningOrder: ['Running order', 'Расписание дня', 'Tagesablauf'], stops: ['stops', 'пункт(ов)', 'Stopps'],

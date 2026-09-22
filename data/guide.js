@@ -20,7 +20,15 @@ window.GUIDE = {
 
 **Дешевле всего — AirTrain + метро (~$12, ~75–90 мин).** AirTrain ($8.50, приложите карту к OMNY на выходе) до *Jamaica Station*, затем либо **поезд E** до Jay St–MetroTech и **F/G** две остановки до 15th St–Prospect Park (до дома 6 минут пешком), либо **LIRR** от Jamaica до *Atlantic Terminal* (20 мин, CityTicket ~$7), потом **R** до 4th Ave–9th St и 12 минут пешком в горку. Нормально с лёгкой сумкой, утомительно после девяти часов в воздухе.
 
-**В день прилёта:** Юля может следить за LH 400 на [FlightAware](https://flightaware.com/live/flight/DLH400). Встретить в зале прилёта Терминала 1 и вместе доехать домой на такси — самый тёплый вариант.` },
+**В день прилёта:** Юля может следить за LH 400 на [FlightAware](https://flightaware.com/live/flight/DLH400). Встретить в зале прилёта Терминала 1 и вместе доехать домой на такси — самый тёплый вариант.`,
+      titleDe: 'Ankunft · Sa 26. September',
+      de: `**LH 400 landet um 13:35 Uhr am JFK Terminal 1.** Lufthansa fliegt seit Jahren Terminal 1 an; JFKs *New Terminal One* geht 2026 in Etappen in Betrieb — schau also am Vortag aufs Terminal auf der Bordkarte und auf [jfkairport.com](https://www.jfkairport.com/) (bitte prüfen). Die Passkontrolle mit ESTA dauert an einem Samstagnachmittag meist 30–60 Minuten, das Gepäck noch einmal 15. Rechne damit, gegen 14:45–15:00 Uhr vor der Tür zu stehen.
+
+**Mit Koffer am besten: Yellow Cab oder Uber/Lyft nach Park Slope.** Folge den *Taxi*-Schildern (steig nie bei jemandem ein, der dich drinnen anspricht). JFK → Brooklyn läuft über den Taxameter (die Pauschale von $70 gilt nur nach Manhattan): rechne mit **$75–90 + Trinkgeld** und etwa **50–70 Minuten** über den Belt Parkway und den Prospect Expressway. Uber/Lyft holen dich im ausgeschilderten Rideshare-Bereich ab und kosten ungefähr dasselbe.
+
+**Am günstigsten: AirTrain + U-Bahn (~$12, ~75–90 Min.).** Mit dem AirTrain ($8.50, am Ausgang OMNY antippen) bis *Jamaica Station*, dann entweder mit der **E** bis Jay St–MetroTech und mit der **F/G** zwei Stationen bis 15th St–Prospect Park (von dort 6 Minuten zu Fuß nach Hause), oder mit der **LIRR** von Jamaica zum *Atlantic Terminal* (20 Min., CityTicket ~$7) und weiter mit der **R** bis 4th Ave–9th St, dann 12 Minuten bergauf zu Fuß. Mit leichtem Gepäck völlig in Ordnung, nach neun Stunden im Flieger ziemlich zäh.
+
+**Am Tag selbst:** Yulia kann LH 400 auf [FlightAware](https://flightaware.com/live/flight/DLH400) verfolgen. Dich in der Ankunftshalle von Terminal 1 abzuholen und gemeinsam mit dem Taxi nach Hause zu fahren, ist der schönste Empfang.` },
     { key: 'departure', icon: '🛫', title: 'Departure · Sun Oct 4', titleRu: 'Вылет · вс 4 октября',
       en: `**LH 411 leaves JFK Terminal 1 at 5:30 pm** (Munich 7:20 am Monday, then LH 4072 at 11:15 to Hannover, landing 12:25). Check in online 23 hours before; Lufthansa's economy allowance on this fare is one 23 kg checked bag plus 8 kg cabin (confirm on the booking).
 
@@ -35,7 +43,15 @@ window.GUIDE = {
 
 **В JFK:** досмотр в Терминале 1 воскресным вечером бывает медленным; после досмотра есть приличный фуд-корт, но ради него приезжать заранее не стоит. Покупки сверх нормы беспошлинного ввоза — в чемодан; возврата налога с продаж в Нью-Йорке нет, так что таможенное окно искать не нужно.
 
-**Смена времени по прилёте:** Мюнхен на 6 часов впереди Нью-Йорка. Поспите в самолёте после ужина — стыковка в понедельник короткая.` },
+**Смена времени по прилёте:** Мюнхен на 6 часов впереди Нью-Йорка. Поспите в самолёте после ужина — стыковка в понедельник короткая.`,
+      titleDe: 'Abflug · So 4. Oktober',
+      de: `**LH 411 startet um 17:30 Uhr ab JFK Terminal 1** (München Montag 7:20 Uhr, dann LH 4072 um 11:15 Uhr nach Hannover, Landung 12:25 Uhr). Der Online-Check-in öffnet 23 Stunden vorher; das Economy-Freigepäck von Lufthansa in diesem Tarif ist ein aufgegebener Koffer mit 23 kg plus 8 kg Handgepäck (bitte prüfen, steht in der Buchung).
+
+**Fahr um 14:00 Uhr in Park Slope los.** Sonntagnachmittags ist wenig Verkehr — Taxi oder Uber brauchen 40–55 Minuten — und 3 Stunden vor einem Interkontinentalflug sind ein entspannter Puffer. Wenn du einen Festpreis willst, bestell den Wagen am Abend vorher.
+
+**Am JFK:** Die Sicherheitskontrolle in Terminal 1 kann sonntagabends zäh sein; dahinter gibt es einen ordentlichen Food Court, aber nichts, wofür man früher da sein müsste. Alles, was über die Zollfreigrenze hinausgeht, kommt in den aufgegebenen Koffer — und in New York gibt es keine Rückerstattung der Verkaufssteuer, du musst also keinen Zollschalter suchen.
+
+**Zeitumstellung bei der Landung:** München ist New York 6 Stunden voraus. Schlaf im Flugzeug nach dem Essen; der Anschluss am Montag ist knapp.` },
     { key: 'subway', icon: '🚇', title: 'The subway from 7th Avenue', titleRu: 'Метро от 7-й авеню',
       en: `**Pay with OMNY:** tap any contactless Visa/Mastercard, Apple Pay or Google Pay at the turnstile — no MetroCard, no app. Each ride is **$3.00** (fare rose in January 2026; confirm) and after **12 paid rides in a Monday–Sunday week on the same card**, the rest of the week is free. Use the *same* card or phone every time so the cap counts; Tatyana's German contactless card works fine.
 
@@ -60,7 +76,20 @@ window.GUIDE = {
 
 **Экспресс и локальный:** ромбовидный значок на табло — экспресс, он пропускает станции. По выходным маршруты постоянно меняют: утром в субботу и воскресенье смотрите **приложение MTA** или [new.mta.info](https://new.mta.info/) и плакаты *Weekender* на станции. Поезда ходят всю ночь; после полуночи F ходит раз в 20 минут, так что после позднего шоу Uber домой из Манхэттена за $35–55 — разумный вариант.
 
-**Этикет:** сначала выпускайте выходящих, на эскалаторе стойте справа, в полном вагоне снимайте рюкзак, смотреть в глаза необязательно. Спрашивайте в будке или любого ньюйоркца — на вопрос люди отвечают охотно.` },
+**Этикет:** сначала выпускайте выходящих, на эскалаторе стойте справа, в полном вагоне снимайте рюкзак, смотреть в глаза необязательно. Спрашивайте в будке или любого ньюйоркца — на вопрос люди отвечают охотно.`,
+      titleDe: 'Die U-Bahn ab der 7th Avenue',
+      de: `**Bezahlen mit OMNY:** Halte einfach eine kontaktlose Visa/Mastercard, Apple Pay oder Google Pay ans Drehkreuz — keine MetroCard, keine App. Jede Fahrt kostet **$3.00** (Tariferhöhung im Januar 2026; bitte prüfen), und nach **12 bezahlten Fahrten in einer Woche von Montag bis Sonntag mit derselben Karte** ist der Rest der Woche frei. Nimm jedes Mal *dieselbe* Karte oder dasselbe Handy, damit das Limit mitzählt; Tatyanas deutsche Kontaktlos-Karte funktioniert einwandfrei.
+
+**Stationen in der Nähe der Wohnung (490A 7th Ave, Ecke 16th St):**
+- **15th St–Prospect Park (F/G)** — 6 Min. zu Fuß Richtung Osten die 16th St entlang bis zum Bartel-Pritchard Square. Die F fährt direkt nach Manhattan: Delancey/Lower East Side 25 Min., Broadway-Lafayette/SoHo 28, W 4th/Village 30, 14th/Chelsea 33, 42nd–Bryant Park 38, Rockefeller Center 42, Lexington–63rd für die Upper East Side 48. Die G fährt nach Carroll Gardens, Williamsburg (Metropolitan Av, 25 Min.) und Greenpoint.
+- **7th Ave (F/G)** — Ecke 9th St, 9 Min. zu Fuß; dieselben Linien, und Park Slopes Hauptstraße liegt auf dem Weg.
+- **4th Ave–9th St (F/G/R)** — 12 Min.; die **R** hält überall und fährt zur Union St, nach Atlantic Av–Barclays (Umstieg auf 2/3/4/5/B/D/Q/N), zur Whitehall St für die Fähre zur Freiheitsstatue (30 Min.), zur Cortlandt St fürs World Trade Center (32), zur Prince St für SoHo, zum Union Square, zur 34th, zum Times Square (48).
+- **Grand Army Plaza (2/3)** — 15 Min. zu Fuß am Rand des Parks hinauf; Express nach Clark St (Brooklyn Heights), Wall St, Chambers, 14th, Times Square (35), 72nd sowie zur Upper West Side / zum Naturkundemuseum.
+- **7th Ave (B/Q)** an der Flatbush — 15 Min.; die Q erreicht ohne Umsteigen die 57th St und die Second-Avenue-Linie der Upper East Side (72nd–96th).
+
+**Express oder Bummelzug:** Ein rautenförmiges Zeichen auf der Anzeige bedeutet Express — der Zug lässt Stationen aus. Am Wochenende wird ständig umgeleitet: Schau Samstag- und Sonntagmorgen in die **MTA-App** oder auf [new.mta.info](https://new.mta.info/) und auf die *Weekender*-Plakate in der Station. Die Züge fahren die ganze Nacht; nach Mitternacht kommt die F nur alle 20 Minuten — nach einer späten Show ist ein Uber aus Manhattan für $35–55 die vernünftige Lösung.
+
+**Etikette:** erst aussteigen lassen, auf der Rolltreppe rechts stehen, im vollen Wagen den Rucksack abnehmen, Blickkontakt muss nicht sein. Frag am Schalter oder irgendeinen New Yorker — wenn man fragt, helfen die Leute hier wirklich gern.` },
     { key: 'money', icon: '💵', title: 'Money, tipping & tax', titleRu: 'Деньги, чаевые и налоги',
       en: `**Cards everywhere**, including the subway and most food carts; keep $40–60 in small bills for tips, a slice, a flea market. ATMs at Chase/Citi/TD branches charge non-customers about $3; the ones in bodegas charge more.
 
@@ -75,7 +104,15 @@ window.GUIDE = {
 
 **Налог с продаж** 8,875% добавляют на кассе, поэтому цены на полках указаны без налога. **Одежда и обувь дешевле $110 за вещь в Нью-Йорке не облагаются налогом** — под это подпадает большинство покупок в бутиках; платье за $300 — нет. **Возврата налога для туристов нет.**
 
-**Ориентиры по счёту:** закуска + основное + бокал вина — $70–110 на человека до чаевых в ресторанах, отмеченных в приложении $$$; в местах $$ примерно вдвое меньше; кусок пиццы $4–5; коктейли $18–26; напиток в лобби-баре отеля $24–30.` },
+**Ориентиры по счёту:** закуска + основное + бокал вина — $70–110 на человека до чаевых в ресторанах, отмеченных в приложении $$$; в местах $$ примерно вдвое меньше; кусок пиццы $4–5; коктейли $18–26; напиток в лобби-баре отеля $24–30.`,
+      titleDe: 'Geld, Trinkgeld & Steuern',
+      de: `**Karten gehen überall**, auch in der U-Bahn und an den meisten Imbisswagen; halte trotzdem $40–60 in kleinen Scheinen bereit — für Trinkgeld, ein Stück Pizza, den Flohmarkt. Geldautomaten in den Filialen von Chase/Citi/TD nehmen von Fremdkunden rund $3; die in den Bodegas mehr.
+
+**Trinkgeld ist keine Geste, sondern Pflicht:** im Restaurant **18–22 %** vom Betrag vor Steuern (20 % ist die einfache Faustregel, das Kartenterminal bietet dir die Knöpfe an), an der Bar **$1–2 pro Drink** oder 20 % auf die Rechnung, Taxi und Uber **15–20 %**, Tischservice in der Hotelbar 20 %, Friseur oder Nägel 20 %, Garderobe $2. Kaffee über den Tresen: aufrunden oder sein lassen.
+
+**Die Verkaufssteuer** von 8,875 % kommt erst an der Kasse dazu, die Preise im Regal sind also ohne Steuer. **Kleidung und Schuhe unter $110 pro Teil sind in New York City steuerfrei** — das trifft auf die meisten Boutique-Einkäufe zu; auf ein Kleid für $300 nicht. Eine **Rückerstattung wie bei der Mehrwertsteuer gibt es für Touristen nicht.**
+
+**Was auf der Rechnung steht:** Vorspeise + Hauptgang + ein Glas Wein landen bei $70–110 pro Person vor Trinkgeld in den Restaurants, die in dieser App mit $$$ markiert sind; in den $$-Lokalen bei etwa der Hälfte; ein Stück Pizza $4–5; Cocktails $18–26; ein Drink in einer Hotel-Lobbybar $24–30.` },
     { key: 'phone', icon: '📱', title: 'Phone, plugs & paperwork', titleRu: 'Телефон, розетки и документы',
       en: `**ESTA** must already be approved for a German passport before boarding (apply at [esta.cbp.dhs.gov](https://esta.cbp.dhs.gov/), $40, ideally 72 hours ahead; it is valid two years). Keep a screenshot of the approval and of the return flight — officers sometimes ask where you are staying: *490A 7th Avenue, Brooklyn 11215, at my cousin's*.
 
@@ -90,7 +127,15 @@ window.GUIDE = {
 
 **Розетки:** американские типа A/B, 120 В. Телефонам и ноутбукам достаточно простого переходника; европейскому фену или утюжку нужна модель на 120 В (большинство — с переключаемым напряжением, проверьте на этикетке).
 
-**Приложения, которые стоит поставить сейчас:** MTA (метро), Citymapper (лучшие маршруты от двери до двери), Uber и Lyft, Resy и OpenTable (столики), TodayTix (театр), офлайн-карта Нью-Йорка в Google Maps. Это приложение работает офлайн, если добавить его на главный экран.` },
+**Приложения, которые стоит поставить сейчас:** MTA (метро), Citymapper (лучшие маршруты от двери до двери), Uber и Lyft, Resy и OpenTable (столики), TodayTix (театр), офлайн-карта Нью-Йорка в Google Maps. Это приложение работает офлайн, если добавить его на главный экран.`,
+      titleDe: 'Handy, Steckdosen & Papiere',
+      de: `**ESTA** muss für den deutschen Pass schon vor dem Einsteigen genehmigt sein (Antrag auf [esta.cbp.dhs.gov](https://esta.cbp.dhs.gov/), $40, am besten 72 Stunden vorher; gilt zwei Jahre). Halte einen Screenshot der Genehmigung und des Rückflugs bereit — die Beamten fragen manchmal, wo du wohnst: *490A 7th Avenue, Brooklyn 11215, bei meiner Cousine*.
+
+**Mobiles Internet:** Am schmerzfreisten ist eine eSIM — die US-Tarife von [Airalo](https://www.airalo.com/united-states-esim) oder [Holafly](https://esim.holafly.com/) (vor dem Flug kaufen, nach der Landung aktivieren); oder eine Prepaid-SIM von T-Mobile in jedem T-Mobile-Laden. EU-Roaming-Pakete für die USA sind pro Tag meist teuer. In der Wohnung, in Cafés und in den meisten Museen gibt es WLAN; die LinkNYC-Säulen auf der Straße geben kostenloses Gigabit-WLAN.
+
+**Steckdosen:** US-Typ A/B, 120 V. Für Handy und Laptop reicht ein einfacher Adapter; ein europäischer Föhn oder ein Glätteisen braucht ein Gerät, das 120 V verträgt (die meisten Zweispannungsgeräte tun das — schau aufs Etikett).
+
+**Apps, die du jetzt installieren solltest:** MTA (U-Bahn), Citymapper (die besten Routen von Tür zu Tür), Uber und Lyft, Resy und OpenTable (Tische), TodayTix (Theater), die Offline-Karte von New York in Google Maps. Diese App hier funktioniert offline, sobald du sie auf den Startbildschirm legst.` },
     { key: 'weather', icon: '🍂', title: 'Weather & what to pack', titleRu: 'Погода и что взять',
       en: `**Late September into early October is New York's best week:** typical highs of 20–23 °C, lows around 13–15 °C, low humidity, roughly one wet day in three. Evenings on the water (Pier 1, the Brooklyn Bridge, rooftops) feel 5 degrees cooler with the breeze.
 
@@ -101,7 +146,13 @@ window.GUIDE = {
 
 **Что взять:** одну тёплую вещь на вечер (лёгкую куртку или тренч), компактный зонт и главное — **обувь, в которой можно пройти 15 000 шагов**: план предполагает 8–12 км пешком в день. В коктейльных барах и на бродвейский вечер — smart casual, никакого дресс-кода; разве что в Bemelmans и Le Bernardin в джинсах и кроссовках будет чуть неловко.
 
-**Солнце:** встаёт около 6:45, садится **в 18:45 26 сентября и в 18:31 к 4 октября** — закатные точки в плане (пирс 1, Top of the Rock) рассчитаны на это. Прогноз на страницах дней — живой, от Open-Meteo для Парк-Слоуп.` },
+**Солнце:** встаёт около 6:45, садится **в 18:45 26 сентября и в 18:31 к 4 октября** — закатные точки в плане (пирс 1, Top of the Rock) рассчитаны на это. Прогноз на страницах дней — живой, от Open-Meteo для Парк-Слоуп.`,
+      titleDe: 'Wetter & was du einpackst',
+      de: `**Ende September und Anfang Oktober ist die schönste Woche in New York:** meist 20–23 °C am Tag, 13–15 °C nachts, wenig Luftfeuchtigkeit, ungefähr jeder dritte Tag nass. Abends am Wasser (Pier 1, Brooklyn Bridge, Dachterrassen) fühlt es sich im Wind 5 Grad kühler an.
+
+**Einpacken:** eine warme Schicht für abends (leichte Jacke oder Trenchcoat), einen kleinen Regenschirm und vor allem **Schuhe, in denen du 15.000 Schritte laufen kannst** — der Plan sieht im Schnitt 8–12 km am Tag zu Fuß vor. In den Cocktailbars und am Broadway-Abend gilt Smart Casual, nie förmlich; nur im Bemelmans und im Le Bernardin wärst du in Jeans und Sneakern zu leger angezogen.
+
+**Sonne:** Sie geht gegen 6:45 Uhr auf und **am 26. September um 18:45 Uhr unter, am 4. Oktober schon um 18:31 Uhr** — die Sonnenuntergangs-Stopps im Plan (Pier 1, Top of the Rock) sind darauf abgestimmt. Die Live-Vorhersage auf jeder Tagesseite kommt von Open-Meteo für Park Slope.` },
     { key: 'safety', icon: '🆘', title: 'Safety & emergencies', titleRu: 'Безопасность и экстренные случаи',
       en: `New York in 2026 is safer than its reputation: the tourist neighborhoods and everything in this app are fine at any hour with normal city sense — phone in a front pocket in Times Square and on crowded platforms, bag zipped in Chinatown crowds, an Uber rather than a long walk after midnight.
 
@@ -118,7 +169,16 @@ window.GUIDE = {
 - **Аптеки** вдоль 7-й авеню (Walgreens/Duane Reade, CVS); фармацевт подскажет аналог немецкого лекарства — возьмите с собой упаковку.
 - **Генконсульство Германии в Нью-Йорке:** 871 United Nations Plaza, +1 212 610 9700 — при утере паспорта сначала заявление в любом полицейском участке (78-й участок — 6th Ave и Bergen St).
 - **Страховка:** номер полиса и круглосуточную линию держите в телефоне; без страховки медицина в США оплачивается полностью.
-- **Потерянные вещи:** в метро → MTA Lost & Found на 34th St–Penn Station; в такси → по номеру медальона из чека на [nyc.gov/taxi](https://www.nyc.gov/site/tlc/passengers/lost-property.page).` },
+- **Потерянные вещи:** в метро → MTA Lost & Found на 34th St–Penn Station; в такси → по номеру медальона из чека на [nyc.gov/taxi](https://www.nyc.gov/site/tlc/passengers/lost-property.page).`,
+      titleDe: 'Sicherheit & Notfälle',
+      de: `New York ist 2026 sicherer als sein Ruf: Die Touristenviertel und alles, was in dieser App steht, sind zu jeder Uhrzeit in Ordnung, wenn du dich wie in jeder großen Stadt verhältst — Handy in die vordere Tasche am Times Square und auf vollen Bahnsteigen, Tasche zu im Gedränge von Chinatown, nach Mitternacht lieber ein Uber als ein langer Fußweg.
+
+- **Notruf: 911** (Polizei, Feuerwehr, Rettungsdienst). Städtische Auskunft ohne Notfall: **311**.
+- **Nächste Notaufnahme:** NewYork-Presbyterian Brooklyn Methodist Hospital, 506 6th St Ecke 7th Ave — 12 Minuten zu Fuß die Avenue hinauf. Notfallpraxis ohne Termin (~$150–250 ohne Versicherung): CityMD an der 7th Ave nahe der 9th St (Öffnungszeiten bitte prüfen).
+- **Apotheken** entlang der 7th Avenue (Walgreens/Duane Reade, CVS); die Apotheker nennen dir rezeptfreie Entsprechungen deutscher Medikamente — nimm die Packung mit.
+- **Deutsches Generalkonsulat New York:** 871 United Nations Plaza, +1 212 610 9700 — bei verlorenem Pass (vorher Anzeige auf irgendeiner Wache erstatten; das 78th Precinct liegt an der 6th Ave Ecke Bergen St).
+- **Reiseversicherung:** Policennummer und die 24-Stunden-Nummer ins Handy; ohne sie wird eine Behandlung in den USA voll berechnet.
+- **Fundsachen:** in der U-Bahn → MTA Lost & Found an der 34th St–Penn Station; im Taxi → über die Medaillonnummer auf der Quittung bei [nyc.gov/taxi](https://www.nyc.gov/site/tlc/passengers/lost-property.page).` },
     { key: 'passes', icon: '🎟️', title: 'Tickets, passes & lines', titleRu: 'Билеты, пассы и очереди',
       en: `**Skip the bundles.** CityPASS (about $150 for five attractions) only pays off if you do four or more paid sights; this plan has two or three (Statue ferry ~$25 with pedestal, Top of the Rock ~$45–60, the Met $30), so buy individually — each card in the app links straight to the official ticket page.
 
@@ -133,7 +193,15 @@ window.GUIDE = {
 
 **Бродвей дешевле:** будка **TKTS** под красными ступенями на Таймс-сквер продаёт билеты на сегодня со скидкой 20–50% с 15:00 (на дневные — с 11:00; список показов смотрите в приложении до очереди). **TodayTix** проводит цифровые лотереи и выкладывает rush-билеты каждое утро. По понедельникам большинство шоу не идёт; во вторник и среду вечером попасть проще всего.
 
-**Музеи бесплатно:** MoMA — вечером в пятницу (UNIQLO Free Fridays, билеты по времени появляются онлайн в 16:00), Уитни — вечером в пятницу и во второе воскресенье, Бруклинский музей — в первую субботу (3 октября, 17:00–23:00), а Метрополитен, Музей естественной истории и Бруклинский музей для жителей штата Нью-Йорк — «плати сколько хочешь»: Юля платит сколько хочет, Таня — полную цену (проверьте правила на сайтах).` },
+**Музеи бесплатно:** MoMA — вечером в пятницу (UNIQLO Free Fridays, билеты по времени появляются онлайн в 16:00), Уитни — вечером в пятницу и во второе воскресенье, Бруклинский музей — в первую субботу (3 октября, 17:00–23:00), а Метрополитен, Музей естественной истории и Бруклинский музей для жителей штата Нью-Йорк — «плати сколько хочешь»: Юля платит сколько хочет, Таня — полную цену (проверьте правила на сайтах).`,
+      titleDe: 'Tickets, Pässe & Schlangen',
+      de: `**Lass die Kombipakete.** Der CityPASS (rund $150 für fünf Attraktionen) lohnt sich erst ab vier kostenpflichtigen Sehenswürdigkeiten; in diesem Plan sind es zwei oder drei (Fähre zur Freiheitsstatue ~$25 mit Sockel, Top of the Rock ~$45–60, das Met $30) — kauf also einzeln, jede Karte in der App führt direkt zur offiziellen Ticketseite.
+
+**Vorher buchen, in dieser Reihenfolge:** Statue City Cruises mit Sockel (ist schnell ausverkauft), das Sonnenuntergangs-Zeitfenster bei Top of the Rock, das Abendessen am Mittwoch (Resy öffnet 30 Tage vorher), Village Vanguard, Comedy Cellar, das Abschiedsessen. Alles andere geht ohne Reservierung.
+
+**Broadway günstiger:** Der **TKTS-Stand** unter den roten Stufen am Times Square verkauft ab 15:00 Uhr Karten für denselben Tag mit 20–50 % Rabatt (für Matineen ab 11:00 Uhr; schau dir die Liste in der App an, bevor du dich anstellst). **TodayTix** veranstaltet digitale Verlosungen und gibt jeden Morgen Restkarten frei. Die meisten Shows spielen montags nicht; dienstag- und mittwochabends kommt man am leichtesten hinein.
+
+**Museen umsonst:** Das MoMA ist freitagabends frei (UNIQLO Free Fridays, die Zeitfenster-Tickets erscheinen um 16:00 Uhr online), das Whitney freitagabends und an jedem zweiten Sonntag, das Brooklyn Museum am First Saturday (3. Oktober, 17:00–23:00 Uhr), und im Met, im Naturkundemuseum und im Brooklyn Museum zahlen Einwohner des Staates New York, so viel sie mögen — Yulia zahlt also nach Gefühl, Tatyana den vollen Preis (die aktuellen Regeln bitte auf der jeweiligen Seite prüfen).` },
     { key: 'home', icon: '🏡', title: 'Home turf: Park Slope', titleRu: 'Свой район: Парк-Слоуп',
       en: `The apartment sits at the quiet end of 7th Avenue, six blocks below the F/G at 9th Street and a five-minute walk from Prospect Park at Bartel-Pritchard Square. **7th Avenue** is the daily street (bagels, pharmacies, a Key Food, Winner bakery a few blocks north); **5th Avenue**, one long block downhill, is the restaurant and bar street (al di là, Fonda, Stone Park Cafe, Miriam, Union Hall, Blueprint). **Prospect Park West** and the brownstone side streets between 1st and 9th are the postcard.
 
@@ -144,7 +212,13 @@ window.GUIDE = {
 
 **Кофе рядом с домом:** Café Regular (11-я улица), Winner (7-я авеню у 8-й), Colson Patisserie (9-я улица у 6-й авеню), Gorilla Coffee (5-я авеню). **Бейглы:** Bagel Pub (7-я авеню у 7-й улицы) или Terrace Bagels (Виндзор-Террас). **Продукты и вино:** Key Food на 7-й, Union Market на 7-й; Park Slope Food Coop — только для членов. **Главные ворота кладбища Грин-Вуд** — 15 минут пешком на юг, лучшая тихая прогулка в Бруклине.
 
-**Домой поздно вечером:** F от 15th St ходит всю ночь; из Манхэттена такси — $35–55 и 30–40 минут. Из Уильямсбурга G идёт напрямую; из Дамбо F от York St — 15 минут.` },
+**Домой поздно вечером:** F от 15th St ходит всю ночь; из Манхэттена такси — $35–55 и 30–40 минут. Из Уильямсбурга G идёт напрямую; из Дамбо F от York St — 15 минут.`,
+      titleDe: 'Das eigene Viertel: Park Slope',
+      de: `Die Wohnung liegt am ruhigen Ende der 7th Avenue, sechs Blocks unterhalb der F/G an der 9th Street und fünf Gehminuten vom Prospect Park am Bartel-Pritchard Square. Die **7th Avenue** ist die Straße für den Alltag (Bagels, Apotheken, ein Key Food, die Bäckerei Winner ein paar Blocks weiter nördlich); die **5th Avenue**, einen langen Block bergab, ist die Straße der Restaurants und Bars (al di là, Fonda, Stone Park Cafe, Miriam, Union Hall, Blueprint). Der **Prospect Park West** und die Seitenstraßen mit den Brownstones zwischen der 1st und der 9th sind das Postkartenmotiv.
+
+**Kaffee in der Nähe:** Café Regular (11th St), Winner (7th Ave Ecke 8th), Colson Patisserie (9th St Ecke 6th Ave), Gorilla Coffee (5th Ave). **Bagels:** Bagel Pub (7th Ave Ecke 7th St) oder Terrace Bagels (Windsor Terrace). **Lebensmittel und Wein:** Key Food an der 7th, Union Market an der 7th; die Park Slope Food Coop ist nur für Mitglieder. Das Haupttor des **Green-Wood Cemetery** liegt 15 Gehminuten südlich — der schönste stille Spaziergang in Brooklyn.
+
+**Spät nachts nach Hause:** Die F an der 15th St fährt die ganze Nacht; aus Manhattan kostet ein Taxi $35–55 und braucht 30–40 Minuten. Aus Williamsburg fährt die G direkt; aus DUMBO bist du mit der F ab York St in 15 Minuten da.` },
     { key: 'russian', icon: '🥟', title: 'Russian & German New York', titleRu: 'Русский и немецкий Нью-Йорк',
       en: `**Brighton Beach** is the Russian-speaking boardwalk at the end of the B/Q (about 50 minutes from home): Brighton Beach Avenue under the elevated tracks, the *Tatiana* and *Volna* boardwalk restaurants, Taste of Russia and the bakeries for a picnic on the sand, then a walk west along the boardwalk to Coney Island. Best as a sunny late-afternoon-into-dinner outing; the amusement park runs weekends only in the autumn.
 
@@ -155,6 +229,12 @@ window.GUIDE = {
 
 **Русская еда в Манхэттене:** Mari Vanna (Грамерси, китчевая дача с пельменями и настойками), Russian Samovar (Театральный квартал, живое пианино) и Veselka (Ист-Виллидж, круглосуточная украинская закусочная, которую любят все) — перед походом проверьте, что каждое место ещё открыто.
 
-**Немецкое:** Zum Schneider закрылся, но Paulaner Brauhaus в Нолите (уточнить), Loreley Beer Garden (Лоуэр-Ист-Сайд), Radegast Hall в Уильямсбурге (пивной зал с раздвижной крышей) и Schaller & Weber на Верхнем Ист-Сайде (немецкий мясник и бакалея с 1937 года, рядом с музейным днём) на месте. Сосиски в Schaller's Stube по соседству — отличный обед.` },
+**Немецкое:** Zum Schneider закрылся, но Paulaner Brauhaus в Нолите (уточнить), Loreley Beer Garden (Лоуэр-Ист-Сайд), Radegast Hall в Уильямсбурге (пивной зал с раздвижной крышей) и Schaller & Weber на Верхнем Ист-Сайде (немецкий мясник и бакалея с 1937 года, рядом с музейным днём) на месте. Сосиски в Schaller's Stube по соседству — отличный обед.`,
+      titleDe: 'Russisches & deutsches New York',
+      de: `**Brighton Beach** ist die russischsprachige Strandpromenade am Ende der B/Q (etwa 50 Minuten von zu Hause): die Brighton Beach Avenue unter der Hochbahn, die Promenadenrestaurants *Tatiana* und *Volna*, Taste of Russia und die Bäckereien für ein Picknick im Sand, danach ein Spaziergang auf der Holzpromenade nach Westen bis Coney Island. Am schönsten an einem sonnigen späten Nachmittag, der ins Abendessen übergeht; der Vergnügungspark hat im Herbst nur am Wochenende geöffnet.
+
+**Russisches Essen in Manhattan:** Mari Vanna (Gramercy, eine kitschige Datscha mit Pelmeni und angesetzten Wodkas), Russian Samovar (Theaterviertel, Klavier live) und Veselka (East Village, der ukrainische Diner rund um die Uhr, den alle lieben) — schau vorher nach, ob die Läden noch geöffnet sind.
+
+**Für deutsches Heimweh:** Das Zum Schneider hat zugemacht, aber das Paulaner Brauhaus in Nolita (bitte prüfen), der Loreley Beer Garden (Lower East Side), die Radegast Hall in Williamsburg (Bierhalle mit ausfahrbarem Dach) und Schaller & Weber auf der Upper East Side (die deutsche Metzgerei mit Feinkost von 1937, nahe am Met-Tag) gibt es alle noch. Die Würste in Schaller's Stube nebenan sind ein guter Mittagsimbiss.` },
   ],
 };

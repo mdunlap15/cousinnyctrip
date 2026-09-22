@@ -1,0 +1,619 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Tatyana in New York//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Tatyana in New York
+X-WR-TIMEZONE:America/New_York
+BEGIN:VTIMEZONE
+TZID:America/New_York
+BEGIN:DAYLIGHT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+TZNAME:EDT
+END:DAYLIGHT
+BEGIN:STANDARD
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+TZNAME:EST
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d0-0-xland@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260926T133500
+DTEND;TZID=America/New_York:20260926T145000
+SUMMARY:✈️ LH 400 lands at JFK Terminal 1 — passport control + bags
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d0-1-xtaxihome@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260926T145000
+DTEND;TZID=America/New_York:20260926T160000
+SUMMARY:🚕 Taxi or Uber to Park Slope (~50–70 min · ~$85–100 with tolls & tip)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d0-2-xsettle@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260926T160000
+DTEND;TZID=America/New_York:20260926T180000
+SUMMARY:🏠 Home: shower\, unpack\, a slow coffee walk down 7th Avenue
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d0-3-paldila@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260926T183000
+DTEND;TZID=America/New_York:20260926T200000
+SUMMARY:🍽 al di là Trattoria
+LOCATION:al di là Trattoria\, 248 5th Ave\, Brooklyn\, NY 11215
+DESCRIPTION:The Park Slope institution since 1998: candlelit Venetian home cooking at fair prices\, a 20-minute stroll up 5th Ave from Yulia's door.\nHours: Dinner nightly ~5:30–10\; lunch/brunch some days (check)\nPrice: $$ (~$65pp)\nhttps://www.aldilatrattoria.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d0-4-xearlynight@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260926T210000
+DTEND;TZID=America/New_York:20260926T213000
+SUMMARY:🛏 Early night — it is 3 a.m. in Hannover
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-0-pmiriam@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T103000
+DTEND;TZID=America/New_York:20260927T114500
+SUMMARY:🍽 Miriam
+LOCATION:Miriam\, 79 5th Ave\, Brooklyn\, NY 11217
+DESCRIPTION:Park Slope's favourite brunch — shakshuka\, Israeli breakfast platters\, halva French toast — a sunny start before the Brooklyn Museum or Botanic Garden.\nHours: Daily ~9am–10pm\; brunch menu until 4\nPrice: $$ (brunch ~$30\, dinner ~$50)\nhttps://www.miriamrestaurant.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-1-pprospectpark@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T122500
+DTEND;TZID=America/New_York:20260927T135500
+SUMMARY:🌳 Prospect Park
+LOCATION:Prospect Park\, Prospect Park West at 15th St\, Brooklyn\, NY 11215
+DESCRIPTION:Olmsted and Vaux built Central Park first\, then came here and did it better. The Long Meadow is a mile of unbroken grass five minutes from the front door.\nHours: Daily 5am–1am\nPrice: free\nhttps://www.prospectpark.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-2-xresthome@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T141500
+DTEND;TZID=America/New_York:20260927T153000
+SUMMARY:🏠 Home for a rest — tea\, feet up\, change for the evening
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-3-pbrooklynheightspromenade@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T163000
+DTEND;TZID=America/New_York:20260927T170500
+SUMMARY:🗽 Brooklyn Heights Promenade
+LOCATION:Brooklyn Heights Promenade\, Brooklyn Heights Promenade\, Montague St & Pierrepont Pl\, Brooklyn\, NY 11201
+DESCRIPTION:A third of a mile of benches cantilevered over the BQE with the whole Lower Manhattan skyline\, the Statue and the bridge laid out in front — the classic Brooklyn sunset\, backed by the brownstone streets (Willow\, Columbia Heights) of the city's first suburb.\nHours: Daily ~dawn–1am\nPrice: free\nhttps://www.nycgovparks.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-4-pbrooklynbridgepark@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T171500
+DTEND;TZID=America/New_York:20260927T181000
+SUMMARY:🌳 Brooklyn Bridge Park (Pier 1\, Jane's Carousel\, Pebble Beach)
+LOCATION:Brooklyn Bridge Park (Pier 1\, Jane's Carousel\, Pebble Beach)\, Pier 1\, 334 Furman St\, Brooklyn\, NY 11201
+DESCRIPTION:1.3 miles of reclaimed piers under the Brooklyn Bridge with the best straight-on skyline view in the city\; the 1922 carousel in its glass pavilion\, Pebble Beach between the bridges and lawns for a sunset picnic.\nHours: Daily 6am–1am\; Jane's Carousel $3/ride (fall: typically 11am–5:50pm\, closed some weekdays — confirm)\nPrice: free\; carousel $3\nhttps://www.brooklynbridgepark.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-5-xsunsetpier1@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T183500
+DTEND;TZID=America/New_York:20260927T190500
+SUMMARY:🌇 Sunset from Pebble Beach / Pier 1 (sun sets 6:42 pm)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d1-6-pcolonie@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260927T193000
+DTEND;TZID=America/New_York:20260927T211500
+SUMMARY:🍽 Colonie
+LOCATION:Colonie\, 127 Atlantic Ave\, Brooklyn\, NY 11201
+DESCRIPTION:Elegant\, candlelit Atlantic Ave dining room with a living green wall — the natural dinner after sunset on the Brooklyn Heights Promenade.\nHours: Dinner nightly ~5:30–10\; brunch Sat–Sun\nPrice: $$$ (~$80pp)\nhttps://www.colonienyc.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-0-xrtowhitehall@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T081000
+DTEND;TZID=America/New_York:20260928T084500
+SUMMARY:🚇 R from 4th Ave–9th St to Whitehall St (~30 min) — be at Battery security by 8:50
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-1-pstatueofliberty@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T093000
+DTEND;TZID=America/New_York:20260928T130000
+SUMMARY:🗽 Statue of Liberty (Liberty Island)
+LOCATION:Statue of Liberty (Liberty Island)\, Liberty Island\, New York\, NY 10004 (ferries from Castle Clinton\, Battery Park)
+DESCRIPTION:The first-timer icon: the ferry ride itself gives the classic skyline-and-harbor view\, and Liberty Island up close is genuinely moving. Combine with Ellis Island for a full half day.\nHours: Ferries from Battery Park ~9:00–9:30 first departure\, last outbound ~3:30pm\, last return ~5:30pm (fall schedule may shift)\nPrice: Ferry + grounds ~$25.50 adult\; Pedestal or Crown Reserve +$0.30 (includes Ellis Island)\nhttps://www.nps.gov/stli/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-2-pwallstreetchargingbull@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T133500
+DTEND;TZID=America/New_York:20260928T140000
+SUMMARY:🗽 Wall Street\, Charging Bull & Fearless Girl
+LOCATION:Wall Street\, Charging Bull & Fearless Girl\, Charging Bull: Bowling Green\, Broadway at Morris St\, New York\, NY 10004\; Fearless Girl: Broad St facing NYSE
+DESCRIPTION:A 45-minute loop through the birthplace of the city: the bull (still at Bowling Green in 2026)\, Fearless Girl staring down the New York Stock Exchange\, Federal Hall where Washington was sworn in\, and Trinity Church's graveyard with Alexander Hamilton.\nHours: 24/7 (Federal Hall Mon–Fri 10–5\; Trinity Church daily)\nPrice: free\nhttps://www.downtownny.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-3-ptinbuilding@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T141600
+DTEND;TZID=America/New_York:20260928T152100
+SUMMARY:🍽 Tin Building by Jean-Georges (South Street Seaport)
+LOCATION:Tin Building by Jean-Georges (South Street Seaport)\, 96 South St\, New York\, NY 10038
+DESCRIPTION:Jean-Georges Vongerichten's 53\,000 sq ft reconstruction of the old Fulton Fish Market: a gleaming food hall with a Chinese restaurant behind a hidden door\, a raw bar\, a French bistro and a very good grocery — with the Brooklyn Bridge right outside on Pier 17.\nHours: Daily roughly 8am–10pm (individual restaurants vary\; bars later)\nPrice: $$–$$$ (counter lunches $18–30\; sit-down dinner ~$80pp)\nhttps://www.tinbuilding.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-4-p911memorial@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T154000
+DTEND;TZID=America/New_York:20260928T163000
+SUMMARY:🗽 9/11 Memorial (reflecting pools)
+LOCATION:9/11 Memorial (reflecting pools)\, 180 Greenwich St\, New York\, NY 10007
+DESCRIPTION:Two acre-sized voids where the towers stood\, water falling into the footprints and 2\,983 names cut in bronze — quiet\, dignified and free. The Survivor Tree (a pear tree recovered from the rubble) stands nearby.\nHours: Daily 8am–8pm\nPrice: free\nhttps://www.911memorial.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-5-xcoffeefidi@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T164500
+DTEND;TZID=America/New_York:20260928T171000
+SUMMARY:☕ Coffee break — La Colombe or Blue Bottle at Brookfield Place
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-6-pbrooklynbridge@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T173100
+DTEND;TZID=America/New_York:20260928T182600
+SUMMARY:🚶 Brooklyn Bridge (pedestrian walk)
+LOCATION:Brooklyn Bridge (pedestrian walk)\, Brooklyn Bridge Promenade\; Brooklyn stairs at Washington St & Prospect St\, Brooklyn\, NY 11201 / Manhattan entrance at Centre St & Park Row\, New York\, NY 10007
+DESCRIPTION:The 1883 Gothic-arched bridge is the most beautiful walk in the city\; 1.1 miles of wooden promenade with the skyline\, harbor and Statue in view. Since 2021 the walkway is pedestrian-only (bikes moved to the roadway).\nHours: 24/7\nPrice: free\nhttps://www.nyc.gov/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-7-pdumbowashingtonstreet@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T184900
+DTEND;TZID=America/New_York:20260928T190400
+SUMMARY:🗽 DUMBO — Washington Street viewpoint
+LOCATION:DUMBO — Washington Street viewpoint\, Washington St between Front St & Water St (near 39 Washington St)\, Brooklyn\, NY 11201
+DESCRIPTION:The cobblestone street that frames the Manhattan Bridge with the Empire State Building peeking through its arch — the most Instagrammed view in Brooklyn — surrounded by galleries\, Time Out Market\, Jacques Torres chocolate and the Empire Stores shops.\nHours: 24/7 (shops ~11am–7pm)\nPrice: free\nhttps://dumbo.nyc/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d2-8-pcecconisdumbo@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260928T191500
+DTEND;TZID=America/New_York:20260928T210000
+SUMMARY:🍽 Cecconi's Dumbo
+LOCATION:Cecconi's Dumbo\, 55 Water St\, Brooklyn\, NY 11201
+DESCRIPTION:Soho House's glossy Venetian-style brasserie with a terrace facing the Brooklyn Bridge — the most scenic dinner in Brooklyn for a three-person evening.\nHours: Daily ~12–11\; brunch Sat–Sun\nPrice: $$$ (~$85pp)\nhttps://www.cecconisdumbo.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-0-pgrandcentralterminal@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T104500
+DTEND;TZID=America/New_York:20260929T112500
+SUMMARY:🗽 Grand Central Terminal
+LOCATION:Grand Central Terminal\, 89 E 42nd St\, New York\, NY 10017
+DESCRIPTION:The 1913 Beaux-Arts concourse with its turquoise zodiac ceiling is a landmark you can wander for free\, and it hides two of the best drinks stops in Midtown: The Campbell (1920s tycoon's office bar) and the Oyster Bar.\nHours: Daily 5:30am–2am\; shops/dining ~10am–9pm\nPrice: free\; official 90-min guided tour $39\nhttps://www.grandcentralterminal.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-1-pstpatrickscathedral@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T113600
+DTEND;TZID=America/New_York:20260929T120100
+SUMMARY:🗽 St. Patrick's Cathedral
+LOCATION:St. Patrick's Cathedral\, 5th Ave between E 50th & 51st St\, New York\, NY 10022
+DESCRIPTION:James Renwick's 1879 Neo-Gothic cathedral facing Rockefeller Center — the spires against the glass towers are the classic Fifth Avenue photo\, and the restored interior is bright and calm after the sidewalk crowds.\nHours: Daily 6:30am–8:45pm\; Masses weekdays 7\, 7:30\, 8am\, noon\, 1pm\, 5:30pm\; Sun 7am–5:30pm hourly-ish (10:15am Solemn Mass)\nPrice: free (donation)\; audio guide extra\nhttps://saintpatrickscathedral.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-2-prockefellercenter@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T120500
+DTEND;TZID=America/New_York:20260929T123500
+SUMMARY:🗽 Rockefeller Center
+LOCATION:Rockefeller Center\, 45 Rockefeller Plaza (Channel Gardens at 5th Ave\, W 49th–50th St)\, New York\, NY 10111
+DESCRIPTION:The Art Deco heart of Midtown: Prometheus over the sunken plaza\, the Channel Gardens\, Atlas facing St. Patrick's\, and Radio City's marquee around the corner. Top of the Rock\, Bar SixtyFive and the Rainbow Room are upstairs.\nHours: Plaza & concourse 24/7\; shops ~10am–8pm. The Rink opens Oct 10\, 2026 (after the trip)\; tree arrives Nov 7\nPrice: free to wander\nhttps://www.rockefellercenter.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-3-plodi@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T124500
+DTEND;TZID=America/New_York:20260929T135500
+SUMMARY:🍽 Lodi
+LOCATION:Lodi\, 1 Rockefeller Plaza\, New York\, NY 10020
+DESCRIPTION:The Estela chef's chic Milanese café on the plaza at Rockefeller Center — cornetti\, tramezzini\, focaccia and a proper lunch that turns the Top of the Rock/St. Patrick's morning into something stylish instead of a chain sandwich.\nHours: Mon–Fri ~7:30am–9pm\; Sat–Sun from ~9am (confirm)\nPrice: $$ — pastries $6–8\, panini/salads $18–26\, pastas $28\nhttps://www.rockefellercenter.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-4-pbergdorfgoodman@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T141000
+DTEND;TZID=America/New_York:20260929T153000
+SUMMARY:🛍 Bergdorf Goodman
+LOCATION:Bergdorf Goodman\, 754 Fifth Ave (at W 58th St)\, New York\, NY 10019
+DESCRIPTION:The most beautiful department store in America: nine floors of the best women's designer edit in the city inside a 1928 mansion-style building facing the Plaza and Central Park. Even non-buyers come for the windows\, the 5th-floor contemporary floor and the shoe salon.\nHours: Mon–Sat 11am–7pm\, Sun 12–6pm (confirm)\nPrice: $$$$ (browsing free\; contemporary floor from ~$200\; BG Restaurant lunch ~$45–70pp)\nhttps://www.bergdorfgoodman.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-5-pgoodmansbarbergdorf@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T154000
+DTEND;TZID=America/New_York:20260929T162500
+SUMMARY:🍸 Goodman’s Bar at Bergdorf Goodman
+LOCATION:Goodman’s Bar at Bergdorf Goodman\, 745 Fifth Ave (Bergdorf Goodman Men’s store\, lower level)\, New York\, NY 10151
+DESCRIPTION:A sleek\, clubby Martini bar hidden in the basement of the men’s store across Fifth Avenue from the main Bergdorf — the chic way to recover from Fifth Avenue shopping.\nHours: Follows store hours: roughly Mon–Sat 11:30am–8pm\, Sun noon–6pm\nPrice: cocktails $22–26\; burger/caviar bites $25–60\nhttps://www.bergdorfgoodman.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-6-ptopoftherock@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T173000
+DTEND;TZID=America/New_York:20260929T184000
+SUMMARY:🗽 Top of the Rock
+LOCATION:Top of the Rock\, 30 Rockefeller Plaza (entrance on W 50th St)\, New York\, NY 10112
+DESCRIPTION:The best classic view in New York: Empire State Building straight ahead\, Central Park spread out behind you\, three open-air levels and no fences on the top tier. Our top pick of the five decks.\nHours: Daily 9am–midnight (last entry 11pm)\nPrice: General admission $40–61 by date (from ~$45)\; Beam combo from $73\; Skylift $35 add-on\; VIP from $207\nhttps://www.rockefellercenter.com/attractions/top-of-the-rock-observation-deck/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-7-xpreshowbite@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T185500
+DTEND;TZID=America/New_York:20260929T194000
+SUMMARY:🍕 Quick pre-show bite near the theater (Joe's Pizza on Broadway\, or Urbanspace)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-8-xbroadwayshow@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T200000
+DTEND;TZID=America/New_York:20260929T224000
+SUMMARY:🎭 Broadway show\, 8 pm curtain — pick it on the Plan tab (TKTS same-day or book ahead)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d3-9-xtimessquarenight@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260929T224500
+DTEND;TZID=America/New_York:20260929T230500
+SUMMARY:✨ Times Square after the show — the lights are the point\, 20 minutes is plenty
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-0-plittleisland@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T103000
+DTEND;TZID=America/New_York:20260930T110000
+SUMMARY:🌳 Little Island
+LOCATION:Little Island\, Pier 55\, W 13th St & Hudson River Park\, New York\, NY 10014
+DESCRIPTION:Barry Diller's tulip-pot island park on the Hudson: hilly paths\, an amphitheater\, and the best low-angle sunset over New Jersey — five minutes from the High Line start.\nHours: Daily 6am–11pm through Oct 31 (6am–9pm from Nov 1)\; weather closures possible\nPrice: free (no timed tickets needed)\nhttps://littleisland.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-1-pwhitney@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T111500
+DTEND;TZID=America/New_York:20260930T131500
+SUMMARY:🖼 Whitney Museum of American Art
+LOCATION:Whitney Museum of American Art\, 99 Gansevoort Street\, New York\, NY 10014
+DESCRIPTION:MUST — Renzo Piano's building at the foot of the High Line has outdoor terraces over the Hudson and the best collection of 20th-century American art\; doing it on the free Friday night (Oct 2) at sunset\, then drinks in the Meatpacking District\, is the perfect evening.\nHours: Wed–Mon 10:30–6\, Fri 10:30–10\nPrice: $30 adults\; FREE Fri 5–10 pm and 2nd Sundays (ticket required)\; 25 and under free\nhttps://whitney.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-2-pchelseamarket@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T132500
+DTEND;TZID=America/New_York:20260930T142500
+SUMMARY:🍽 Chelsea Market
+LOCATION:Chelsea Market\, 75 9th Ave (between W 15th & 16th St)\, New York\, NY 10011
+DESCRIPTION:The former Nabisco factory (where the Oreo was invented) is now the city's best-known food hall: Los Tacos No. 1\, The Lobster Place\, Very Fresh Noodles\, Li-Lac chocolates\, plus Artists & Fleas and Anthropologie for browsing.\nHours: Daily 7am–10pm (vendors vary\, most 11am–8pm)\nPrice: $ – $$ (tacos ~$5 each\, lobster ~$30)\nhttps://www.chelseamarket.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-3-pthehighline@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T143500
+DTEND;TZID=America/New_York:20260930T153000
+SUMMARY:🚶 The High Line
+LOCATION:The High Line\, Gansevoort St entrance\, 820 Washington St\, New York\, NY 10014 (runs to W 34th St)
+DESCRIPTION:A 1.45-mile garden on an old freight railway with planting by Piet Oudolf\, art\, and glimpses into Chelsea galleries and Zaha Hadid's building — the most stylish free walk in the city.\nHours: Daily 7am–10pm (Apr 1–Nov 30)\nPrice: free\nhttps://www.thehighline.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-4-xsubwaytovillage@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T161500
+DTEND;TZID=America/New_York:20260930T163500
+SUMMARY:🚇 A/C/E from 34th St–Hudson Yards to 14th St (~10 min)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-5-pbleeckerstreet@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T164500
+DTEND;TZID=America/New_York:20260930T174000
+SUMMARY:🛍 Bleecker Street (West Village)
+LOCATION:Bleecker Street (West Village)\, Bleecker St between 6th Ave/Christopher St and Bank St\, New York\, NY 10014
+DESCRIPTION:The West Village's postcard shopping street — brownstones\, Magnolia Bakery\, Marc Jacobs' Bookmarc\, Diptyque\, Cynthia Rowley — reborn after its 2017 vacancy slump with a mix of small fashion and home brands\, and the best restaurants of the trip (Via Carota\, Buvette) two blocks away.\nHours: Shops ~11am–7pm daily\; Magnolia to 10–11pm\nPrice: $$–$$$$ (Magnolia cupcake ~$5\; Diptyque candle ~$75)\nhttps://www.villagealliance.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-6-pbarpisellino@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T174300
+DTEND;TZID=America/New_York:20260930T182800
+SUMMARY:🍸 Bar Pisellino
+LOCATION:Bar Pisellino\, 52 Grove St (at 7th Ave S)\, New York\, NY 10014
+DESCRIPTION:Rita Sodi and Jody Williams’ (Via Carota) tiny Venetian-style bar: espresso and cornetti in the morning\, spritzes and tramezzini from 4pm\, all at a marble counter or sidewalk tables.\nHours: Daily ~8am–midnight\nPrice: spritz $16–18\, cocktails $18–20\, pastries $6–9\nhttps://www.barpisellino.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-7-plartusi@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T183100
+DTEND;TZID=America/New_York:20260930T200600
+SUMMARY:🍽 L'Artusi
+LOCATION:L'Artusi\, 228 W 10th St\, New York\, NY 10014
+DESCRIPTION:The polished\, buzzy West Village Italian that is easier to love than Carbone and easier to book: roasted mushrooms\, garganelli with ragù\, the olive oil cake\, a deep Italian wine list.\nHours: Dinner nightly from 5pm\; lunch/brunch Fri–Sun (confirm)\nPrice: $$$ — ~$90–110pp\; pastas $28–34\nhttps://www.lartusi.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d4-8-pvillagevanguard@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20260930T201100
+DTEND;TZID=America/New_York:20260930T213100
+SUMMARY:🎭 Village Vanguard
+LOCATION:Village Vanguard\, 178 7th Ave S\, New York\, NY 10014
+DESCRIPTION:The holy basement of jazz since 1935 — Coltrane\, Bill Evans and Sonny Rollins recorded here — and it still looks and sounds exactly like the album covers. The most authentic single hour of jazz in New York.\nHours: Nightly sets 8pm & 10pm (doors 7:30pm)\; Vanguard Jazz Orchestra every Monday\nPrice: ~$40 cover + one-drink minimum (drinks ~$15)\; cards accepted\nhttps://villagevanguard.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d5-0-pthemet@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261001T101500
+DTEND;TZID=America/New_York:20261001T130000
+SUMMARY:🖼 The Metropolitan Museum of Art (The Met Fifth Avenue)
+LOCATION:The Metropolitan Museum of Art (The Met Fifth Avenue)\, 1000 Fifth Avenue\, New York\, NY 10028
+DESCRIPTION:MUST — the one museum no first-timer skips: Temple of Dendur\, the European paintings\, the American Wing courtyard and the Costume Institute\; even three hours only scratches it\, so pick wings rather than trying to see everything.\nHours: Sun–Tue & Thu 10–5\, Fri–Sat 10–9\nPrice: $30 adults (NY State residents pay-what-you-wish)\nhttps://www.metmuseum.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d5-1-pcafesabarsky@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261001T131500
+DTEND;TZID=America/New_York:20261001T143000
+SUMMARY:☕ Café Sabarsky (Neue Galerie)
+LOCATION:Café Sabarsky (Neue Galerie)\, 1048 5th Ave (at E 86th St)\, New York\, NY 10028
+DESCRIPTION:The most beautiful café in New York: a wood-panelled 1914 Vanderbilt mansion room with Bösendorfer piano\, Viennese coffee and real Sachertorte — a Hannover visitor will feel the European kinship instantly.\nHours: Reopens Thu Oct 1 2026: Mon 9–6\, Wed–Sun 9–9\, closed Tue (Neue Galerie galleries stay closed until Nov 12)\nPrice: $$ — coffee $6–8\, Sachertorte/strudel ~$12–14\, schnitzel lunch ~$35\nhttps://www.neuegalerie.org/cafesabarsky\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d5-2-pcentralpark@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261001T150500
+DTEND;TZID=America/New_York:20261001T163000
+SUMMARY:🌳 Central Park (south-end loop)
+LOCATION:Central Park (south-end loop)\, Enter at Grand Army Plaza\, 5th Ave & E 59th St\, New York\, NY 10019 (or 72nd St & 5th Ave)
+DESCRIPTION:The essential slow morning: the Mall's elm allée\, Bethesda Terrace\, Bow Bridge and a rowboat on the Lake are the postcard New York she has seen in every film. Early fall color usually starts in the first days of October.\nHours: Daily 6am–1am\; rowboats at the Boathouse daily 10am–5:30pm last rental (season through October\, weather permitting)\nPrice: free\; rowboats Mon–Thu $25/hr\, Fri–Sun $30/hr (card only)\, boats seat 4\nhttps://www.centralparknyc.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d5-3-pmadisonavenue@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261001T164800
+DTEND;TZID=America/New_York:20261001T174300
+SUMMARY:🛍 Madison Avenue (Upper East Side)
+LOCATION:Madison Avenue (Upper East Side)\, Madison Ave between E 57th and E 79th St (core 60th–72nd)\, New York\, NY 10021
+DESCRIPTION:Quieter and more elegant than Fifth: fifteen blocks of townhouse boutiques where Upper East Side women actually shop — Hermès\, Celine\, Loro Piana\, Max Mara\, Prada\, Ralph Lauren's Rhinelander mansion — with Ladurée and Sant Ambroeus for the café stop.\nHours: Boutiques Mon–Sat 10/11am–6/7pm\, Sun 12–5/6pm (several closed Sun)\nPrice: $$$$ (Hermès\, The Row\, Loro Piana…)\; Ladurée macarons ~$4 each\nhttps://www.madisonavenuebid.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d5-4-pbemelmansbar@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261001T175700
+DTEND;TZID=America/New_York:20261001T190700
+SUMMARY:🍸 Bemelmans Bar at The Carlyle
+LOCATION:Bemelmans Bar at The Carlyle\, 35 E 76th St (at Madison Ave)\, New York\, NY 10021
+DESCRIPTION:The most romantic room in New York: Ludwig Bemelmans’ 1947 “Madeline” murals\, gold-leaf ceiling\, tuxedoed waiters and a piano. The single best “we are in Manhattan” cocktail for two women who like style.\nHours: Daily from noon to ~12:30am\; live piano nightly from ~5:30pm\, trio/cover sets from ~9:30pm\nPrice: cocktails $28–34\; evening music cover ~$30–40 pp added from ~9:30pm (Mon–Sat)\nhttps://www.rosewoodhotels.com/en/the-carlyle-new-york\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d5-5-pjgmelon@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261001T191400
+DTEND;TZID=America/New_York:20261001T202900
+SUMMARY:🍽 J.G. Melon
+LOCATION:J.G. Melon\, 1291 3rd Ave (at E 74th St)\, New York\, NY 10021
+DESCRIPTION:The green-checked-tablecloth pub with watermelon knick-knacks and a top-3 New York burger — the unpretentious lunch after the Met or Madison Avenue shopping that every Upper East Sider swears by.\nHours: Daily ~11:30am–2am (kitchen later than most)\nPrice: $$ — burger ~$18\, cottage fries ~$9\; historically CASH ONLY (confirm)\nhttps://jgmelon-nyc.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-0-plafayettegrandcafe@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T100000
+DTEND;TZID=America/New_York:20261002T104500
+SUMMARY:☕ Lafayette Grand Café & Bakery
+LOCATION:Lafayette Grand Café & Bakery\, 380 Lafayette St (at Great Jones St)\, New York\, NY 10003
+DESCRIPTION:Andrew Carmellini's grand Parisian brasserie whose bakery window launched the viral Suprême — a round cream-filled croissant — and a great NoHo breakfast either way.\nHours: Bakery counter daily ~8am–5pm\; restaurant daily 8am–late (weekend brunch)\nPrice: Suprême croissant ~$9\, pastries $6–9\, brunch $$–$$$\nhttps://lafayetteny.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-1-psohoshopping@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T105500
+DTEND;TZID=America/New_York:20261002T130500
+SUMMARY:🛍 SoHo Shopping Walk
+LOCATION:SoHo Shopping Walk\, Broadway\, Prince\, Spring\, Greene\, Mercer & Wooster Sts between Houston & Canal Sts\, New York\, NY 10012
+DESCRIPTION:The densest shopping neighborhood in America under cast-iron facades and cobblestones: every brand a stylish 40-something wants has a SoHo store — from Uniqlo/Zara/Aritzia on Broadway to Khaite\, Ganni\, Mansur Gavriel and The RealReal on the side streets\, plus Chanel\, Dior and Vuitton on Greene.\nHours: Mon–Sat 10/11am–7/8pm\, Sun 11am–7pm\nPrice: free to stroll\; $–$$$$ inside (Uniqlo to Chanel)\nhttps://www.sohobroadway.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-2-pbalthazar@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T131500
+DTEND;TZID=America/New_York:20261002T142500
+SUMMARY:🍽 Balthazar
+LOCATION:Balthazar\, 80 Spring St\, New York\, NY 10012
+DESCRIPTION:Keith McNally's 1997 recreation of a Paris grand brasserie — red banquettes\, mirrors\, the best people-watching room in SoHo. Breakfast here before shopping is the classic stylish-visitor move.\nHours: Mon–Fri 7:30am–midnight\; Sat–Sun brunch 9am–4pm\, dinner to midnight (confirm)\nPrice: $$$ — brunch ~$45pp\, dinner ~$95pp\; steak frites ~$46\, seafood tower ~$150\nhttps://www.balthazarny.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-3-pelizabethstreetnolita@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T143500
+DTEND;TZID=America/New_York:20261002T152000
+SUMMARY:🛍 Elizabeth Street & Nolita
+LOCATION:Elizabeth Street & Nolita\, Elizabeth St between E Houston St and Kenmare St (with Mott & Mulberry Sts)\, New York\, NY 10012
+DESCRIPTION:The prettiest shopping walk in Manhattan for women in their 40s: low tenement blocks lined with the independent and French-girl brands — Sézane\, Clare V.\, Warm\, Love Adorned\, Le Labo — plus cafés every 50 metres and none of SoHo's chain-store crush.\nHours: Boutiques ~11am–7pm daily (Sun often 12–6)\nPrice: $$–$$$ (Sézane dresses ~$150–250\; Clare V. bags ~$200–500)\nhttps://www.nolitanyc.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-4-xdropbags@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T160500
+DTEND;TZID=America/New_York:20261002T164500
+SUMMARY:🏠 Home to drop the shopping and change for the concert
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-5-psofreh@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T172000
+DTEND;TZID=America/New_York:20261002T182000
+SUMMARY:🍽 Sofreh
+LOCATION:Sofreh\, 75 St Marks Ave\, Brooklyn\, NY 11217
+DESCRIPTION:Nasim Alikhani's celebrated Persian dining room — saffron tahdig\, herb stews\, rosewater desserts — flavours Tatyana will half-recognise from the Caucasus\, in a beautiful room.\nHours: Dinner Tue–Sun ~5:30–10\nPrice: $$$ (~$80pp)\nhttps://www.sofrehnyc.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d6-6-xteddyswims@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261002T190000
+DTEND;TZID=America/New_York:20261002T223000
+SUMMARY:🎤 Teddy Swims · The UGLY Tour — Barclays Center\, Sec 222 Row 13 · 2 tickets
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-0-pdevocion@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T103000
+DTEND;TZID=America/New_York:20261003T111000
+SUMMARY:☕ Devoción (Williamsburg)
+LOCATION:Devoción (Williamsburg)\, 69 Grand St (btwn Wythe & Kent Ave)\, Brooklyn\, NY 11249
+DESCRIPTION:A skylit warehouse full of plants and leather sofas serving coffee flown fresh from Colombia within days of harvest — the most beautiful café in Williamsburg and a proper sit-down break.\nHours: Daily ~7am–7pm\nPrice: coffee $5–7\nhttps://www.devocion.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-1-pbedfordavenue@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T112000
+DTEND;TZID=America/New_York:20261003T124500
+SUMMARY:🛍 Bedford Avenue & North Williamsburg
+LOCATION:Bedford Avenue & North Williamsburg\, Bedford Ave between N 3rd St and N 10th St (with N 6th St & Wythe Ave)\, Brooklyn\, NY 11249
+DESCRIPTION:Brooklyn's main street for style: Catbird's tiny jewelry shop\, Mociun\, Awoke Vintage\, Buffalo Exchange\, Aesop and Le Labo\, and now Hermès/Chanel-level pop-ups around N 6th & Wythe — mixed with the best cafés and Domino Park on the waterfront.\nHours: Shops ~11am/12–7/8pm daily\nPrice: $$–$$$ (Catbird rings from ~$50\; vintage $20–150)\nhttps://www.northbrooklynchamber.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-2-psmorgasburgwilliamsburg@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T125500
+DTEND;TZID=America/New_York:20261003T140000
+SUMMARY:🍽 Smorgasburg Williamsburg
+LOCATION:Smorgasburg Williamsburg\, Marsha P. Johnson State Park\, 90 Kent Ave\, Brooklyn\, NY 11249
+DESCRIPTION:The original Saturday waterfront edition with the Manhattan skyline behind the stalls — pairs with Bedford Ave shopping\, Artists & Fleas and Domino Park\; Sat Oct 3 is Tatyana's last full day.\nHours: Saturdays 11–6\, April–late October (2026 season end date: confirm)\nPrice: $ (~$15–25pp)\nhttps://www.smorgasburg.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-3-pdominopark@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T141400
+DTEND;TZID=America/New_York:20261003T144400
+SUMMARY:🌳 Domino Park
+LOCATION:Domino Park\, 300 Kent Ave\, Brooklyn\, NY 11249
+DESCRIPTION:Built on the bones of the Domino Sugar refinery: salvaged cranes and syrup tanks left standing over a strip of waterfront with the best head-on Manhattan view in Williamsburg.\nHours: Daily 6am–1am\nPrice: free\nhttps://www.dominopark.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-4-xtobrooklynmuseum@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T150100
+DTEND;TZID=America/New_York:20261003T154600
+SUMMARY:🚇 G to Hoyt–Schermerhorn\, then 2/3 to Eastern Pkwy–Brooklyn Museum (~40 min)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-5-pbrooklynmuseum@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T160000
+DTEND;TZID=America/New_York:20261003T183000
+SUMMARY:🖼 Brooklyn Museum
+LOCATION:Brooklyn Museum\, 200 Eastern Parkway\, Brooklyn\, NY 11238
+DESCRIPTION:MUST and 20 minutes from home — Iris van Herpen: Sculpting the Senses (140 haute-couture pieces\, to Dec 5) is the most style-relevant show in the city\, plus a top Egyptian collection and Judy Chicago's Dinner Party\; on Sat Oct 3 the free First Saturday party (5–11 pm) coincides with the opening of Art of Manga.\nHours: Wed–Sun 11–6\; First Saturday Oct 3 open 5–11 pm (free)\nPrice: $20 adults suggested (NYC residents pay-what-you-wish)\; Art of Manga $30 timed ticket\; Iris van Herpen requires a timed ticket\nhttps://www.brooklynmuseum.org/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-6-polmsted@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T190000
+DTEND;TZID=America/New_York:20261003T205000
+SUMMARY:🍽 Olmsted
+LOCATION:Olmsted\, 659 Vanderbilt Ave\, Brooklyn\, NY 11238
+DESCRIPTION:Greg Baxtrom's playful farm-to-table with a backyard garden where herbs are picked for your plate — one of Brooklyn's most loved dinners\, 15 minutes from Park Slope.\nHours: Dinner Wed–Sun ~5:30–10 (check)\; weekend brunch\nPrice: $$$ (~$90pp)\nhttps://www.olmstednyc.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d7-7-pweatherup@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261003T210000
+DTEND;TZID=America/New_York:20261003T215500
+SUMMARY:🍸 Weather Up (Prospect Heights)
+LOCATION:Weather Up (Prospect Heights)\, 589 Vanderbilt Ave (at Bergen St)\, Brooklyn\, NY 11238
+DESCRIPTION:Dark\, subway-tiled\, no sign\, with a lovely back garden — the Prospect Heights bar that has been quietly excellent since 2008\, 10 minutes from the Brooklyn Museum.\nHours: Daily ~5:30pm–2am\nPrice: cocktails $15–18\nhttps://www.weatherupnyc.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d8-0-xpack@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261004T093000
+DTEND;TZID=America/New_York:20261004T103000
+SUMMARY:🧳 Pack — 23 kg checked bag on Lufthansa\, boarding pass in the app
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d8-1-pwinnerparkslope@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261004T104500
+DTEND;TZID=America/New_York:20261004T113500
+SUMMARY:☕ Winner
+LOCATION:Winner\, 367 7th Ave (at 11th St)\, Brooklyn\, NY 11215
+DESCRIPTION:Daniel Eddy's beloved bakery five blocks from the apartment — sourdough\, morning buns\, ham-and-cheese croissants and rotisserie chicken — the natural 'home' breakfast spot\; Runner Up wine bar is next door.\nHours: Daily ~7am–5pm (bakery/café)\; rotisserie and dinner-to-go later — confirm\nPrice: coffee $4–6\, pastries $5–7\, sandwiches $12–16\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d8-2-pgreenwoodcemetery@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261004T115700
+DTEND;TZID=America/New_York:20261004T132200
+SUMMARY:🌳 Green-Wood Cemetery
+LOCATION:Green-Wood Cemetery\, 500 25th St\, Brooklyn\, NY 11232
+DESCRIPTION:478 acres of hills\, ponds and Victorian monuments\, with wild parrots nesting in the Gothic gate. From Battle Hill\, the highest point in Brooklyn\, you can see the whole harbour.\nHours: Daily 8am–6pm (gates close promptly)\nPrice: free to walk in\nhttps://www.green-wood.com/\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d8-3-xleaveforjfk@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261004T140000
+DTEND;TZID=America/New_York:20261004T150000
+SUMMARY:🚕 Leave for JFK Terminal 1 (Sunday traffic ~45 min · be there 3 h before LH 411)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+BEGIN:VEVENT
+UID:nyc-2026-tatyana-d8-4-xdepart@nyc
+DTSTAMP:20260922T053139Z
+DTSTART;TZID=America/New_York:20261004T173000
+DTEND;TZID=America/New_York:20261004T180000
+SUMMARY:✈️ LH 411 to Munich\, then LH 4072 to Hannover (12:25 Monday)
+LOCATION:
+DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
+END:VEVENT
+END:VCALENDAR

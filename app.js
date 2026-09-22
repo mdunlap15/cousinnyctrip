@@ -264,7 +264,13 @@ function agState(day) { return (state.agenda || {})[day] || {}; }
 function agOv(day) { return agState(day).t || {}; }
 function agDur(day, id) { const st = agState(day); const o = (st.d || {})[id]; if (o) return o; const sd = SEEDT[day + '|' + id]; if (sd && sd.d) return sd.d; return seedFor(id).d; }
 function agBase(day, id) { const ov = agOv(day); if (ov[id]) return agMin(ov[id]); const sd = SEEDT[day + '|' + id]; if (sd && sd.t) return agMin(sd.t); return agMin(seedFor(id).t); }
-function agTravel(from, to) { const m = G.travelMin(from, to); return m == null ? null : m; }
+// How far people will walk depends on what they are walking to: approaching a park
+// or a named walk IS the outing, so allow a longer stroll before calling it a ride.
+function walkCap(a, b) {
+  const big = (it) => { const c = it && it.place && it.place.cat; return c === 'park' || c === 'walk'; };
+  return (big(a) || big(b)) ? 2.6 : 1.7;
+}
+function agTravel(from, to, cap) { const m = G.travelMin(from, to, cap); return m == null ? null : m; }
 function agTouched(day) {
   const st = agState(day); if (!st || !Array.isArray(st.ids)) return false;
   const seedOrder = AGDAYS[day] || []; const ids = st.ids.filter(x => seedOrder.indexOf(x) >= 0);
@@ -281,7 +287,7 @@ function agReflow(day, ids) {
     const anchored = it.lock || ov[id] != null;
     let gap = 0, mode = '';
     // A stop with no location ("a café near here") happens where you already are.
-    if (i > 0) { if (!it.p) { gap = 5; mode = 'same'; } else { const est = agTravel(prevQ, it.p); gap = (est != null) ? est : 10; mode = G.travelMode(prevQ, it.p); } }
+    if (i > 0) { if (!it.p) { gap = 5; mode = 'same'; } else { const cap = walkCap(seedFor(ids[i - 1]), it); const est = agTravel(prevQ, it.p, cap); gap = (est != null) ? est : 10; mode = G.travelMode(prevQ, it.p, cap); } }
     let start, warn = false;
     if (i === 0) start = seed;
     else if (anchored) { start = seed; warn = cur + gap > seed + 5; }

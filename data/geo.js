@@ -79,13 +79,16 @@
     return Math.round((14 + km * 2.6 + (cross ? 8 : 0)) / 5) * 5;
   }
   // Door-to-door minutes between two [lat,lng] points; null if either is unknown.
-  function travelMin(from, to) {
+  // maxWalkKm raises the walking cutoff — pass a larger number when the walk is
+  // itself the point (crossing Central Park to get to Bethesda Terrace is not a
+  // journey you would take a train for, even though it is nearly two kilometres).
+  function travelMin(from, to, maxWalkKm) {
     if (!from || !to) return null;
     const straight = haversine(from[0], from[1], to[0], to[1]);
     if (straight < 0.1) return 0;
     // New Yorkers walk a mile without thinking about it, and below ~1.7 km walking
     // beats waiting for a train anyway.
-    if (straight <= 1.7) return walkMin(straight);
+    if (straight <= (maxWalkKm || 1.7)) return walkMin(straight);
     const A = nearestHub(from[0], from[1]), B = nearestHub(to[0], to[1]);
     let mins = hubToHub(A.hub.key, B.hub.key);
     if (mins === 0) mins = Math.max(walkMin(straight), 10);
@@ -95,11 +98,11 @@
   }
   const fromHome = (lat, lng) => travelMin([HOME.lat, HOME.lng], [lat, lng]);
   // Which travel mode the estimate assumes — for the little labels
-  function travelMode(from, to) {
+  function travelMode(from, to, maxWalkKm) {
     if (!from || !to) return '';
     const km = haversine(from[0], from[1], to[0], to[1]);
     if (km < 0.1) return 'same';
-    if (km <= 1.7) return 'walk';
+    if (km <= (maxWalkKm || 1.7)) return 'walk';
     return 'subway';
   }
   // Google Maps transit directions deep link

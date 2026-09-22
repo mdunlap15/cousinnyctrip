@@ -47,31 +47,31 @@ window.TRIP = {
       lede: 'LH 400 lands at 1:35 pm. Nothing is planned but a shower, a slow walk down 7th Avenue and an early, easy dinner — it is 3 a.m. in Hannover by the time dessert comes.',
       ledeRu: 'LH 400 садится в 13:35. Планов никаких: душ, неспешная прогулка по 7-й авеню и ранний лёгкий ужин — к десерту в Ганновере уже 3 часа ночи.',
       ledeDe: 'LH 400 landet um 13:35 Uhr. Geplant ist nichts außer einer Dusche, einem gemütlichen Bummel die 7th Avenue hinunter und einem frühen, leichten Abendessen — wenn der Nachtisch kommt, ist es in Hannover 3 Uhr nachts.' },
-    { key: 'd1', date: '2026-09-27', dw: 'Sun', dwRu: 'Вс', dn: '27', hubs: ['home', 'prospect', 'dumbo'],
-      title: 'Brooklyn first', titleRu: 'Сначала Бруклин', titleDe: 'Erst mal Brooklyn',
-      lede: 'A jet-lag-friendly Sunday that never leaves Brooklyn: brunch on 5th Avenue, the Long Meadow, the Botanic Garden, then the skyline from the Promenade and Pier 1 as the sun goes down. Mike joins for dinner in Brooklyn Heights.',
-      ledeRu: 'Щадящее воскресенье, не выезжая из Бруклина: бранч на 5-й авеню, Лонг-Медоу, Ботанический сад, а на закате — панорама Манхэттена с Променада и пирса 1. Майк присоединяется к ужину в Бруклин-Хайтс.',
-      ledeDe: 'Ein jetlagfreundlicher Sonntag, der Brooklyn nie verlässt: Brunch auf der 5th Avenue, die Long Meadow, der Botanic Garden, und zum Sonnenuntergang die Skyline von der Promenade und vom Pier 1. Mike kommt zum Abendessen in Brooklyn Heights dazu.' },
-    { key: 'd2', date: '2026-09-28', dw: 'Mon', dwRu: 'Пн', dn: '28', hubs: ['fidi', 'dumbo'],
+    { key: 'd1', date: '2026-09-27', dw: 'Sun', dwRu: 'Вс', dn: '27', hubs: ['midtowne', 'midtownw', 'soho'],
+      title: 'Midtown icons & San Gennaro', titleRu: 'Мидтаун и Сан-Дженнаро', titleDe: 'Midtown-Ikonen & San Gennaro',
+      lede: 'Straight into Manhattan: Grand Central, St. Patrick\'s and Rockefeller Center, lunch under the flags, Fifth Avenue from Saks to Bergdorf, sunset from Top of the Rock — then down to Mulberry Street, where the Feast of San Gennaro is having its very last night.',
+      ledeRu: 'Сразу в Манхэттен: Гранд-Сентрал, собор Святого Патрика и Рокфеллер-центр, обед под флагами, Пятая авеню от Saks до Bergdorf, закат с Top of the Rock — а вечером на Малберри-стрит, где у праздника Сан-Дженнаро самая последняя ночь.',
+      ledeDe: 'Direkt nach Manhattan: Grand Central, St. Patrick\'s und das Rockefeller Center, Mittagessen unter den Flaggen, die Fifth Avenue von Saks bis Bergdorf, Sonnenuntergang vom Top of the Rock — und abends runter zur Mulberry Street, wo das Fest des San Gennaro seine allerletzte Nacht feiert.' },
+    { key: 'd2', date: '2026-09-28', dw: 'Mon', dwRu: 'Пн', dn: '28', hubs: ['chelsea', 'wvillage'],
+      title: 'High Line to the Village', titleRu: 'От Хай-Лайн до Виллиджа', titleDe: 'Von der High Line ins Village',
+      lede: 'The West Side on foot: Little Island over the water, the Whitney, tacos in Chelsea Market, then the High Line itself. Bleecker Street boutiques in the late afternoon, an aperitivo at Bar Pisellino, dinner with Mike and the eight o\'clock set at the Village Vanguard.',
+      ledeRu: 'Вест-Сайд пешком: Литтл-Айленд над водой, Уитни, тако в Челси-Маркет, а потом и сама Хай-Лайн. Ближе к вечеру бутики Бликер-стрит, аперитив в Bar Pisellino, ужин с Майком и сет в восемь в Village Vanguard.',
+      ledeDe: 'Die West Side zu Fuß: Little Island über dem Wasser, das Whitney, Tacos im Chelsea Market und dann die High Line selbst. Am späten Nachmittag die Boutiquen der Bleecker Street, ein Aperitivo im Bar Pisellino, Abendessen mit Mike und um acht das Set im Village Vanguard.' },
+    { key: 'd3', date: '2026-09-29', dw: 'Tue', dwRu: 'Вт', dn: '29', hubs: ['fidi', 'dumbo'],
       title: 'Liberty & Lower Manhattan', titleRu: 'Свобода и Нижний Манхэттен', titleDe: 'Freiheitsstatue & Lower Manhattan',
       lede: 'The 9:30 ferry to the Statue and Ellis Island, Wall Street and the 9/11 Memorial in the afternoon, then the Brooklyn Bridge on foot at golden hour — it ends in DUMBO, where Mike can meet you for dinner straight from work.',
       ledeRu: 'Паром в 9:30 к Статуе Свободы и на остров Эллис, днём Уолл-стрит и мемориал 9/11, а в золотой час — пешком по Бруклинскому мосту. Финал в Дамбо, куда Майк приедет на ужин прямо с работы.',
       ledeDe: 'Die Fähre um 9:30 Uhr zur Freiheitsstatue und nach Ellis Island, nachmittags Wall Street und das 9/11 Memorial, dann in der goldenen Stunde zu Fuß über die Brooklyn Bridge — Schluss ist in DUMBO, wo Mike direkt nach der Arbeit zum Abendessen dazustoßen kann.' },
-    { key: 'd3', date: '2026-09-29', dw: 'Tue', dwRu: 'Вт', dn: '29', hubs: ['midtowne', 'midtownw'],
-      title: 'Midtown icons & Broadway', titleRu: 'Мидтаун и Бродвей', titleDe: 'Midtown-Ikonen & Broadway',
-      lede: 'Grand Central, St. Patrick\'s and Rockefeller Center, lunch under the flags, a Fifth Avenue afternoon from Saks to Bergdorf, sunset from Top of the Rock — then the lights of Times Square before an 8 pm curtain.',
-      ledeRu: 'Гранд-Сентрал, собор Святого Патрика и Рокфеллер-центр, обед под флагами, день на Пятой авеню от Saks до Bergdorf, закат с Top of the Rock — и огни Таймс-сквер перед спектаклем в 20:00.',
-      ledeDe: 'Grand Central, St. Patrick\'s und das Rockefeller Center, Mittagessen unter den Flaggen, ein Nachmittag auf der Fifth Avenue von Saks bis Bergdorf, Sonnenuntergang vom Top of the Rock — und dann die Lichter des Times Square, bevor um 20 Uhr der Vorhang aufgeht.' },
-    { key: 'd4', date: '2026-09-30', dw: 'Wed', dwRu: 'Ср', dn: '30', hubs: ['chelsea', 'wvillage'],
-      title: 'High Line to the Village', titleRu: 'От Хай-Лайн до Виллиджа', titleDe: 'Von der High Line ins Village',
-      lede: 'The Met is closed on Wednesdays, so this is the West Side day: Little Island, the Whitney, tacos in Chelsea Market, the High Line north to Hudson Yards, then Bleecker Street boutiques, an aperitivo, dinner with Mike and the 8 pm set at the Village Vanguard.',
-      ledeRu: 'По средам Метрополитен закрыт, поэтому это день Вест-Сайда: Литтл-Айленд, Уитни, тако в Челси-Маркет, Хай-Лайн на север до Хадсон-Ярдс, бутики Бликер-стрит, аперитив, ужин с Майком и сет в 20:00 в Village Vanguard.',
-      ledeDe: 'Mittwochs ist das Met geschlossen, also gehört der Tag der West Side: Little Island, das Whitney, Tacos im Chelsea Market, die High Line nach Norden bis Hudson Yards, dann die Boutiquen der Bleecker Street, ein Aperitivo, Abendessen mit Mike und das Set um 20 Uhr im Village Vanguard.' },
-    { key: 'd5', date: '2026-10-01', dw: 'Thu', dwRu: 'Чт', dn: '1', hubs: ['ues'],
-      title: 'Museum Mile & Central Park', titleRu: 'Музейная миля и Центральный парк', titleDe: 'Museum Mile & Central Park',
-      lede: 'Three unhurried hours in the Met, Viennese lunch at Café Sabarsky, Bethesda Terrace and Bow Bridge on foot, Madison Avenue windows, and a drink at Bemelmans before the cover charge kicks in.',
-      ledeRu: 'Три неспешных часа в Метрополитен, венский обед в Café Sabarsky, пешком к террасе Бетесда и мосту Боу, витрины Мэдисон-авеню и бокал в Bemelmans до того, как начнут брать за вход.',
-      ledeDe: 'Drei ungehetzte Stunden im Met, Wiener Mittagessen im Café Sabarsky, zu Fuß zur Bethesda Terrace und über die Bow Bridge, Schaufenster auf der Madison Avenue und ein Drink im Bemelmans, bevor Eintritt fällig wird.' },
+    { key: 'd4', date: '2026-09-30', dw: 'Wed', dwRu: 'Ср', dn: '30', hubs: ['home', 'prospect', 'dumbo'],
+      title: 'Brooklyn, properly', titleRu: 'Бруклин как следует', titleDe: 'Brooklyn, in Ruhe',
+      lede: 'A day that never leaves the borough, with the afternoon off at home in the middle of it: brunch on 5th Avenue, the Long Meadow, feet up, then the skyline from the Promenade and Pier 1 as the sun goes down. Dinner with Mike in Brooklyn Heights.',
+      ledeRu: 'День, который не выезжает за пределы Бруклина, и с паузой дома посередине: бранч на 5-й авеню, Лонг-Медоу, ноги вверх — а на закате панорама Манхэттена с Променада и пирса 1. Ужин с Майком в Бруклин-Хайтс.',
+      ledeDe: 'Ein Tag, der den Stadtteil nie verlässt, mit einer Pause zu Hause mittendrin: Brunch auf der 5th Avenue, die Long Meadow, Füße hoch — und zum Sonnenuntergang die Skyline von der Promenade und vom Pier 1. Abendessen mit Mike in Brooklyn Heights.' },
+    { key: 'd5', date: '2026-10-01', dw: 'Thu', dwRu: 'Чт', dn: '1', hubs: ['ues', 'midtownw'],
+      title: 'The Met, the Park & Broadway', titleRu: 'Метрополитен, парк и Бродвей', titleDe: 'Das Met, der Park & Broadway',
+      lede: 'Three unhurried hours in the Met, Viennese lunch at Café Sabarsky on the day it reopens, Bethesda Terrace and Bow Bridge on foot, a martini at Bemelmans before the cover starts — then downtown for an eight o\'clock curtain.',
+      ledeRu: 'Три неспешных часа в Метрополитен, венский обед в Café Sabarsky в день, когда оно вновь открывается, терраса Бетесда и мост Боу пешком, мартини в Bemelmans до начала музыкального сбора — и вниз, к спектаклю в восемь, а после — в огни Таймс-сквер.',
+      ledeDe: 'Drei geruhsame Stunden im Met, Wiener Mittagessen im Café Sabarsky an seinem Wiedereröffnungstag, Bethesda Terrace und Bow Bridge zu Fuß, ein Martini im Bemelmans, bevor der Musikzuschlag beginnt — und dann runter in die Stadt zum Vorhang um acht, und danach hinaus in die Lichter des Times Square.' },
     { key: 'd6', date: '2026-10-02', dw: 'Fri', dwRu: 'Пт', dn: '2', hubs: ['soho', 'les', 'prospect'],
       title: 'SoHo shopping & Teddy Swims', titleRu: 'Шопинг в Сохо и Teddy Swims', titleDe: 'Shopping in SoHo & Teddy Swims',
       lede: 'The shopping day, timed to finish early: croissants at Lafayette, then Broadway, Prince and Greene Streets, lunch at Balthazar and the Elizabeth Street boutiques. Home at half past four to drop the bags and change, Persian dinner at Sofreh, and Teddy Swims at Barclays four minutes\' walk away.',
@@ -136,18 +136,19 @@ window.TRIP = {
   // belongs to the day's neighborhood lives in the library, one tap away.
   SEED: {
     d0: [['x:land', '13:35'], ['x:taxi-home', '14:50'], ['x:settle', '16:00'], ['p:al-di-la', '18:30', 90], ['x:early-night', '21:00']],
-    // Sunday, jet-lagged: brunch, the park, a nap, then the skyline at sunset.
-    d1: [['p:miriam', '10:30', 75], ['p:prospect-park', '12:00', 90], ['x:rest-home', '14:15', 75], ['p:brooklyn-heights-promenade', '16:30', 35], ['p:brooklyn-bridge-park', '17:15', 55], ['x:sunset-pier1', '18:35'], ['p:colonie', '19:30', 105]],
+    // First full day, straight into Manhattan. Bergdorf opens at noon on Sunday,
+    // so the department-store stretch sits after lunch; the feast runs to 23:30.
+    d1: [['p:grand-central-terminal', '10:45', 40], ['p:st-patricks-cathedral', '11:35', 25], ['p:rockefeller-center', '12:05', 30], ['p:lodi', '12:45', 70], ['p:bergdorf-goodman', '14:10', 80], ['p:goodmans-bar-bergdorf', '15:40', 45], ['p:top-of-the-rock', '17:45', 70], ['p:san-gennaro-final-day', '19:30', 105]],
+    // The West Side on foot, north along the High Line then south to the Village.
+    d2: [['p:little-island', '10:30', 30], ['p:whitney', '11:15', 120], ['p:chelsea-market', '13:25', 60], ['p:the-high-line', '14:35', 55], ['x:subway-to-village', '15:45'], ['p:bleecker-street', '16:15', 55], ['p:bar-pisellino', '17:20', 45], ['p:lartusi', '18:20', 95], ['p:village-vanguard', '20:00', 80]],
     // The ferry eats the morning; the afternoon is one loop on foot ending on the bridge.
-    d2: [['x:r-to-whitehall', '08:10'], ['p:statue-of-liberty', '09:30', 210], ['p:wall-street-charging-bull', '13:35', 25], ['p:tin-building', '14:15', 65], ['p:911-memorial', '15:40', 50], ['x:coffee-fidi', '16:45'], ['p:brooklyn-bridge', '17:25', 55], ['p:dumbo-washington-street', '18:25', 15], ['p:cecconis-dumbo', '19:15', 105]],
-    // Midtown is dense, so the stops are short; the evening is the point.
-    d3: [['p:grand-central-terminal', '10:45', 40], ['p:st-patricks-cathedral', '11:35', 25], ['p:rockefeller-center', '12:05', 30], ['p:lodi', '12:45', 70], ['p:bergdorf-goodman', '14:10', 80], ['p:goodmans-bar-bergdorf', '15:40', 45], ['p:top-of-the-rock', '17:30', 70], ['x:pre-show-bite', '18:55'], ['x:broadway-show', '20:00'], ['x:times-square-night', '22:45']],
-    // Met is closed today. West Side, north along the High Line, south to the Village.
-    d4: [['p:little-island', '10:30', 30], ['p:whitney', '11:15', 120], ['p:chelsea-market', '13:25', 60], ['p:the-high-line', '14:35', 55], ['x:subway-to-village', '15:45'], ['p:bleecker-street', '16:15', 55], ['p:bar-pisellino', '17:20', 45], ['p:lartusi', '18:20', 95], ['p:village-vanguard', '20:00', 80]],
-    // One big museum, one long lunch, the park on foot, a martini with a mural behind it.
-    d5: [['p:the-met', '10:15', 165], ['p:cafe-sabarsky', '13:15', 75], ['p:central-park', '14:45', 85], ['p:madison-avenue', '16:20', 55], ['p:bemelmans-bar', '17:30', 70], ['p:jg-melon', '19:00', 75]],
-    // The shopping day: one long stretch of it, then a Friday night with Mike.
-    d6: [['p:lafayette-grand-cafe', '10:00', 45], ['p:soho-shopping', '10:55', 130], ['p:balthazar', '13:15', 70], ['p:elizabeth-street-nolita', '14:35', 45], ['x:drop-bags', '16:05', 40], ['p:sofreh', '17:30', 55], ['x:teddy-swims', '19:00']],
+    d3: [['x:r-to-whitehall', '08:10'], ['p:statue-of-liberty', '09:30', 210], ['p:wall-street-charging-bull', '13:35', 25], ['p:tin-building', '14:15', 65], ['p:911-memorial', '15:40', 50], ['x:coffee-fidi', '16:45'], ['p:brooklyn-bridge', '17:25', 55], ['p:dumbo-washington-street', '18:25', 15], ['p:cecconis-dumbo', '19:15', 105]],
+    // Midweek breather in their own borough, with a real gap at home in the middle.
+    d4: [['p:miriam', '10:30', 75], ['p:prospect-park', '12:00', 90], ['x:rest-home', '14:15', 75], ['p:brooklyn-heights-promenade', '16:30', 35], ['p:brooklyn-bridge-park', '17:15', 55], ['x:sunset-pier1', '18:30'], ['p:colonie', '19:30', 105]],
+    // Café Sabarsky reopens this very day; Bemelmans before 17:30 avoids the music charge.
+    d5: [['p:the-met', '10:45', 160], ['p:cafe-sabarsky', '13:15', 70], ['p:central-park', '14:45', 75], ['p:bemelmans-bar', '16:35', 60], ['x:pre-show-bite', '18:30'], ['x:broadway-show', '20:00']],
+    // The shopping day, finishing early for the concert.
+    d6: [['p:lafayette-grand-cafe', '10:15', 45], ['p:soho-shopping', '11:10', 135], ['p:balthazar', '13:35', 75], ['p:elizabeth-street-nolita', '15:00', 55], ['x:drop-bags', '16:05', 40], ['p:sofreh', '17:30', 55], ['x:teddy-swims', '19:00']],
     // Williamsburg in the morning, the free First Saturday party ten minutes from home.
     d7: [['p:devocion', '10:30', 50], ['p:bedford-avenue', '11:40', 75], ['p:smorgasburg-williamsburg', '12:55', 65], ['p:domino-park', '14:10', 30], ['x:to-brooklyn-museum', '15:00'], ['p:brooklyn-museum', '16:00', 150], ['p:olmsted', '19:00', 110], ['p:weather-up', '21:00', 55]],
     d8: [['x:pack', '09:30'], ['p:winner-park-slope', '10:45', 50], ['p:green-wood-cemetery', '11:45', 85], ['x:leave-for-jfk', '14:00'], ['x:depart', '17:30']],
@@ -155,26 +156,26 @@ window.TRIP = {
 
   // Rainy-day swaps, per day (place ids). Shown as one-tap suggestions when the forecast says rain.
   RAIN: {
-    d1: ['brooklyn-museum', 'brooklyn-public-library', 'time-out-market', 'lappartement-4f'],
-    d2: ['911-museum', 'the-oculus', 'tin-building', 'century-21', 'one-world-observatory'],
-    d3: ['moma', 'morgan-library', 'summit-one-vanderbilt', 'bloomingdales', 'nordstrom-nyc'],
-    d4: ['whitney', 'chelsea-market', 'chelsea-galleries', 'the-frankie-shop', 'artechouse'],
-    d5: ['the-met', 'the-frick', 'neue-galerie', 'guggenheim', 'bloomingdales'],
+    d1: ['moma', 'morgan-library', 'summit-one-vanderbilt', 'bloomingdales', 'nordstrom-nyc'],
+    d2: ['whitney', 'chelsea-market', 'chelsea-galleries', 'the-frankie-shop', 'artechouse'],
+    d3: ['911-museum', 'the-oculus', 'tin-building', 'century-21', 'one-world-observatory'],
+    d4: ['brooklyn-museum', 'brooklyn-public-library', 'time-out-market', 'lappartement-4f', 'industry-city'],
+    d5: ['the-met', 'the-frick', 'guggenheim', 'bloomingdales', 'morgan-library'],
     d6: ['tenement-museum', 'new-museum', 'the-realreal-soho', 'essex-market', 'mercer-labs'],
     d7: ['brooklyn-museum', 'industry-city', 'lilia', 'union-hall'],
   },
 
   // Book-this-now list. Links come from the place library (tickets / reserve).
   BOOK: [
-    { id: 'statue-of-liberty', day: 'd2', by: '2026-09-24', en: 'Reserve the 9:30 am Statue City Cruises ferry with pedestal access — pedestal sells out days ahead, crown weeks ahead.', ru: 'Забронировать паром Statue City Cruises на 9:30 с доступом на пьедестал — пьедестал раскупают за дни, корону — за недели.', de: 'Die Statue City Cruises Fähre um 9:30 Uhr mit Zugang zum Sockel reservieren — der Sockel ist Tage im Voraus weg, die Krone Wochen.' },
-    { id: 'top-of-the-rock', day: 'd3', by: '2026-09-26', en: 'Timed ticket for 5:45 pm (sunset 6:40 pm) — the sunset slots go first.', ru: 'Билет на 17:45 (закат в 18:40) — закатные слоты уходят первыми.', de: 'Zeitfenster-Ticket für 17:45 Uhr (Sonnenuntergang 18:40 Uhr) — die Sonnenuntergangs-Slots gehen zuerst.' },
-    { id: 'lartusi', day: 'd4', by: '2026-09-23', en: 'Resy for 3 at 6:15 pm Wed Sep 30 (opens 30 days out; check for cancellations daily, or walk in at Via Carota at 5:30 instead).', ru: 'Столик на троих в Resy на 18:15 в среду 30 сентября (открывается за 30 дней; ловите отмены, или Via Carota без брони в 17:30).', de: 'Resy für 3 Personen um 18:15 Uhr am Mittwoch, 30. September (öffnet 30 Tage vorher; täglich nach Absagen schauen — oder stattdessen um 17:30 Uhr ohne Reservierung ins Via Carota).' },
-    { id: 'village-vanguard', day: 'd4', by: '2026-09-25', en: 'Tickets for the 8 pm set on Wed Sep 30 — sold online, sells out on weekends.', ru: 'Билеты на сет в 20:00 в среду 30 сентября — продаются онлайн, по выходным раскупают.', de: 'Tickets für das Set um 20 Uhr am Mittwoch, 30. September — nur online, am Wochenende ausverkauft.' },
+    { id: 'statue-of-liberty', day: 'd3', by: '2026-09-24', en: 'Reserve the 9:30 am Statue City Cruises ferry with pedestal access — pedestal sells out days ahead, crown weeks ahead.', ru: 'Забронировать паром Statue City Cruises на 9:30 с доступом на пьедестал — пьедестал раскупают за дни, корону — за недели.', de: 'Die Statue City Cruises Fähre um 9:30 Uhr mit Zugang zum Sockel reservieren — der Sockel ist Tage im Voraus weg, die Krone Wochen.' },
+    { id: 'top-of-the-rock', day: 'd1', by: '2026-09-26', en: 'Timed ticket for 5:45 pm (sunset 6:40 pm) — the sunset slots go first.', ru: 'Билет на 17:45 (закат в 18:40) — закатные слоты уходят первыми.', de: 'Zeitfenster-Ticket für 17:45 Uhr (Sonnenuntergang 18:40 Uhr) — die Sonnenuntergangs-Slots gehen zuerst.' },
+    { id: 'lartusi', day: 'd2', by: '2026-09-23', en: 'Resy for 3 at 6:15 pm Wed Sep 30 (opens 30 days out; check for cancellations daily, or walk in at Via Carota at 5:30 instead).', ru: 'Столик на троих в Resy на 18:15 в среду 30 сентября (открывается за 30 дней; ловите отмены, или Via Carota без брони в 17:30).', de: 'Resy für 3 Personen um 18:15 Uhr am Mittwoch, 30. September (öffnet 30 Tage vorher; täglich nach Absagen schauen — oder stattdessen um 17:30 Uhr ohne Reservierung ins Via Carota).' },
+    { id: 'village-vanguard', day: 'd2', by: '2026-09-25', en: 'Tickets for the 8 pm set on Wed Sep 30 — sold online, sells out on weekends.', ru: 'Билеты на сет в 20:00 в среду 30 сентября — продаются онлайн, по выходным раскупают.', de: 'Tickets für das Set um 20 Uhr am Mittwoch, 30. September — nur online, am Wochenende ausverkauft.' },
     { id: 'sofreh', day: 'd6', by: '2026-09-25', en: 'Table for 2 at 5:20 pm on Fri Oct 2 — an early sitting, four minutes\' walk from Barclays before the 7 pm show. Sofreh books up; Resy opens 30 days out.', ru: 'Столик на двоих в 17:30 в пятницу 2 октября — самая ранняя посадка в Sofreh, в четырёх минутах пешком от Barclays. Скажите при брони и при посадке, что у вас билеты на 19:00. Resy открывается за 30 дней.', de: 'Tisch für 2 um 17:30 Uhr am Freitag, 2. Oktober — die erste Sitzung im Sofreh, vier Gehminuten vom Barclays. Sagt bei der Buchung und beim Hinsetzen, dass ihr um 19 Uhr Tickets habt. Resy öffnet 30 Tage vorher.', de: 'Die späte Show am Freitag, 2. Oktober reservieren (die Reservierung öffnet etwa eine Woche vorher und ist schnell weg).' },
     { id: 'olmsted', day: 'd7', by: '2026-09-26', en: 'Farewell dinner for 3 on Sat Oct 3, 7:30 pm.', ru: 'Прощальный ужин на троих в субботу 3 октября, 19:30.', de: 'Abschiedsessen für 3 Personen am Samstag, 3. Oktober, 19:30 Uhr.' },
-    { id: 'cecconis-dumbo', day: 'd2', by: '2026-09-26', en: 'Table for 3 on Mon Sep 28, 7:15 pm — or keep it casual at Time Out Market next door.', ru: 'Столик на троих в понедельник 28 сентября, 19:15 — или без брони в Time Out Market по соседству.', de: 'Tisch für 3 Personen am Montag, 28. September, 19:15 Uhr — oder ganz entspannt nebenan im Time Out Market.' },
+    { id: 'cecconis-dumbo', day: 'd3', by: '2026-09-26', en: 'Table for 3 on Mon Sep 28, 7:15 pm — or keep it casual at Time Out Market next door.', ru: 'Столик на троих в понедельник 28 сентября, 19:15 — или без брони в Time Out Market по соседству.', de: 'Tisch für 3 Personen am Montag, 28. September, 19:15 Uhr — oder ganz entspannt nebenan im Time Out Market.' },
     { id: 'the-met', day: 'd5', by: '', en: 'No timed ticket needed; buy at the door or online. Closed Wednesdays.', ru: 'Билет по времени не нужен; купить на месте или онлайн. По средам закрыт.', de: 'Kein Zeitfenster-Ticket nötig; an der Kasse oder online kaufen. Mittwochs geschlossen.' },
-    { id: 'whitney', day: 'd4', by: '', en: 'Buy online to skip the line (closed Tuesdays).', ru: 'Купить онлайн, чтобы не стоять в очереди (по вторникам закрыт).', de: 'Online kaufen und die Schlange überspringen (dienstags geschlossen).' },
-    { id: 'x:broadway-show', day: 'd3', by: '2026-09-29', en: 'Pick the show on the Plan tab. TKTS (Times Square booth) sells same-day seats from 3 pm; TodayTix for rush/lottery.', ru: 'Выберите спектакль на вкладке План. TKTS (будка на Таймс-сквер) продаёт билеты на сегодня с 15:00; TodayTix — rush и лотерея.', de: 'Die Show im Plan-Tab auswählen. TKTS (die Bude am Times Square) verkauft ab 15 Uhr Karten für denselben Tag; TodayTix für Rush und Lotterie.' },
+    { id: 'whitney', day: 'd2', by: '', en: 'Buy online to skip the line (closed Tuesdays).', ru: 'Купить онлайн, чтобы не стоять в очереди (по вторникам закрыт).', de: 'Online kaufen und die Schlange überspringen (dienstags geschlossen).' },
+    { id: 'x:broadway-show', day: 'd5', by: '2026-09-29', en: 'Pick the show on the Plan tab. TKTS (Times Square booth) sells same-day seats from 3 pm; TodayTix for rush/lottery.', ru: 'Выберите спектакль на вкладке План. TKTS (будка на Таймс-сквер) продаёт билеты на сегодня с 15:00; TodayTix — rush и лотерея.', de: 'Die Show im Plan-Tab auswählen. TKTS (die Bude am Times Square) verkauft ab 15 Uhr Karten für denselben Tag; TodayTix für Rush und Lotterie.' },
   ],
 };

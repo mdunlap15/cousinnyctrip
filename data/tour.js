@@ -103,6 +103,14 @@ window.TOUR = {
       bodyRu: 'Дождь, поздний подъём или просто нет сил: здесь можно сдвинуть весь день на час позже, убрать то, что нужно меньше всего, или заменить уличное на то, что под крышей. Если пойдёт дождь, страница дня предложит замены сама.',
       bodyDe: 'Regen, ein später Start oder einfach zu müde: Hier verschiebt ihr den ganzen Tag um eine Stunde, streicht den Stopp, der euch am wenigsten wichtig ist, oder tauscht Draußen gegen Drinnen. Bei Regen bietet die Tagesseite die Alternativen von selbst an.' },
 
+    { key: 'chat', tab: 'chat', sel: '#chatbox', icon: '💬',
+      title: 'Ask the concierge anything',
+      titleRu: 'Спросите консьержа о чём угодно',
+      titleDe: 'Fragt den Concierge alles',
+      body: 'It knows your plan, all three hundred places in here, and how long each one takes from Park Slope. Ask it in your own language: what to swap when it rains, somewhere to eat near the Met, whether a shop opens on a Sunday. The ✨ Replan button on each day asks it too.',
+      bodyRu: 'Он знает ваш план, все триста мест из этого приложения и сколько до каждого добираться от Парк-Слоуп. Спрашивайте на своём языке: что заменить в дождь, где поесть рядом с Метрополитен, работает ли магазин в воскресенье. Кнопка «✨ Перепланировать» на каждом дне обращается к нему же.',
+      bodyDe: 'Er kennt euren Plan, alle dreihundert Orte hier drin und wie lange jeder einzelne von Park Slope aus dauert. Fragt ihn in eurer eigenen Sprache: was man bei Regen tauscht, wo man in der Nähe des Met isst, ob ein Laden sonntags öffnet. Die Taste „✨ Neu planen“ an jedem Tag fragt ihn ebenfalls.' },
+
     { key: 'lang', tab: 'home', sel: '#langbtn', icon: '🌍',
       title: 'English, Russian, German',
       titleRu: 'Английский, русский, немецкий',
@@ -115,8 +123,8 @@ window.TOUR = {
       title: 'That\'s everything',
       titleRu: 'Вот и всё',
       titleDe: 'Das war alles',
-      body: 'Start by rating a few places, then press Build my week. You can run this tour again any time from More. Have a wonderful trip.',
-      bodyRu: 'Начните с оценки нескольких мест, потом нажмите «Собрать неделю». Этот тур можно запустить снова в любой момент из раздела «Ещё». Прекрасной вам поездки!',
-      bodyDe: 'Fangt damit an, ein paar Orte zu bewerten, und drückt dann „Woche bauen“. Diese Tour könnt ihr jederzeit unter „Mehr“ noch einmal starten. Habt eine wunderbare Reise.' },
+      body: 'Start by rating a few places, then press Build my week — or just ask the concierge where to begin. You can run this tour again any time from More. Have a wonderful trip.',
+      bodyRu: 'Начните с оценки нескольких мест, потом нажмите «Собрать неделю» — или просто спросите консьержа, с чего начать. Этот тур можно запустить снова в любой момент из раздела «Ещё». Прекрасной вам поездки!',
+      bodyDe: 'Fangt damit an, ein paar Orte zu bewerten, und drückt dann „Woche bauen“ — oder fragt einfach den Concierge, womit ihr anfangen sollt. Diese Tour könnt ihr jederzeit unter „Mehr“ noch einmal starten. Habt eine wunderbare Reise.' },
   ],
 };

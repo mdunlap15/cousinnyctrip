@@ -15,7 +15,7 @@ window.TRIP = {
   SUB_DE: 'Neun Herbsttage, eine Wohnung in Park Slope, die ganze Stadt in Reichweite. Die großen Sehenswürdigkeiten sind mit Bleistift eingetragen — Tische, Shopping und Tempo entscheidet ihr gemeinsam.',
   TIMEZONE: 'America/New_York',
   HOME_LABEL: '490A 7th Ave, Park Slope',
-  CHAT_HELLO: 'Hi! I know the whole trip — the plan, the library, the subway from 7th Avenue. Ask me anything, in English or по-русски.',
+  CHAT_HELLO: 'Hi! I know the whole trip — the plan, the library, the subway from 7th Avenue. Ask me anything, in English, по-русски or auf Deutsch.',
   CHAT_HELLO_RU: 'Привет! Я знаю всю поездку — план, все места, метро от 7-й авеню. Спрашивайте о чём угодно, по-русски или по-английски.',
   CHAT_HELLO_DE: 'Hallo! Ich kenne die ganze Reise — den Plan, alle Orte, die U-Bahn ab der 7th Avenue. Frag mich alles, auf Deutsch, auf Russisch oder auf Englisch.',
   QUICKQS: ['What should we do right now?', "It's raining — replan today", 'Pick tonight\'s dinner near where we are', 'Помоги спланировать завтра'],

@@ -147,8 +147,10 @@ const server = http.createServer(async (req, res) => {
     return send(res, 204, '', {}, req);
   }
   // /health is deliberately open and free: it is how you check the deploy from
-  // a browser or curl, and it never touches the model.
-  if (req.method === 'GET' && req.url === '/health') {
+  // a browser or curl, and it never touches the model. The bare root answers the
+  // same thing, so opening the domain shows something useful — and so a platform
+  // health check pointed at / does not mark a working deploy as failed.
+  if (req.method === 'GET' && (req.url === '/health' || req.url === '/' || req.url === '')) {
     return send(res, 200, {
       ok: true,
       model: MODEL,
@@ -208,9 +210,29 @@ const server = http.createServer(async (req, res) => {
   send(res, 404, { error: 'not found' }, {}, req);
 });
 
-server.listen(PORT, () => {
+// Railway reaches a container over IPv6 on some stacks and IPv4 on others, and
+// a server bound to only one of them is precisely the "Application failed to
+// respond" screen. Bind dual-stack where the host has IPv6, fall back where it
+// does not.
+function announce() {
+  const a = server.address();
   console.log('concierge listening on :' + PORT + ' (' + MODEL + ')');
+  console.log('  bound to      : ' + (a && typeof a === 'object' ? a.address + ' ' + a.family + ' port ' + a.port : String(a)));
+  console.log('  PORT env      : ' + (process.env.PORT === undefined ? 'not set — using the 3000 fallback' : process.env.PORT));
   console.log('  anthropic key : ' + (process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — set ANTHROPIC_API_KEY'));
   console.log('  origins       : ' + (ORIGIN_OPEN ? 'any (ALLOW_ORIGINS=* or empty)' : ALLOW_ORIGINS.join(', ')));
   console.log('  rate limit    : ' + RATE_PER_IP + ' per ' + RATE_WINDOW_S + 's per address, ' + RATE_PER_DAY + ' per day total');
+}
+let fellBack = false;
+server.on('listening', announce);        // fires once, on whichever bind succeeds
+server.on('error', (e) => {
+  if (!fellBack && ['EAFNOSUPPORT', 'EADDRNOTAVAIL', 'EINVAL'].includes(e.code)) {
+    fellBack = true;
+    console.warn('no IPv6 on this host (' + e.code + ') — binding 0.0.0.0 instead');
+    server.listen(PORT, '0.0.0.0');
+    return;
+  }
+  console.error('could not listen on :' + PORT + ' — ' + e.message);
+  process.exit(1);
 });
+server.listen(PORT, '::');

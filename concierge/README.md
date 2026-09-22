@@ -31,8 +31,14 @@ nothing answered on the routed port. In order of likelihood:
    want both sides pinned to the same number whatever Railway does.
 3. **The build failed.** Deployments → the latest one → View Logs.
 
-A healthy boot prints four lines: the port, whether the key is set, the allowed
-origins and the rate limits.
+The server binds `::` dual-stack so it answers over IPv6 and IPv4, falling back
+to `0.0.0.0` on a host with no IPv6. A server listening on only one family while
+the platform routes over the other is the same "failed to respond" screen with a
+healthy-looking log, so the boot output names the address and family it got.
+
+A healthy boot prints the port, the bound address and family, the `PORT` it
+read from the environment, whether the key is set, the allowed origins and the
+rate limits.
 
 ## The two guards
 

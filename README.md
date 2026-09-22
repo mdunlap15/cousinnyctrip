@@ -50,6 +50,7 @@ npm run build:data ../research   # regenerate data/places.js from research lanes
 npm run build:ics        # regenerate trip.ics from the seeded plan
 npm run test:tour        # the onboarding walkthrough, in a real browser on 3 phones
 npm run test:proxy       # the concierge's origin check and rate limits (no API spend)
+npm run test:concierge   # the app in a browser talking to the real proxy across origins
 npm run test:offline     # loads the app, kills the network, reloads
 npm run test:install     # manifest, iOS tags and the right install hint per phone
 npm run serve            # http://localhost:8080

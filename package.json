@@ -12,7 +12,8 @@
     "shots": "node scripts/shots.mjs",
     "test:install": "node scripts/install-test.mjs",
     "test:tour": "node scripts/tour-test.mjs",
-    "test:proxy": "node concierge/test.mjs"
+    "test:proxy": "node concierge/test.mjs",
+    "test:concierge": "node scripts/concierge-test.mjs"
   },
   "devDependencies": {
     "jsdom": "^24.0.0",

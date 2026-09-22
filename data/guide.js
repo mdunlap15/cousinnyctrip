@@ -6,6 +6,40 @@
 // ============================================================================
 window.GUIDE = {
   sections: [
+    { key: 'install', icon: '📲', title: 'Install this app', titleRu: 'Установить это приложение', titleDe: 'Diese App installieren',
+      en: `This is a web app, so there is nothing to find in an app store — you add it from the browser and it behaves like any other app: its own icon, full screen, no address bar, and **everything works with no signal** once it has been opened once.
+
+**On Android (Chrome or Samsung Internet):** open the link, then tap the **⋮** menu (top right) and choose **Add to Home screen** — or just tap **Install** if Chrome offers it in a bar at the bottom. Confirm the name and it lands on your home screen.
+
+**On iPhone (Safari — it must be Safari, not Chrome):** open the link, tap the **Share** button (the square with the ↑, in the bar at the bottom), scroll down the list and tap **Add to Home Screen**, then **Add** at the top right.
+
+**Then open it once from the new icon** while you still have wifi. That first launch downloads the whole trip — all nine days, every place, the maps' data and the guide — so it keeps working in the subway, in a basement restaurant, and on the plane.
+
+- The language button is at the top right of every screen: **ENG → РУС → DEU** and round again. Your choice sticks on your phone.
+- Tap your name on the Today screen once, so your votes show up as yours.
+- To update it later, open the app, go to **More** and tap **check for update**.`,
+      ru: `Это веб-приложение, так что искать его в магазине приложений не нужно — вы добавляете его прямо из браузера, и дальше оно ведёт себя как обычное приложение: своя иконка, полный экран, без адресной строки, и **всё работает без связи**, если один раз его открыть.
+
+**На Android (Chrome или Samsung Internet):** откройте ссылку, нажмите меню **⋮** справа вверху и выберите **«Добавить на главный экран»** — или просто нажмите **«Установить»**, если Chrome сам предложит это внизу. Подтвердите название, и иконка появится на экране.
+
+**На iPhone (только Safari, не Chrome):** откройте ссылку, нажмите кнопку **«Поделиться»** (квадрат со стрелкой ↑ в нижней панели), пролистайте список вниз до **«На экран „Домой“»** и нажмите **«Добавить»** справа вверху.
+
+**Потом обязательно откройте приложение с новой иконки, пока есть Wi-Fi.** При первом запуске загружается вся поездка — все девять дней, все места, данные для карты и гид, — поэтому дальше оно работает и в метро, и в подвальном ресторане, и в самолёте.
+
+- Кнопка языка — справа вверху на любом экране: **ENG → РУС → DEU** и по кругу. Выбор сохраняется на вашем телефоне.
+- Один раз нажмите своё имя на экране «Сегодня», чтобы ваши голоса были подписаны.
+- Чтобы обновить приложение позже: откройте его, зайдите в **«Ещё»** и нажмите **«проверить обновление»**.`,
+      de: `Das hier ist eine Web-App — im App Store musst du also nichts suchen. Du fügst sie direkt aus dem Browser hinzu, und danach verhält sie sich wie jede andere App: eigenes Symbol, Vollbild, keine Adresszeile, und **alles funktioniert ohne Empfang**, sobald sie einmal geöffnet wurde.
+
+**Auf Android (Chrome oder Samsung Internet):** Link öffnen, oben rechts auf das **⋮**-Menü tippen und **„Zum Startbildschirm hinzufügen“** wählen — oder einfach auf **„Installieren“**, wenn Chrome das unten selbst anbietet. Namen bestätigen, fertig.
+
+**Auf dem iPhone (nur Safari, nicht Chrome):** Link öffnen, unten auf **„Teilen“** tippen (das Quadrat mit dem ↑), in der Liste nach unten scrollen bis **„Zum Home-Bildschirm“**, dann oben rechts auf **„Hinzufügen“**.
+
+**Danach die App einmal über das neue Symbol öffnen, solange du noch WLAN hast.** Beim ersten Start lädt sie die ganze Reise herunter — alle neun Tage, jeden Ort, die Kartendaten und die Infos —, damit sie auch in der U-Bahn, im Kellerrestaurant und im Flugzeug weiterläuft.
+
+- Die Sprachtaste sitzt oben rechts auf jedem Bildschirm: **ENG → РУС → DEU** und wieder von vorn. Deine Wahl bleibt auf deinem Handy gespeichert.
+- Tippe auf dem Heute-Bildschirm einmal deinen Namen an, damit deine Stimmen dir zugeordnet werden.
+- Zum späteren Aktualisieren: App öffnen, auf **„Mehr“** gehen und **„nach Update suchen“** tippen.` },
     { key: 'arrival', icon: '🛬', title: 'Arrival · Sat Sep 26', titleRu: 'Прилёт · сб 26 сентября',
       en: `**LH 400 lands at JFK Terminal 1 at 1:35 pm.** Lufthansa has used Terminal 1 for years; JFK's *New Terminal One* opens in phases during 2026, so glance at the terminal on the boarding pass and at [jfkairport.com](https://www.jfkairport.com/) the day before (confirm). Passport control with ESTA usually takes 30–60 minutes on a Saturday afternoon; bags another 15. Expect to be kerbside around 2:45–3:00 pm.
 

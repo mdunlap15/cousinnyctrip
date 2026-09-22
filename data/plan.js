@@ -73,6 +73,24 @@ window.TRIP = {
       ledeRu: 'Собрать чемодан, выпечка в Winner, последняя тихая прогулка по Грин-Вуд — и такси в Терминал 1 к 14:00 на рейс в Мюнхен в 17:30.' },
   ],
 
+  // Where you actually arrive at and leave from, for places whose map pin is not
+  // where you get on and off. The ferry islands are the obvious case: the pin
+  // belongs on Liberty Island, but the travel time is to the Battery ticket hall.
+  ACCESS: {
+    'statue-of-liberty': [40.7030, -74.0150],   // Battery Park / Castle Clinton
+    'ellis-island': [40.7030, -74.0150],
+    'governors-island': [40.7016, -74.0122],    // Battery Maritime Building
+    'staten-island-ferry': [40.7013, -74.0132], // Whitehall Terminal
+    'roosevelt-island-tram': [40.7614, -73.9640],
+    'brooklyn-bridge': [40.7128, -73.9997],     // Manhattan-side stair at City Hall
+    'coney-island': [40.5776, -73.9812],        // Stillwell Av station
+    'brighton-beach': [40.5776, -73.9613],
+    'the-high-line': [40.7398, -74.0080],       // 14th St entrance, mid-park
+    'green-wood-cemetery': [40.6580, -73.9940], // 25th St main gate
+    'prospect-park': [40.6614, -73.9800],       // Bartel-Pritchard, the entrance nearest home
+    'central-park': [40.7681, -73.9819],        // 72nd St / Bethesda side
+  },
+
   // Fixed-time custom stops (not library places). p = [lat,lng]; q = where it ends if different.
   STOPS: {
     'land':   { t: '13:35', d: 75,  lock: true,  en: '✈️ LH 400 lands at JFK Terminal 1 — passport control + bags',            ru: '✈️ LH 400 садится в JFK, Терминал 1 — паспортный контроль и багаж', p: [40.6431, -73.7896], link: '#guide-arrival' },
@@ -111,7 +129,7 @@ window.TRIP = {
     // One big museum, one long lunch, the park on foot, a martini with a mural behind it.
     d5: [['p:the-met', '10:15', 165], ['p:cafe-sabarsky', '13:15', 75], ['p:central-park', '14:45', 85], ['p:madison-avenue', '16:20', 55], ['p:bemelmans-bar', '17:30', 70], ['p:jg-melon', '19:00', 75]],
     // The shopping day: one long stretch of it, then a Friday night with Mike.
-    d6: [['p:lafayette-grand-cafe', '10:30', 45], ['p:soho-shopping', '11:25', 145], ['p:balthazar', '14:05', 80], ['p:elizabeth-street-nolita', '15:35', 55], ['x:rest-home', '17:00', 60], ['p:dante', '18:15', 55], ['p:rubirosa', '19:30', 90], ['p:comedy-cellar', '21:15', 90]],
+    d6: [['p:lafayette-grand-cafe', '10:30', 45], ['p:soho-shopping', '11:25', 145], ['p:balthazar', '14:05', 80], ['p:elizabeth-street-nolita', '15:35', 60], ['x:rest-cafe', '16:50', 50], ['p:rubirosa', '18:15', 90], ['p:dante', '20:00', 55], ['p:comedy-cellar', '21:15', 90]],
     // Williamsburg in the morning, the free First Saturday party ten minutes from home.
     d7: [['p:devocion', '10:30', 40], ['p:bedford-avenue', '11:20', 85], ['p:smorgasburg-williamsburg', '12:55', 65], ['p:domino-park', '14:10', 30], ['x:to-brooklyn-museum', '15:00'], ['p:brooklyn-museum', '16:00', 150], ['p:olmsted', '19:00', 110], ['p:weather-up', '21:00', 55]],
     d8: [['x:pack', '09:30'], ['p:winner-park-slope', '10:45', 50], ['p:green-wood-cemetery', '11:45', 85], ['x:leave-for-jfk', '14:00'], ['x:depart', '17:30']],

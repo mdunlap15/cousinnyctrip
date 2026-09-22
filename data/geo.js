@@ -83,7 +83,9 @@
     if (!from || !to) return null;
     const straight = haversine(from[0], from[1], to[0], to[1]);
     if (straight < 0.1) return 0;
-    if (straight <= 1.4) return walkMin(straight);
+    // New Yorkers walk a mile without thinking about it, and below ~1.7 km walking
+    // beats waiting for a train anyway.
+    if (straight <= 1.7) return walkMin(straight);
     const A = nearestHub(from[0], from[1]), B = nearestHub(to[0], to[1]);
     let mins = hubToHub(A.hub.key, B.hub.key);
     if (mins === 0) mins = Math.max(walkMin(straight), 10);
@@ -97,7 +99,7 @@
     if (!from || !to) return '';
     const km = haversine(from[0], from[1], to[0], to[1]);
     if (km < 0.1) return 'same';
-    if (km <= 1.4) return 'walk';
+    if (km <= 1.7) return 'walk';
     return 'subway';
   }
   // Google Maps transit directions deep link

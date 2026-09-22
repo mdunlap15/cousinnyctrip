@@ -23,76 +23,98 @@ const DAYBYKEY = {}; DAYS.forEach(d => { DAYBYKEY[d.key] = d; });
 const HOMEPT = [G.HOME.lat, G.HOME.lng];
 
 // ---------------------------------------------------------------- i18n
+const LANGS = ['en', 'ru', 'de'];
+const LANGBTN = { en: 'РУС', ru: 'DEU', de: 'ENG' };   // the button shows what you get next
 let lang = 'en';
-try { lang = localStorage.getItem(LSK + '-lang') || 'en'; } catch (e) {}
-if (lang !== 'ru') lang = 'en';
-const RL = () => lang === 'ru';
-const L = (en, ru) => (RL() && ru) ? ru : en;
-const S = {
-  runningOrder: ['Running order', 'Расписание дня'], stops: ['stops', 'пункт(ов)'],
-  dragHint: ['hold a stop to drag it · tap a time to pin it · ⋯ moves, retimes or removes', 'зажмите пункт и тяните · нажмите на время, чтобы закрепить · ⋯ — перенести, изменить или убрать'],
-  resetDay: ['↺ reset to the plan', '↺ вернуть план'], homeBy: ['Home by', 'Дома к'], anchors: ['anchors', 'точек'], transit: ['in transit', 'в пути'],
-  paceRelaxed: ['🟢 Relaxed', '🟢 Спокойно'], paceComfy: ['🟢 Comfortable', '🟢 Комфортно'], paceFull: ['🟡 Full day', '🟡 Насыщенно'], paceCrammed: ['🔴 Crammed', '🔴 Перегружено'],
-  paceHint: ['Too much for one day — the ⋯ menu on any stop moves it to a lighter day.', 'Слишком много для одного дня — через ⋯ у любого пункта его можно перенести в более свободный день.'],
-  mikeOn: ['🎷 Mike joins tonight', '🎷 Майк вечером с нами'], mikeOff: ['🎷 Mike joins?', '🎷 Майк придёт?'],
-  addStop: ['＋ Add a stop', '＋ Добавить пункт'], suggestBreak: ['☕ Suggest a break', '☕ Предложить паузу'], replan: ['✨ Replan', '✨ Перепланировать'], shareDay: ['↗ Share day', '↗ Поделиться днём'], rainPlan: ['🌧 Rain plan', '🌧 План на дождь'],
-  dayNotes: ['Day notes — shared with the others', 'Заметки к дню — видят все'],
-  walk: ['min walk', 'мин пешком'], subway: ['min by subway', 'мин на метро'], free: ['min free', 'мин свободно'], travel: ['min travel', 'мин в пути'], slack: ['min slack', 'мин запаса'],
-  fixed: ['Fixed-time anchor', 'Фиксированное время'], drag: ['Drag', 'Перетащить'], moveOrRemove: ['Move, retime or remove', 'Перенести, изменить или убрать'], tapTime: ['Tap to pin a time', 'Нажмите, чтобы закрепить время'],
-  remove: ['✕ Remove from this day', '✕ Убрать из этого дня'], removed: ['Removed — "↺ reset" brings the plan back', 'Убрано — «↺ вернуть план» всё восстановит'], moved: ['Moved to', 'Перенесено на'],
-  closedThatDay: ['closed that day', 'в этот день закрыто'], recommended: ['best fit', 'лучше всего'],
-  wantIt: ['❤️ Want', '❤️ Хочу'], maybeIt: ['🤔 Maybe', '🤔 Может быть'], skipIt: ['✕ Skip', '✕ Нет'],
-  yourVote: ['Your vote', 'Ваш голос'], pickWho: ['Whose phone is this?', 'Чей это телефон?'], pickWhoFirst: ['Tap your name first (Today tab)', 'Сначала выберите своё имя (вкладка «Сегодня»)'],
-  addToDay: ['📅 Add to a day', '📅 Добавить в день'], inPlan: ['In the plan', 'В плане'], website: ['Website', 'Сайт'], tickets: ['Tickets', 'Билеты'], reserve: ['Reserve', 'Бронь'], menu: ['Menu', 'Меню'], map: ['Map', 'Карта'], directions: ['Directions', 'Маршрут'],
-  fromHome: ['from home', 'от дома'], hours: ['Hours', 'Часы'], price: ['Price', 'Цена'], booking: ['Booking', 'Бронирование'], typical: ['Typical visit', 'Обычно'], closed: ['Closed', 'Закрыто'], address: ['Address', 'Адрес'], confirm: ['Details compiled Sep 2026 from memory — confirm on the site.', 'Данные собраны в сентябре 2026 по памяти — проверьте на сайте.'],
-  minutes: ['min', 'мин'], places: ['places', 'мест'], noMatch: ['Nothing matches — try fewer filters.', 'Ничего не найдено — уберите фильтры.'],
-  swipeHint: ['Swipe right = want, left = skip, up = maybe. Everyone\'s votes sync.', 'Вправо = хочу, влево = нет, вверх = может быть. Голоса синхронизируются.'],
-  deckDone: ['You have rated everything in this view 🎉 — change the filter or head to Plan.', 'Вы оценили всё в этой подборке 🎉 — смените фильтр или загляните в План.'],
-  left: ['left to rate', 'осталось оценить'], exitSwipe: ['✕ Exit swipe', '✕ Выйти'],
-  bothWant: ['both want', 'хотите обе'], oneWants: ['one wants', 'хочет одна'], scheduled: ['scheduled', 'в плане'], ratedByMe: ['rated by me', 'оценено мной'],
-  nothingYet: ['Nothing here yet — rate a few places in Explore.', 'Пока пусто — оцените несколько мест в разделе «Места».'],
-  buildTitle: ['Build my week', 'Собрать неделю'], buildIntro: ['Everything you both want (and nobody vetoed) that is not in the plan yet, slotted into the day that fits its neighborhood and pace. Nothing is saved until you tap Apply.', 'Всё, чего хотите обе (и никто не против), чего ещё нет в плане, — по дням, подходящим по району и темпу. Ничего не сохраняется, пока вы не нажмёте «Применить».'],
-  apply: ['✓ Apply to the plan', '✓ Применить'], cancel: ['Cancel', 'Отмена'], nothingToAdd: ['Nothing to add — everything you both want is already in the plan.', 'Добавлять нечего — всё, чего хотите обе, уже в плане.'], noFit: ['no free day fits', 'нет подходящего дня'],
-  applied: ['Added to the plan', 'Добавлено в план'],
-  pickDay: ['Which day?', 'В какой день?'], pickStop: ['Add a stop', 'Добавить пункт'], custom: ['✎ Custom stop', '✎ Свой пункт'], customName: ['What is it?', 'Что это?'], customMin: ['min', 'мин'], add: ['Add', 'Добавить'],
-  breakTitle: ['A break near', 'Пауза рядом с'], breakNone: ['No café or bar in the library near that stop — add one from Explore.', 'В библиотеке нет кафе или бара рядом — добавьте из раздела «Места».'],
-  replanTitle: ['Replan this day', 'Перепланировать день'], later: ['☀️ Start an hour later', '☀️ Начать на час позже'], lighter: ['🪶 Make it lighter — drop a stop', '🪶 Сделать легче — убрать пункт'], rainSwap: ['🌧 Swap outdoor stops for the rain plan', '🌧 Заменить уличное на план для дождя'], askAI: ['✨ Ask the concierge', '✨ Спросить консьержа'], askPlaceholder: ['e.g. We\'re tired — one museum, a long lunch, home by 9', 'например: мы устали — один музей, долгий обед, домой к 9'], thinking: ['Drafting…', 'Думаю…'], applyDraft: ['✓ Apply this draft', '✓ Применить'],
-  aiOff: ['The concierge is not connected yet (see the Chat tab).', 'Консьерж пока не подключён (см. вкладку «Чат»).'], shifted: ['Day shifted an hour later', 'День сдвинут на час позже'], whichDrop: ['Which stop goes?', 'Какой пункт убрать?'],
-  daysToGo: ['days to go', 'дней до поездки'], dayOf: ['Day', 'День'], of: ['of', 'из'], today: ['Today', 'Сегодня'], tomorrow: ['Tomorrow', 'Завтра'], nextUp: ['Next up', 'Дальше'], nowAt: ['Now', 'Сейчас'], openDay: ['Open the day', 'Открыть день'], getHome: ['⌂ Get me home', '⌂ Домой'], wrap: ['That was the trip — the plan pages are the memory book now.', 'Поездка позади — страницы дней теперь на память.'],
-  beforeIntro: ['The week is sketched in; rate places in Explore, book the handful of things that sell out, and the app takes it from there.', 'Неделя намечена; оцените места в разделе «Места», забронируйте то немногое, что раскупают, — остальное сделает приложение.'],
-  toBook: ['still to book', 'ещё забронировать'], allBooked: ['everything that needed booking is booked', 'всё, что нужно было забронировать, забронировано'],
-  flightOut: ['To New York', 'В Нью-Йорк'], flightBack: ['Home to Hannover', 'Домой в Ганновер'], locked: ['booked', 'забронировано'], lockedOf: ['of', 'из'],
-  save: ['Save', 'Сохранить'], saved: ['Saved', 'Сохранено'], noResv: ['No reservations logged yet.', 'Броней пока нет.'],
-  icsDone: ['Calendar file ready — open it to add the events', 'Файл календаря готов — откройте его, чтобы добавить события'],
-  notesEmpty: ['No notes yet.', 'Заметок пока нет.'], delete: ['delete', 'удалить'],
-  nearNone: ['Location not available — allow it in Settings, or open the map.', 'Геолокация недоступна — разрешите её в настройках или откройте карту.'], locating: ['Locating…', 'Определяю…'], near: ['Nearest to you', 'Ближе всего к вам'],
-  syncOn: ['sync on', 'синхронизация включена'], syncOff: ['saving on this phone only', 'сохраняется только на этом телефоне'],
-  chatOffline: ['The concierge needs a connection.', 'Консьержу нужно соединение.'], chatErr: ['The concierge is not answering — try again in a moment.', 'Консьерж не отвечает — попробуйте чуть позже.'],
-  updating: ['Updating…', 'Обновляю…'], copied: ['Copied', 'Скопировано'],
-  rainTitle: ['Rain in the forecast — indoor swaps for this day', 'В прогнозе дождь — варианты под крышей на этот день'],
-  paceRelaxedPick: ['Relaxed', 'Спокойный'], paceNormalPick: ['Comfortable', 'Комфортный'], paceFullPick: ['Full', 'Насыщенный'],
-  ideasHead: ['Your ideas', 'Ваши идеи'], idea: ['idea', 'идея'],
-  sortRank: ['Sort: our votes', 'Сортировка: наши голоса'], sortNear: ['Sort: closest to home', 'Сортировка: ближе к дому'], sortAz: ['Sort: A–Z', 'Сортировка: А–Я'], sortHood: ['Sort: neighborhood', 'Сортировка: район'],
-  searchPh: ['Search: rooftop, pizza, Sézane, Williamsburg…', 'Поиск: крыша, пицца, Sézane, Уильямсбург…'],
+try { lang = localStorage.getItem(LSK + '-lang') || ''; } catch (e) {}
+if (LANGS.indexOf(lang) < 0) { // first run: follow the phone
+  const nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
+  lang = LANGS.indexOf(nav) >= 0 ? nav : 'en';
+}
+const LI = () => LANGS.indexOf(lang);
+const RL = () => lang === 'ru';           // kept: "is a non-English script" checks
+const DE = () => lang === 'de';
+// L(en, ru, de) — falls back to Russian then English when a translation is missing
+const L = (en, ru, de) => (lang === 'ru' ? (ru || en) : (lang === 'de' ? (de || en) : en));
+// pick a per-language field off an object: fld(p,'why') -> p.whyDe / p.whyRu / p.why
+const fld = (o, base) => {
+  if (!o) return '';
+  const suffix = lang === 'ru' ? 'Ru' : (lang === 'de' ? 'De' : '');
+  return (suffix && o[base + suffix]) || o[base] || '';
 };
-const t = (k) => { const v = S[k]; return v ? (RL() ? v[1] : v[0]) : k; };
+const S = {
+  runningOrder: ['Running order', 'Расписание дня', 'Tagesablauf'], stops: ['stops', 'пункт(ов)', 'Stopps'],
+  dragHint: ['hold a stop to drag it · tap a time to pin it · ⋯ moves, retimes or removes', 'зажмите пункт и тяните · нажмите на время, чтобы закрепить · ⋯ — перенести, изменить или убрать', 'Stopp halten und ziehen · auf die Zeit tippen, um sie festzusetzen · ⋯ verschiebt, ändert oder entfernt'],
+  resetDay: ['↺ reset to the plan', '↺ вернуть план', '↺ Plan wiederherstellen'], homeBy: ['Home by', 'Дома к', 'Zu Hause gegen'], anchors: ['anchors', 'точек', 'Programmpunkte'], transit: ['in transit', 'в пути', 'unterwegs'],
+  paceRelaxed: ['🟢 Relaxed', '🟢 Спокойно', '🟢 Entspannt'], paceComfy: ['🟢 Comfortable', '🟢 Комфортно', '🟢 Angenehm'], paceFull: ['🟡 Full day', '🟡 Насыщенно', '🟡 Voller Tag'], paceCrammed: ['🔴 Crammed', '🔴 Перегружено', '🔴 Zu voll'],
+  paceHint: ['Too much for one day — the ⋯ menu on any stop moves it to a lighter day.', 'Слишком много для одного дня — через ⋯ у любого пункта его можно перенести в более свободный день.', 'Zu viel für einen Tag — über das ⋯-Menü lässt sich ein Stopp auf einen ruhigeren Tag schieben.'],
+  mikeOn: ['🎷 Mike joins tonight', '🎷 Майк вечером с нами', '🎷 Mike ist heute Abend dabei'], mikeOff: ['🎷 Mike joins?', '🎷 Майк придёт?', '🎷 Kommt Mike mit?'],
+  addStop: ['＋ Add a stop', '＋ Добавить пункт', '＋ Stopp hinzufügen'], suggestBreak: ['☕ Suggest a break', '☕ Предложить паузу', '☕ Pause vorschlagen'], replan: ['✨ Replan', '✨ Перепланировать', '✨ Neu planen'], shareDay: ['↗ Share day', '↗ Поделиться днём', '↗ Tag teilen'], rainPlan: ['🌧 Rain plan', '🌧 План на дождь', '🌧 Regenplan'],
+  dayNotes: ['Day notes — shared with the others', 'Заметки к дню — видят все', 'Notizen zum Tag — für alle sichtbar'],
+  walk: ['min walk', 'мин пешком', 'Min zu Fuß'], subway: ['min by subway', 'мин на метро', 'Min mit der U-Bahn'], free: ['min free', 'мин свободно', 'Min frei'], travel: ['min travel', 'мин в пути', 'Min Fahrt'], slack: ['min slack', 'мин запаса', 'Min Puffer'],
+  fixed: ['Fixed-time anchor', 'Фиксированное время', 'Feste Uhrzeit'], drag: ['Drag', 'Перетащить', 'Ziehen'], moveOrRemove: ['Move, retime or remove', 'Перенести, изменить или убрать', 'Verschieben, umlegen oder entfernen'], tapTime: ['Tap to pin a time', 'Нажмите, чтобы закрепить время', 'Tippen, um die Zeit festzusetzen'],
+  remove: ['✕ Remove from this day', '✕ Убрать из этого дня', '✕ Aus diesem Tag entfernen'], removed: ['Removed — "↺ reset" brings the plan back', 'Убрано — «↺ вернуть план» всё восстановит', 'Entfernt — «↺ Plan wiederherstellen» holt alles zurück'], moved: ['Moved to', 'Перенесено на', 'Verschoben auf'],
+  closedThatDay: ['closed that day', 'в этот день закрыто', 'an dem Tag geschlossen'], recommended: ['best fit', 'лучше всего', 'passt am besten'],
+  wantIt: ['❤️ Want', '❤️ Хочу', '❤️ Will ich'], maybeIt: ['🤔 Maybe', '🤔 Может быть', '🤔 Vielleicht'], skipIt: ['✕ Skip', '✕ Нет', '✕ Nein'],
+  yourVote: ['Your vote', 'Ваш голос', 'Deine Stimme'], pickWho: ['Whose phone is this?', 'Чей это телефон?', 'Wessen Handy ist das?'], pickWhoFirst: ['Tap your name first (Today tab)', 'Сначала выберите своё имя (вкладка «Сегодня»)', 'Zuerst den eigenen Namen antippen (Tab „Heute“)'],
+  addToDay: ['📅 Add to a day', '📅 Добавить в день', '📅 Zu einem Tag hinzufügen'], inPlan: ['In the plan', 'В плане', 'Im Plan'], website: ['Website', 'Сайт', 'Website'], tickets: ['Tickets', 'Билеты', 'Tickets'], reserve: ['Reserve', 'Бронь', 'Reservieren'], menu: ['Menu', 'Меню', 'Speisekarte'], map: ['Map', 'Карта', 'Karte'], directions: ['Directions', 'Маршрут', 'Route'],
+  fromHome: ['from home', 'от дома', 'von zu Hause'], hours: ['Hours', 'Часы', 'Öffnungszeiten'], price: ['Price', 'Цена', 'Preis'], booking: ['Booking', 'Бронирование', 'Buchung'], typical: ['Typical visit', 'Обычно', 'Übliche Dauer'], closed: ['Closed', 'Закрыто', 'Geschlossen'], address: ['Address', 'Адрес', 'Adresse'], confirm: ['Details compiled Sep 2026 from memory — confirm on the site.', 'Данные собраны в сентябре 2026 по памяти — проверьте на сайте.', 'Angaben von September 2026 — bitte auf der Website prüfen.'],
+  minutes: ['min', 'мин', 'Min'], places: ['places', 'мест', 'Orte'], noMatch: ['Nothing matches — try fewer filters.', 'Ничего не найдено — уберите фильтры.', 'Nichts gefunden — weniger Filter setzen.'],
+  swipeHint: ['Swipe right = want, left = skip, up = maybe. Everyone\'s votes sync.', 'Вправо = хочу, влево = нет, вверх = может быть. Голоса синхронизируются.', 'Nach rechts = will ich, links = nein, hoch = vielleicht. Alle Stimmen werden synchronisiert.'],
+  deckDone: ['You have rated everything in this view 🎉 — change the filter or head to Plan.', 'Вы оценили всё в этой подборке 🎉 — смените фильтр или загляните в План.', 'Du hast alles in dieser Auswahl bewertet 🎉 — Filter ändern oder weiter zum Plan.'],
+  left: ['left to rate', 'осталось оценить', 'noch zu bewerten'], exitSwipe: ['✕ Exit swipe', '✕ Выйти', '✕ Swipe beenden'],
+  bothWant: ['both want', 'хотите обе', 'wollen beide'], oneWants: ['one wants', 'хочет одна', 'will eine'], scheduled: ['scheduled', 'в плане', 'im Plan'], ratedByMe: ['rated by me', 'оценено мной', 'von mir bewertet'],
+  nothingYet: ['Nothing here yet — rate a few places in Explore.', 'Пока пусто — оцените несколько мест в разделе «Места».', 'Noch nichts hier — bewertet ein paar Orte unter „Entdecken“.'],
+  buildTitle: ['Build my week', 'Собрать неделю', 'Meine Woche bauen'], buildIntro: ['Everything you both want (and nobody vetoed) that is not in the plan yet, slotted into the day that fits its neighborhood and pace. Nothing is saved until you tap Apply.', 'Всё, чего хотите обе (и никто не против), чего ещё нет в плане, — по дням, подходящим по району и темпу. Ничего не сохраняется, пока вы не нажмёте «Применить».', 'Alles, was ihr beide wollt (und niemand abgelehnt hat) und noch nicht im Plan steht — einsortiert in den Tag, der vom Viertel und vom Tempo her passt. Gespeichert wird erst, wenn du auf Übernehmen tippst.'],
+  apply: ['✓ Apply to the plan', '✓ Применить', '✓ In den Plan übernehmen'], cancel: ['Cancel', 'Отмена', 'Abbrechen'], nothingToAdd: ['Nothing to add — everything you both want is already in the plan.', 'Добавлять нечего — всё, чего хотите обе, уже в плане.', 'Nichts hinzuzufügen — alles, was ihr beide wollt, steht schon im Plan.'], noFit: ['no free day fits', 'нет подходящего дня', 'kein freier Tag passt'],
+  applied: ['Added to the plan', 'Добавлено в план', 'Zum Plan hinzugefügt'],
+  pickDay: ['Which day?', 'В какой день?', 'An welchem Tag?'], pickStop: ['Add a stop', 'Добавить пункт', 'Stopp hinzufügen'], custom: ['✎ Custom stop', '✎ Свой пункт', '✎ Eigener Stopp'], customName: ['What is it?', 'Что это?', 'Was ist es?'], customMin: ['min', 'мин', 'Min'], add: ['Add', 'Добавить', 'Hinzufügen'],
+  breakTitle: ['A break near', 'Пауза рядом с', 'Eine Pause in der Nähe von'], breakNone: ['No café or bar in the library near that stop — add one from Explore.', 'В библиотеке нет кафе или бара рядом — добавьте из раздела «Места».', 'Kein Café und keine Bar in der Nähe dieses Stopps — füge eine über „Entdecken“ hinzu.'],
+  replanTitle: ['Replan this day', 'Перепланировать день', 'Diesen Tag neu planen'], later: ['☀️ Start an hour later', '☀️ Начать на час позже', '☀️ Eine Stunde später starten'], lighter: ['🪶 Make it lighter — drop a stop', '🪶 Сделать легче — убрать пункт', '🪶 Leichter machen — einen Stopp streichen'], rainSwap: ['🌧 Swap outdoor stops for the rain plan', '🌧 Заменить уличное на план для дождя', '🌧 Außenstopps gegen den Regenplan tauschen'], askAI: ['✨ Ask the concierge', '✨ Спросить консьержа', '✨ Den Concierge fragen'], askPlaceholder: ['e.g. We\'re tired — one museum, a long lunch, home by 9', 'например: мы устали — один музей, долгий обед, домой к 9', 'z. B.: Wir sind müde — ein Museum, langes Mittagessen, um 21 Uhr zu Hause'], thinking: ['Drafting…', 'Думаю…', 'Entwurf läuft…'], applyDraft: ['✓ Apply this draft', '✓ Применить', '✓ Entwurf übernehmen'],
+  aiOff: ['The concierge is not connected yet (see the Chat tab).', 'Консьерж пока не подключён (см. вкладку «Чат»).', 'Der Concierge ist noch nicht verbunden (siehe Tab „Chat“).'], shifted: ['Day shifted an hour later', 'День сдвинут на час позже', 'Tag um eine Stunde nach hinten verschoben'], whichDrop: ['Which stop goes?', 'Какой пункт убрать?', 'Welcher Stopp fällt weg?'],
+  daysToGo: ['days to go', 'дней до поездки', 'Tage'], dayOf: ['Day', 'День', 'Tag'], of: ['of', 'из', 'von'], today: ['Today', 'Сегодня', 'Heute'], tomorrow: ['Tomorrow', 'Завтра', 'Morgen'], nextUp: ['Next up', 'Дальше', 'Als Nächstes'], nowAt: ['Now', 'Сейчас', 'Jetzt'], openDay: ['Open the day', 'Открыть день', 'Tag öffnen'], getHome: ['⌂ Get me home', '⌂ Домой', '⌂ Nach Hause'], wrap: ['That was the trip — the plan pages are the memory book now.', 'Поездка позади — страницы дней теперь на память.', 'Das war die Reise — die Tagesseiten sind jetzt das Erinnerungsbuch.'],
+  beforeIntro: ['The week is sketched in; rate places in Explore, book the handful of things that sell out, and the app takes it from there.', 'Неделя намечена; оцените места в разделе «Места», забронируйте то немногое, что раскупают, — остальное сделает приложение.', 'Die Woche ist skizziert. Bewertet Orte unter „Entdecken“, bucht die paar Dinge, die ausverkauft sind — den Rest macht die App.'],
+  toBook: ['still to book', 'ещё забронировать', 'noch zu buchen'], allBooked: ['everything that needed booking is booked', 'всё, что нужно было забронировать, забронировано', 'alles Nötige ist gebucht'],
+  flightOut: ['To New York', 'В Нью-Йорк', 'Nach New York'], flightBack: ['Home to Hannover', 'Домой в Ганновер', 'Zurück nach Hannover'], locked: ['booked', 'забронировано', 'gebucht'], lockedOf: ['of', 'из', 'von'],
+  save: ['Save', 'Сохранить', 'Speichern'], saved: ['Saved', 'Сохранено', 'Gespeichert'], noResv: ['No reservations logged yet.', 'Броней пока нет.', 'Noch keine Reservierungen eingetragen.'],
+  icsDone: ['Calendar file ready — open it to add the events', 'Файл календаря готов — откройте его, чтобы добавить события', 'Kalenderdatei fertig — zum Eintragen öffnen'],
+  notesEmpty: ['No notes yet.', 'Заметок пока нет.', 'Noch keine Notizen.'], delete: ['delete', 'удалить', 'löschen'],
+  nearNone: ['Location not available — allow it in Settings, or open the map.', 'Геолокация недоступна — разрешите её в настройках или откройте карту.', 'Standort nicht verfügbar — in den Einstellungen erlauben oder die Karte öffnen.'], locating: ['Locating…', 'Определяю…', 'Standort wird ermittelt…'], near: ['Nearest to you', 'Ближе всего к вам', 'Am nächsten bei dir'],
+  syncOn: ['sync on', 'синхронизация включена', 'Sync aktiv'], syncOff: ['saving on this phone only', 'сохраняется только на этом телефоне', 'wird nur auf diesem Handy gespeichert'],
+  chatOffline: ['The concierge needs a connection.', 'Консьержу нужно соединение.', 'Der Concierge braucht eine Verbindung.'], chatErr: ['The concierge is not answering — try again in a moment.', 'Консьерж не отвечает — попробуйте чуть позже.', 'Der Concierge antwortet nicht — gleich noch einmal versuchen.'],
+  updating: ['Updating…', 'Обновляю…', 'Wird aktualisiert…'], copied: ['Copied', 'Скопировано', 'Kopiert'],
+  rainTitle: ['Rain in the forecast — indoor swaps for this day', 'В прогнозе дождь — варианты под крышей на этот день', 'Regen gemeldet — Alternativen drinnen für diesen Tag'],
+  paceRelaxedPick: ['Relaxed', 'Спокойный', 'Entspannt'], paceNormalPick: ['Comfortable', 'Комфортный', 'Angenehm'], paceFullPick: ['Full', 'Насыщенный', 'Voll'],
+  ideasHead: ['Your ideas', 'Ваши идеи', 'Eure Ideen'], idea: ['idea', 'идея', 'Idee'],
+  filters: ['Filters', 'Фильтры', 'Filter'], swipeMode: ['Swipe', 'Свайп', 'Swipe'],
+  fillGap: ['tap to fill', 'заполнить', 'tippen zum Füllen'], fillGapTitle: ['Fill this gap', 'Чем заполнить', 'Diese Lücke füllen'], fillGapNone: ['Nothing in the library fits that window nearby — browse everything instead.', 'Ничего подходящего рядом на это время — посмотрите весь список.', 'Nichts in der Nähe passt in dieses Zeitfenster — sieh dir stattdessen alles an.'], detour: ['detour', 'крюк', 'Umweg'],
+  sortRank: ['Sort: our votes', 'Сортировка: наши голоса', 'Sortierung: unsere Stimmen'], sortNear: ['Sort: closest to home', 'Сортировка: ближе к дому', 'Sortierung: am nächsten'], sortAz: ['Sort: A–Z', 'Сортировка: А–Я', 'Sortierung: A–Z'], sortHood: ['Sort: neighborhood', 'Сортировка: район', 'Sortierung: Viertel'],
+  searchPh: ['Search: rooftop, pizza, Sézane, Williamsburg…', 'Поиск: крыша, пицца, Sézane, Уильямсбург…', 'Suche: Dachbar, Pizza, Sézane, Williamsburg…'],
+};
+const t = (k) => { const v = S[k]; if (!v) return k; return v[LI()] || v[0]; };
 const CATS = [
-  ['see', '🗽', 'Sights', 'Достопримечательности', '#FF6319'], ['museum', '🖼', 'Museums', 'Музеи', '#0039A6'], ['show', '🎭', 'Shows & events', 'Шоу и события', '#B933AD'],
-  ['eat', '🍽', 'Eat', 'Еда', '#EE352E'], ['drink', '🍸', 'Drinks', 'Бары', '#F5B700'], ['cafe', '☕', 'Cafés', 'Кафе', '#8a6f47'],
-  ['shop', '🛍', 'Shopping', 'Шопинг', '#FF3EA5'], ['park', '🌳', 'Parks & walks', 'Парки и прогулки', '#6CBE45'], ['walk', '🚶', 'Walks', 'Прогулки', '#6CBE45'],
-  ['daytrip', '🚌', 'Day trips', 'Поездки', '#00933C'], ['idea', '💡', 'Your ideas', 'Ваши идеи', '#5D6170'],
+  ['see', '🗽', 'Sights', 'Достопримечательности', 'Sehenswertes', '#FF6319'], ['museum', '🖼', 'Museums', 'Музеи', 'Museen', '#0039A6'], ['show', '🎭', 'Shows & events', 'Шоу и события', 'Shows & Events', '#B933AD'],
+  ['eat', '🍽', 'Eat', 'Еда', 'Essen', '#EE352E'], ['drink', '🍸', 'Drinks', 'Бары', 'Bars', '#F5B700'], ['cafe', '☕', 'Cafés', 'Кафе', 'Cafés', '#8a6f47'],
+  ['shop', '🛍', 'Shopping', 'Шопинг', 'Shopping', '#FF3EA5'], ['park', '🌳', 'Parks & walks', 'Парки и прогулки', 'Parks & Spaziergänge', '#6CBE45'], ['walk', '🚶', 'Walks', 'Прогулки', 'Spaziergänge', '#6CBE45'],
+  ['daytrip', '🚌', 'Day trips', 'Поездки', 'Tagesausflüge', '#00933C'], ['idea', '💡', 'Your ideas', 'Ваши идеи', 'Eure Ideen', '#5D6170'],
 ];
-const CAT = {}; CATS.forEach(c => { CAT[c[0]] = { key: c[0], ico: c[1], en: c[2], ru: c[3], color: c[4] }; });
-const catLabel = (k) => { const c = CAT[k] || CAT.idea; return c.ico + ' ' + (RL() ? c.ru : c.en); };
+const CAT = {}; CATS.forEach(c => { CAT[c[0]] = { key: c[0], ico: c[1], en: c[2], ru: c[3], de: c[4], color: c[5] }; });
+const catLabel = (k) => { const c = CAT[k] || CAT.idea; return c.ico + ' ' + L(c.en, c.ru, c.de); };
 const catColor = (k) => (CAT[k] || CAT.idea).color;
-const TAGS = [['first-timer', 'First-timer', 'Обязательно'], ['near-home', 'Near home', 'Рядом с домом'], ['rainy-day', 'Rainy day', 'На дождь'], ['free', 'Free', 'Бесплатно'], ['view', 'Views', 'Виды'], ['mike-evening', 'With Mike', 'С Майком'], ['pre-dinner', 'Pre-dinner drink', 'Аперитив'], ['brunch', 'Brunch', 'Бранч'], ['hidden-gem', 'Hidden gem', 'Нетуристическое'], ['splurge', 'Splurge', 'Роскошь'], ['late-night', 'Late night', 'Поздний вечер'], ['dessert', 'Dessert', 'Десерт']];
+const TAGS = [['first-timer', 'First-timer', 'Обязательно', 'Für Erstbesucher'], ['near-home', 'Near home', 'Рядом с домом', 'Nah bei uns'], ['rainy-day', 'Rainy day', 'На дождь', 'Bei Regen'], ['free', 'Free', 'Бесплатно', 'Kostenlos'], ['view', 'Views', 'Виды', 'Aussicht'], ['mike-evening', 'With Mike', 'С Майком', 'Mit Mike'], ['pre-dinner', 'Pre-dinner drink', 'Аперитив', 'Aperitif'], ['brunch', 'Brunch', 'Бранч', 'Brunch'], ['hidden-gem', 'Hidden gem', 'Нетуристическое', 'Geheimtipp'], ['splurge', 'Splurge', 'Роскошь', 'Luxus'], ['late-night', 'Late night', 'Поздний вечер', 'Spätabends'], ['dessert', 'Dessert', 'Десерт', 'Dessert']];
 const DOW = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-const DOWL = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ru: ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'] };
+const DOWL = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ru: ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'], de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'] };
+const MON = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], ru: ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'], de: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'] };
+const LOCALE = { en: 'en-US', ru: 'ru-RU', de: 'de-DE' };
+const monthName = (date) => MON[lang][Number(String(date).split('-')[1]) - 1];
+const longDate = (date) => { const p = String(date).split('-').map(Number); const wd = new Date(p[0], p[1] - 1, p[2]).getDay(); return DOWL[lang][wd] + ' ' + p[2] + ' ' + MON[lang][p[1] - 1]; };
+// A stop's label in the current language; seeds carry en/ru/de, places carry nameRu/nameDe.
+const stopLabel = (it) => { if (!it) return ''; if (it.place) return placeName(it.place); return L(it.en, it.ru, it.de); };
 
 // ---------------------------------------------------------------- travelers + state
 const TR = T.TRAVELERS || [];
 let me = null; try { me = localStorage.getItem(LSK + '-who'); } catch (e) {}
-function whoName(k) { const o = ((state.settings.names || {}).v || state.settings.names || {})[k]; if (o) return o; const tr = TR.find(x => x[0] === k); return tr ? (RL() ? (tr[2] || tr[1]) : tr[1]) : k; }
+function whoName(k) { const o = ((state.settings.names || {}).v || state.settings.names || {})[k]; if (o) return o; const tr = TR.find(x => x[0] === k); return tr ? L(tr[1], tr[2], tr[4] || tr[1]) : k; }
 function whoEmoji(k) { const tr = TR.find(x => x[0] === k); return tr ? (tr[3] || '') : ''; }
 const state = { vote: {}, agenda: {}, custom: {}, mike: {}, daynote: {}, note: {}, check: {}, resv: {}, settings: {}, pack: {} };
 function localLoad() { try { const s = JSON.parse(localStorage.getItem(LSK + '-shared') || '{}'); Object.keys(s).forEach(k => { state[k] = Object.assign({}, state[k] || {}, s[k]); }); } catch (e) {} }
@@ -138,15 +160,17 @@ function agPad(m) { m = Math.max(0, Math.min(m, 1439)); return String(Math.floor
 function todayKey() { const n = new Date(); return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0'); }
 function dayOfKey(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return null; return DAYKEYS.indexOf(dayKey); }
 function dowOf(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return null; const p = d.date.split('-').map(Number); return DOW[new Date(p[0], p[1] - 1, p[2]).getDay()]; }
-function dayLabel(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return dayKey; return (RL() ? (d.dwRu || d.dw) : d.dw) + ' ' + d.dn; }
-function dayTitle(d) { return RL() ? (d.titleRu || d.title) : d.title; }
-function placeName(p) { return RL() ? (p.nameRu || p.name) : p.name; }
-function placeWhy(p) { return RL() ? (p.whyRu || p.why || '') : (p.why || ''); }
-function placeSub(p) { return RL() ? (p.subRu || p.sub || '') : (p.sub || ''); }
-function placeHours(p) { return RL() ? (p.hoursRu || p.hours || '') : (p.hours || ''); }
-function placePrice(p) { return RL() ? (p.priceRu || p.price || '') : (p.price || ''); }
-function placeLead(p) { return RL() ? (p.leadRu || p.lead || '') : (p.lead || ''); }
-function placeTips(p) { const a = RL() ? (p.tipsRu || p.tips) : p.tips; return Array.isArray(a) ? a : []; }
+const DWL = { ru: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'], de: ['So','Mo','Di','Mi','Do','Fr','Sa'] };
+function dayLabel(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return dayKey; const p = d.date.split('-').map(Number); const wd = new Date(p[0], p[1]-1, p[2]).getDay(); const nm = lang === 'en' ? d.dw : (DWL[lang] ? DWL[lang][wd] : d.dw); return nm + ' ' + d.dn; }
+function dayTitle(d) { return fld(d, 'title'); }
+function dayLede(d) { return fld(d, 'lede'); }
+function placeName(p) { return fld(p, 'name') || p.name; }
+function placeWhy(p) { return fld(p, 'why'); }
+function placeSub(p) { return fld(p, 'sub'); }
+function placeHours(p) { return fld(p, 'hours'); }
+function placePrice(p) { return fld(p, 'price'); }
+function placeLead(p) { return fld(p, 'lead'); }
+function placeTips(p) { const a = fld(p, 'tips'); return Array.isArray(a) ? a : (Array.isArray(p.tips) ? p.tips : []); }
 const HOMEMIN = {};
 function fromHomeMin(p) { if (!p || p.lat == null) return null; if (HOMEMIN[p.id] == null) HOMEMIN[p.id] = G.fromHome(p.lat, p.lng); return HOMEMIN[p.id]; }
 let RENDER_Q = null;
@@ -188,7 +212,11 @@ function seedFor(ref) {
   if (ref.startsWith('p:')) {
     const p = PL[ref.slice(2)];
     if (!p) { AGSEED[ref] = { id: ref, t: '12:00', d: 60, lock: false, en: '⚠️ ' + ref.slice(2), ru: '⚠️ ' + ref.slice(2), p: null, q: null, missing: true }; return AGSEED[ref]; }
-    AGSEED[ref] = { id: ref, t: bestTime(p), d: p.dur || 60, lock: false, en: p.name, ru: p.nameRu || p.name, p: (p.lat != null) ? [p.lat, p.lng] : null, q: null, place: p };
+    // Route to the access point when the pin is not where you arrive (ferry islands,
+    // a park entrance, the Manhattan end of the bridge) — the pin stays on the map.
+    const acc = (T.ACCESS || {})[p.id];
+    const pt = acc || ((p.lat != null) ? [p.lat, p.lng] : null);
+    AGSEED[ref] = { id: ref, t: bestTime(p), d: p.dur || 60, lock: false, en: p.name, ru: p.nameRu || p.name, p: pt, q: pt, pin: (p.lat != null) ? [p.lat, p.lng] : null, place: p };
     return AGSEED[ref];
   }
   if (ref.startsWith('x:')) {
@@ -242,7 +270,8 @@ function agReflow(day, ids) {
     const it = seedFor(id); const seed = agBase(day, id); const d = agDur(day, id);
     const anchored = it.lock || ov[id] != null;
     let gap = 0, mode = '';
-    if (i > 0) { const est = agTravel(prevQ, it.p); gap = (est != null) ? est : 10; mode = G.travelMode(prevQ, it.p); }
+    // A stop with no location ("a café near here") happens where you already are.
+    if (i > 0) { if (!it.p) { gap = 5; mode = 'same'; } else { const est = agTravel(prevQ, it.p); gap = (est != null) ? est : 10; mode = G.travelMode(prevQ, it.p); } }
     let start, warn = false;
     if (i === 0) start = seed;
     else if (anchored) { start = seed; warn = cur + gap > seed + 5; }
@@ -308,9 +337,8 @@ function paceLabel(lvl) { return [t('paceRelaxed'), t('paceComfy'), t('paceFull'
 function buildDayPanels() {
   const host = $('#dayhost'); if (!host) return;
   host.innerHTML = DAYS.map((d, i) => {
-    const raw = (RL() ? d.ledeRu : d.lede) || '';
     return '<section class="panel" id="' + d.key + '" role="tabpanel">' +
-      '<div class="dayhead"><div class="kicker"><span class="no">' + t('dayOf').toUpperCase() + ' ' + (i + 1) + '</span><span class="eyebrow"><span class="dl"></span> · <span class="wx" data-wxday="' + d.key + '"></span></span></div>' +
+      '<div class="dayhead"><div class="kicker"><span class="no">' + t('dayOf').toUpperCase() + ' ' + (i + 1) + '</span><span class="eyebrow"><span class="dl"></span><span class="wxsep"></span><span class="wx" data-wxday="' + d.key + '"></span></span></div>' +
       '<h2 class="dt"></h2><p class="lede dlede"></p>' +
       '<div class="daytools"><button class="mikebtn" type="button" data-mike="' + d.key + '" aria-pressed="false"></button><span class="pace" data-pace="' + d.key + '"></span></div><p class="pacehint" data-pacehint="' + d.key + '" hidden></p></div>' +
       '<div class="rainbox" data-rainbox="' + d.key + '" hidden></div>' +
@@ -330,9 +358,9 @@ function paintDayHeads() {
   DAYS.forEach((d, i) => {
     const sec = document.getElementById(d.key); if (!sec) return;
     sec.querySelector('.no').textContent = t('dayOf').toUpperCase() + ' ' + (i + 1);
-    sec.querySelector('.dl').textContent = dayLabel(d.key) + ' · ' + (RL() ? ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'][Number(d.date.split('-')[1]) - 1] : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(d.date.split('-')[1]) - 1]);
+    sec.querySelector('.dl').textContent = dayLabel(d.key) + ' · ' + monthName(d.date);
     sec.querySelector('.dt').textContent = dayTitle(d);
-    sec.querySelector('.dlede').textContent = (RL() ? d.ledeRu : d.lede) || '';
+    sec.querySelector('.dlede').textContent = dayLede(d);
     sec.querySelector('[data-addstop]').textContent = t('addStop');
     sec.querySelector('[data-break]').textContent = t('suggestBreak');
     sec.querySelector('[data-replan]').textContent = t('replan');
@@ -346,7 +374,7 @@ let AG_DRAG = false, AG_LASTDRAG = 0;
 document.addEventListener('pointerdown', function (e) { if (!e.target.closest('.agmenu,.ag-mv')) $$('.agmenu').forEach(m => m.remove()); }, true);
 document.addEventListener('click', function (e) { if (AG_LASTDRAG && (Date.now() - AG_LASTDRAG) < 450 && e.target.closest('.aglist')) { e.preventDefault(); e.stopPropagation(); } }, true);
 function rowTitleHtml(it) {
-  const ttl = RL() ? it.ru : it.en;
+  const ttl = stopLabel(it);
   if (it.place) return '<button type="button" class="ag-link" data-openplace="' + esc(it.place.id) + '">' + esc(ttl) + '</button>';
   if (it.link && it.link.startsWith('#guide-')) return '<button type="button" class="ag-link" data-goguide="' + esc(it.link.slice(7)) + '">' + esc(ttl) + '</button>';
   if (it.link && it.link.startsWith('#explore-')) return '<button type="button" class="ag-link" data-goexplore="' + esc(it.link.slice(9)) + '">' + esc(ttl) + '</button>';
@@ -377,7 +405,10 @@ function renderAgenda(day) {
         if (g <= 0 && diff > 0) lbl = '↓ ' + diff + ' ' + t('free');
         else if (g > 0 && slack <= 10) lbl = '↓ ~' + (diff > 0 ? diff : g) + ' ' + unit;
         else if (g > 0) lbl = '↓ ~' + g + ' ' + unit + ' · ' + slack + ' ' + t('slack');
-        if (lbl) conn = '<div class="aggap' + (g >= 45 ? ' long' : '') + '">' + lbl + '</div>';
+        // A real hole in the day is an offer, not a complaint: tap it to fill it.
+        const fillable = slack >= 45;
+        if (fillable) lbl = (lbl || '↓ ' + diff + ' ' + t('free')) + ' · ' + t('fillGap');
+        if (lbl) conn = '<div class="aggap' + (g >= 45 ? ' long' : '') + (fillable ? ' fill' : '') + '"' + (fillable ? ' data-gap="' + i + '" role="button" tabindex="0"' : '') + '>' + lbl + '</div>';
       }
       const cat = r.it.place ? r.it.place.cat : (r.it.x ? 'x' : 'idea');
       const ico = r.it.place ? (CAT[r.it.place.cat] || CAT.idea).ico : (r.it.custom ? '💡' : '');
@@ -403,6 +434,7 @@ function renderAgenda(day) {
     };
   });
   box.querySelector('[data-agtoggle]').onclick = () => { box.classList.toggle('open'); };
+  box.querySelectorAll('[data-gap]').forEach(gp => { gp.onclick = (e) => { e.stopPropagation(); fillGap(day, Number(gp.dataset.gap)); }; });
   const rst = box.querySelector('[data-agreset]'); if (rst) rst.onclick = (e) => { e.stopPropagation(); put('agenda', day, null); toast(L('Day reset to the plan', 'День возвращён к плану')); };
   box.querySelectorAll('[data-openplace]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); openPlace(b.dataset.openplace); }; });
   box.querySelectorAll('[data-goguide]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); goGuide(b.dataset.goguide); }; });
@@ -545,7 +577,7 @@ function openBuildWeek() {
   DAYKEYS.forEach(d => {
     if (!r.plan[d]) return;
     html += '<div class="pd">' + dayLabel(d) + ' · ' + esc(dayTitle(DAYBYKEY[d])) + '</div>';
-    agReflow(d, r.virtual[d]).forEach(row => { const added = r.plan[d].some(a => a.ref === row.it.id); html += '<div class="pr' + (added ? ' add' : '') + '"><span class="tt">' + agHM(row.start) + '</span>' + (added ? '＋ ' : '') + esc(RL() ? row.it.ru : row.it.en) + '</div>'; });
+    agReflow(d, r.virtual[d]).forEach(row => { const added = r.plan[d].some(a => a.ref === row.it.id); html += '<div class="pr' + (added ? ' add' : '') + '"><span class="tt">' + agHM(row.start) + '</span>' + (added ? '＋ ' : '') + esc(stopLabel(row.it)) + '</div>'; });
   });
   html += '</div>' + (r.skipped.length ? '<p class="gsub">' + t('noFit') + ': ' + esc(r.skipped.map(p => placeName(p)).join(', ')) + '</p>' : '') +
     '<div class="sheetacts"><button class="act go" type="button" id="bw-apply">' + t('apply') + '</button><button class="act" type="button" id="bw-cancel">' + t('cancel') + '</button></div>';
@@ -579,7 +611,7 @@ function openPlace(id) {
   if (!p && id.startsWith('c:')) { custom = (state.custom || {})[id.slice(2)]; if (!custom) return; ref = id; p = { id: id.slice(2), name: custom.name, cat: 'idea', hood: custom.hood || '', dur: custom.d || 60, why: '', tips: [], tags: [], custom: true }; }
   if (!p) return;
   const hm = fromHomeMin(p); const dow = scheduledDays(ref); const v = votesFor(ref);
-  const closed = Array.isArray(p.closed) && p.closed.length ? p.closed.map(c => (RL() ? DOWL.ru : DOWL.en)[DOW.indexOf(c)]).join(', ') : '';
+  const closed = Array.isArray(p.closed) && p.closed.length ? p.closed.map(c => DOWL[lang][DOW.indexOf(c)]).join(', ') : '';
   const kv = [];
   if (placeHours(p)) kv.push([t('hours'), placeHours(p)]);
   if (closed) kv.push([t('closed'), closed]);
@@ -605,10 +637,10 @@ function openPlace(id) {
     const del = $('#sh-del'); if (del) del.onclick = () => { put('custom', id.slice(2), Object.assign({}, custom, { deleted: true })); closeSheet(); };
   });
 }
-function tagLabel(x) { const tg = TAGS.find(z => z[0] === x); return tg ? (RL() ? tg[2] : tg[1]) : x.replace(/-/g, ' '); }
+function tagLabel(x) { const tg = TAGS.find(z => z[0] === x); return tg ? L(tg[1], tg[2], tg[3]) : x.replace(/-/g, ' '); }
 function pickDay(ref, p) {
   const fits = rankDays(p || seedFor(ref).place || { tags: [] });
-  const html = '<h3>' + t('pickDay') + '</h3><p class="meta">' + esc(RL() ? seedFor(ref).ru : seedFor(ref).en) + '</p>' +
+  const html = '<h3>' + t('pickDay') + '</h3><p class="meta">' + esc(stopLabel(seedFor(ref))) + '</p>' +
     fits.map(f => { const d = DAYBYKEY[f.day]; const placed = agIds(f.day).indexOf(ref) >= 0; return '<div class="pkrow" data-pick="' + f.day + '"><div class="pn">' + dayLabel(f.day) + ' · ' + esc(dayTitle(d)) + '<small>' + (f.closed ? '⚠ ' + t('closedThatDay') : (f.why || '')) + '</small></div><button type="button" class="pk-b' + (f.rec ? ' rec' : '') + '" ' + (f.closed ? 'disabled' : '') + '>' + (placed ? '✓' : (f.rec ? '★ ' + t('recommended') : '📅')) + '</button></div>'; }).join('');
   openSheet(html, () => { $$('#sheet [data-pick]').forEach(r => { const b = r.querySelector('.pk-b'); if (b.disabled) return; r.onclick = () => { agInsert(r.dataset.pick, ref); closeSheet(); toast(t('applied') + ' · ' + dayLabel(r.dataset.pick)); }; }); });
 }
@@ -641,9 +673,37 @@ function suggestBreak(day) {
   const inDay = new Set(agIds(day));
   const cands = PLACES.filter(p => (p.cat === wantCat || (wantCat === 'drink' && (p.tags || []).indexOf('pre-dinner') >= 0)) && p.lat != null && !inDay.has('p:' + p.id))
     .map(p => ({ p, km: G.haversine(pt[0], pt[1], p.lat, p.lng) })).filter(x => x.km <= 1.6).sort((a, b) => a.km - b.km).slice(0, 7);
-  const html = '<h3>' + t('breakTitle') + ' ' + esc(RL() ? anchor.it.ru : anchor.it.en) + '</h3><p class="meta">' + agHM(anchor.end) + ' · ' + catLabel(wantCat) + '</p>' +
+  const html = '<h3>' + t('breakTitle') + ' ' + esc(stopLabel(anchor.it)) + '</h3><p class="meta">' + agHM(anchor.end) + ' · ' + catLabel(wantCat) + '</p>' +
     (cands.length ? cands.map(x => '<div class="pkrow" data-brk="' + esc(x.p.id) + '"><div class="pn">' + esc(placeName(x.p)) + '<small>' + esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + ' · ' + G.walkMin(x.km) + ' ' + t('walk') + ' ' + voteBadges('p:' + x.p.id) + '</small></div><button type="button" class="pk-b">＋</button></div>').join('') : '<p class="gsub">' + t('breakNone') + '</p>');
   openSheet(html, () => { $$('#sheet [data-brk]').forEach(r => { r.onclick = () => { const p = PL[r.dataset.brk]; const km = G.haversine(pt[0], pt[1], p.lat, p.lng); agInsert(day, 'p:' + p.id, { after: anchor.it.id, at: anchor.end + G.walkMin(km) }); closeSheet(); toast(t('applied')); }; }); });
+}
+// Fill an empty stretch between two stops with something they actually want that
+// sits between them geographically and fits in the time available.
+function fillGap(day, idx) {
+  const rows = agReflow(day, agIds(day)); const before = rows[idx - 1], after = rows[idx];
+  if (!before || !after) return;
+  const slack = after.start - before.end - after.gap;
+  const from = before.it.q || before.it.p, to = after.it.p;
+  const inDay = new Set(agIds(day)); const dow = dowOf(day);
+  const cands = PLACES.filter(p => {
+    if (p.lat == null || inDay.has('p:' + p.id)) return false;
+    if (Array.isArray(p.closed) && p.closed.indexOf(dow) >= 0) return false;
+    if (voteScore('p:' + p.id) < 0) return false;
+    const inA = from ? agTravel(from, [p.lat, p.lng]) : 0;
+    const outB = to ? agTravel([p.lat, p.lng], to) : 0;
+    const need = inA + Math.min(p.dur || 60, 90) + outB;
+    return need <= slack + after.gap + 15;
+  }).map(p => {
+    const inA = from ? agTravel(from, [p.lat, p.lng]) : 0, outB = to ? agTravel([p.lat, p.lng], to) : 0;
+    return { p, detour: inA + outB - after.gap, stay: Math.min(p.dur || 60, Math.max(30, slack - (inA + outB - after.gap))), score: voteScore('p:' + p.id) * 8 + (bothWant('p:' + p.id) ? 20 : 0) - (inA + outB) };
+  }).sort((a, b) => b.score - a.score).slice(0, 8);
+  const html = '<h3>' + t('fillGapTitle') + '</h3><p class="meta">' + agHM(before.end) + '–' + agHM(after.start) + ' · ' + slack + ' ' + t('minutes') + ' ' + t('free') + ' · ' + esc(stopLabel(before.it)) + ' → ' + esc(stopLabel(after.it)) + '</p>' +
+    (cands.length ? cands.map(x => '<div class="pkrow" data-fill="' + esc(x.p.id) + '" data-stay="' + x.stay + '"><div class="pn">' + (CAT[x.p.cat] || CAT.idea).ico + ' ' + esc(placeName(x.p)) + '<small>' + esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + ' · +' + Math.max(0, Math.round(x.detour)) + ' ' + t('minutes') + ' ' + t('detour') + ' ' + voteBadges('p:' + x.p.id) + '</small></div><button type="button" class="pk-b' + (bothWant('p:' + x.p.id) ? ' rec' : '') + '">＋ ' + x.stay + '′</button></div>').join('') : '<p class="gsub">' + t('fillGapNone') + '</p>') +
+    '<div class="sheetacts"><button class="act" type="button" id="fg-browse">' + t('addStop') + '</button></div>';
+  openSheet(html, () => {
+    $$('#sheet [data-fill]').forEach(r => { r.onclick = () => { const id = r.dataset.fill; const stay = Number(r.dataset.stay); const inA = from ? agTravel(from, [PL[id].lat, PL[id].lng]) : 0; agInsert(day, 'p:' + id, { after: before.it.id, at: before.end + inA }); agSetDur(day, 'p:' + id, stay); closeSheet(); toast(t('applied')); }; });
+    $('#fg-browse').onclick = () => openAddStop(day);
+  });
 }
 function openReplan(day) {
   const rows = agReflow(day, agIds(day));
@@ -657,7 +717,7 @@ function openReplan(day) {
     $('#rp-later').onclick = () => { if (!rows.length) return; const first = rows[0]; const st = agState(day); put('agenda', day, { ids: agIds(day), t: Object.assign({}, st.t || {}, { [first.it.id]: agPad(first.start + 60) }), d: st.d || {}, seen: (AGDAYS[day] || []).slice() }); closeSheet(); toast(t('shifted')); };
     $('#rp-lighter').onclick = () => {
       const cands = rows.filter(r => !r.it.lock).map(r => ({ r, s: r.it.place ? voteScore('p:' + r.it.place.id) : 0 })).sort((a, b) => a.s - b.s);
-      const h = '<h3>' + t('whichDrop') + '</h3>' + cands.map(c => '<div class="pkrow" data-drop="' + esc(c.r.it.id) + '"><div class="pn">' + agHM(c.r.start) + ' ' + esc(RL() ? c.r.it.ru : c.r.it.en) + '<small>' + (c.r.it.place ? voteBadges('p:' + c.r.it.place.id) : '') + '</small></div><button type="button" class="pk-b">✕</button></div>').join('');
+      const h = '<h3>' + t('whichDrop') + '</h3>' + cands.map(c => '<div class="pkrow" data-drop="' + esc(c.r.it.id) + '"><div class="pn">' + agHM(c.r.start) + ' ' + esc(stopLabel(c.r.it)) + '<small>' + (c.r.it.place ? voteBadges('p:' + c.r.it.place.id) : '') + '</small></div><button type="button" class="pk-b">✕</button></div>').join('');
       openSheet(h, () => { $$('#sheet [data-drop]').forEach(x => { x.onclick = () => { agSave(day, agIds(day).filter(id => id !== x.dataset.drop)); closeSheet(); toast(t('removed')); }; }); });
     };
     const rr = $('#rp-rain'); if (rr) rr.onclick = () => {
@@ -684,8 +744,8 @@ async function askPlanner(day, req) {
     const j = await r.json();
     if (!j || !Array.isArray(j.stops) || !j.stops.length) { out.innerHTML = '<p class="gsub">' + esc((j && j.note) || t('chatErr')) + '</p>'; return; }
     const cur = new Set(agIds(day));
-    out.innerHTML = '<div class="preview">' + j.stops.map(s => { const it = seedFor(s.ref); return '<div class="pr' + (cur.has(s.ref) ? '' : ' add') + '"><span class="tt">' + esc(s.t) + '</span>' + (cur.has(s.ref) ? '' : '＋ ') + esc(it ? (RL() ? it.ru : it.en) : s.ref) + '</div>'; }).join('') +
-      agIds(day).filter(id => !j.stops.some(s => s.ref === id)).map(id => { const it = seedFor(id); return '<div class="pr rm"><span class="tt">–</span>' + esc(RL() ? it.ru : it.en) + '</div>'; }).join('') + '</div>' +
+    out.innerHTML = '<div class="preview">' + j.stops.map(s => { const it = seedFor(s.ref); return '<div class="pr' + (cur.has(s.ref) ? '' : ' add') + '"><span class="tt">' + esc(s.t) + '</span>' + (cur.has(s.ref) ? '' : '＋ ') + esc(it ? stopLabel(it) : s.ref) + '</div>'; }).join('') +
+      agIds(day).filter(id => !j.stops.some(s => s.ref === id)).map(id => { const it = seedFor(id); return '<div class="pr rm"><span class="tt">–</span>' + esc(stopLabel(it)) + '</div>'; }).join('') + '</div>' +
       (j.note ? '<p class="why">' + esc(j.note) + '</p>' : '') + '<div class="sheetacts"><button class="act go" type="button" id="rp-apply">' + t('applyDraft') + '</button></div>';
     $('#rp-apply').onclick = () => {
       const ids = j.stops.map(s => s.ref).filter(ref => seedFor(ref)); const tt = {}, dd = {};
@@ -697,7 +757,7 @@ async function askPlanner(day, req) {
 }
 function shareDay(day) {
   const d = DAYBYKEY[day]; const rows = agReflow(day, agIds(day));
-  const txt = dayLabel(day) + ' — ' + dayTitle(d) + '\n' + rows.map(r => agHM(r.start) + '  ' + (RL() ? r.it.ru : r.it.en) + (r.it.place && r.it.place.hood ? ' (' + r.it.place.hood + ')' : '')).join('\n') + '\n\n' + location.href.split('#')[0];
+  const txt = dayLabel(day) + ' — ' + dayTitle(d) + '\n' + rows.map(r => agHM(r.start) + '  ' + stopLabel(r.it) + (r.it.place && r.it.place.hood ? ' (' + r.it.place.hood + ')' : '')).join('\n') + '\n\n' + location.href.split('#')[0];
   if (navigator.share) navigator.share({ title: dayTitle(d), text: txt }).catch(() => {});
   else (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => toast(t('copied'))).catch(() => toast(txt.slice(0, 80)));
 }
@@ -734,7 +794,9 @@ function renderExplore() {
   cats.innerHTML = '<button class="vchip" type="button" data-c="all" aria-pressed="' + String(EX.cat === 'all') + '">' + L('All', 'Все') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park', 'daytrip', 'idea'].map(c => '<button class="vchip" type="button" data-c="' + c + '" aria-pressed="' + String(EX.cat === c) + '">' + catLabel(c) + '</button>').join('');
   cats.querySelectorAll('.vchip').forEach(b => { b.onclick = () => { EX.cat = b.dataset.c; renderExplore(); if (EX.deck) deckStart(); }; });
   const tg = $('#extags');
-  tg.innerHTML = TAGS.map(x => '<button class="vchip" type="button" data-t="' + x[0] + '" aria-pressed="' + String(EX.tags.has(x[0])) + '">' + esc(RL() ? x[2] : x[1]) + '</button>').join('');
+  const tt = $('#tagtoggle');
+  if (tt) { const n = EX.tags.size; tt.textContent = (n ? '● ' : '') + t('filters') + (n ? ' (' + n + ')' : ''); tt.setAttribute('aria-pressed', String(!tg.hidden)); tt.onclick = () => { tg.hidden = !tg.hidden; renderExplore(); }; }
+  tg.innerHTML = TAGS.map(x => '<button class="vchip" type="button" data-t="' + x[0] + '" aria-pressed="' + String(EX.tags.has(x[0])) + '">' + esc(L(x[1], x[2], x[3])) + '</button>').join('');
   tg.querySelectorAll('.vchip').forEach(b => { b.onclick = () => { if (EX.tags.has(b.dataset.t)) EX.tags.delete(b.dataset.t); else EX.tags.add(b.dataset.t); renderExplore(); }; });
   const list = exFiltered();
   $('#excount').textContent = list.length + ' ' + t('places');
@@ -748,12 +810,12 @@ function renderExplore() {
 // swipe deck
 const DECK = { queue: [], i: 0 };
 function deckStart() {
-  EX.deck = true; $('#deck').hidden = false; $('#exlist').hidden = true;
-  $('#swipebtn').innerHTML = t('exitSwipe');
+  EX.deck = true; document.body.dataset.deck = '1'; $('#deck').hidden = false; $('#exlist').hidden = true;
+  $('#swipebtn').textContent = t('exitSwipe');
   DECK.queue = exFiltered().filter(p => !p.custom && !votesFor('p:' + p.id)[me]); DECK.i = 0;
   renderDeck();
 }
-function deckStop() { EX.deck = false; $('#deck').hidden = true; $('#swipebtn').innerHTML = '<span class="L-en">🃏 Swipe mode</span><span class="L-ru">🃏 Свайп</span>'; renderExplore(); }
+function deckStop() { EX.deck = false; delete document.body.dataset.deck; $('#deck').hidden = true; $('#swipebtn').textContent = '🃏 ' + t('swipeMode'); paintFallbacks(); renderExplore(); }
 function renderDeck() {
   const host = $('#deck'); if (!host) return;
   if (!me) { host.innerHTML = '<div class="deckdone">' + t('pickWhoFirst') + '</div><div class="whoslot"></div>'; renderWho(); return; }
@@ -784,7 +846,7 @@ function renderPlan() {
   const sched = new Set(); DAYKEYS.forEach(d => agIds(d).forEach(id => sched.add(id)));
   const mine = me ? refs.filter(r => votesFor(r)[me]).length : 0;
   $('#planstats').innerHTML = [[both.length, t('bothWant')], [one.length, t('oneWants')], [Array.from(sched).filter(x => !x.startsWith('x:')).length, t('scheduled')]].map(x => '<div class="pstat"><b>' + x[0] + '</b><span>' + x[1] + '</span></div>').join('');
-  const nameOf = (ref) => { const it = seedFor(ref); return it ? (RL() ? it.ru : it.en) : ref; };
+  const nameOf = (ref) => { const it = seedFor(ref); return it ? stopLabel(it) : ref; };
   const item = (ref, cls) => {
     const days = scheduledDays(ref); const it = seedFor(ref); const p = it && it.place;
     return '<div class="glcard ' + cls + (days.length ? ' done' : '') + '"><div class="glmain"><div class="gln"><button type="button" data-open="' + esc(p ? p.id : ref) + '">' + esc(nameOf(ref)) + '</button></div><div class="glg">' + esc(p ? [placeSub(p), p.hood].filter(Boolean).join(' · ') : t('idea')) + ' · ' + voteBadges(ref) + '</div>' +
@@ -826,7 +888,7 @@ function loadWeather() {
   }).catch(() => {});
 }
 function paintWeather() {
-  DAYS.forEach(d => { const w = WX[d.key]; if (!w) return; $$('.wx[data-wxday="' + d.key + '"]').forEach(el => { el.textContent = w.ico + ' ' + w.hi + '° / ' + w.lo + '°'; }); $$('.cwx[data-cwxday="' + d.key + '"]').forEach(el => { el.textContent = w.ico + w.hi + '°'; }); });
+  DAYS.forEach(d => { const w = WX[d.key]; if (!w) return; $$('.wx[data-wxday="' + d.key + '"]').forEach(el => { el.textContent = w.ico + ' ' + w.hi + '° / ' + w.lo + '°'; const sep = el.parentNode && el.parentNode.querySelector('.wxsep'); if (sep) sep.textContent = ' · '; }); $$('.cwx[data-cwxday="' + d.key + '"]').forEach(el => { el.textContent = w.ico + w.hi + '°'; }); });
 }
 
 // ---------------------------------------------------------------- home / today
@@ -840,7 +902,7 @@ function renderHome() {
   let html = '';
   if (d0 < start) {
     const n = Math.round((start - d0) / 864e5);
-    html = '<div class="today"><div class="eyebrow">' + n + ' ' + t('daysToGo') + '</div><h3>' + esc(RL() ? T.TITLE_RU : T.TITLE) + '</h3><p>' + t('beforeIntro') + '</p>' +
+    html = '<div class="today"><div class="eyebrow">' + n + ' ' + t('daysToGo') + '</div><h3>' + esc(fld(T, 'TITLE_') || T.TITLE) + '</h3><p>' + t('beforeIntro') + '</p>' +
       '<div class="acts wrap2"><button class="act site" type="button" data-go="explore">' + L('Rate places', 'Оценить места') + '</button><button class="act" type="button" data-go="bookings">' + (pending ? pending + ' ' + t('toBook') : t('allBooked')) + '</button><button class="act" type="button" data-goday="' + DAYKEYS[0] + '">' + L('See the plan', 'Смотреть план') + '</button></div></div>';
   } else if (d0 <= end) {
     const dk = DAYS.find(d => d.date === tk); const dayKey = dk ? dk.key : DAYKEYS[0];
@@ -850,10 +912,10 @@ function renderHome() {
     const useKey = showTomorrow ? DAYKEYS[DAYKEYS.indexOf(dayKey) + 1] : dayKey; const useRows = showTomorrow ? agReflow(useKey, agIds(useKey)) : rows;
     const d = DAYBYKEY[useKey]; const w = WX[useKey];
     html = '<div class="today"><div class="eyebrow">' + (showTomorrow ? t('tomorrow') : t('today')) + ' · ' + dayLabel(useKey) + (w ? ' · ' + w.ico + ' ' + w.hi + '°/' + w.lo + '°' : '') + (state.mike[useKey] && state.mike[useKey].on ? ' · 🎷' : '') + '</div><h3>' + esc(dayTitle(d)) + '</h3>' +
-      useRows.map((r, i) => '<div class="trow' + (!showTomorrow && i === nextIdx ? ' next' : '') + '"><span class="tt">' + agHM(r.start) + '</span><span>' + (!showTomorrow && i === nextIdx ? '▶ ' : '') + esc(RL() ? r.it.ru : r.it.en) + '</span></div>').join('') +
+      useRows.map((r, i) => '<div class="trow' + (!showTomorrow && i === nextIdx ? ' next' : '') + '"><span class="tt">' + agHM(r.start) + '</span><span>' + (!showTomorrow && i === nextIdx ? '▶ ' : '') + esc(stopLabel(r.it)) + '</span></div>').join('') +
       '<div class="acts wrap2"><button class="act site" type="button" data-goday="' + useKey + '">' + t('openDay') + '</button><a class="act" href="' + esc(G.mapsDir(null, HOMEPT)) + '" target="_blank" rel="noopener">' + t('getHome') + '</a><button class="act" type="button" data-go="chat">✨ ' + L('Ask', 'Спросить') + '</button></div></div>';
   } else {
-    html = '<div class="today"><div class="eyebrow">' + esc(RL() ? T.TITLE_RU : T.TITLE) + '</div><h3>🗽</h3><p>' + t('wrap') + '</p><div class="acts"><button class="act site" type="button" data-goday="' + DAYKEYS[0] + '">' + t('openDay') + '</button></div></div>';
+    html = '<div class="today"><div class="eyebrow">' + esc(fld(T, 'TITLE_') || T.TITLE) + '</div><h3>🗽</h3><p>' + t('wrap') + '</p><div class="acts"><button class="act site" type="button" data-goday="' + DAYKEYS[0] + '">' + t('openDay') + '</button></div></div>';
   }
   tc.innerHTML = html;
   tc.querySelectorAll('[data-go]').forEach(b => { b.onclick = () => setTab(b.dataset.go); });
@@ -872,7 +934,7 @@ function renderHome() {
   }
   const hb = $('#homebook');
   if (hb) { const list = bookItems().filter(b => !(state.check[b.key] && state.check[b.key].on)).slice(0, 4); hb.innerHTML = list.length ? '<h3>' + L('Book next', 'Забронировать') + '</h3>' + list.map(b => '<div class="exrow"><span>' + (b.url ? '<a href="' + esc(b.url) + '" target="_blank" rel="noopener">' : '') + esc(b.title) + (b.url ? '</a>' : '') + '<small>' + esc(b.sub) + '</small></span></div>').join('') : ''; }
-  const hs = $('#hero-sub-en'); if (hs) hs.textContent = T.SUB || ''; const hr = $('#hero-sub-ru'); if (hr) hr.textContent = T.SUB_RU || T.SUB || '';
+  [['en', T.SUB], ['ru', T.SUB_RU || T.SUB], ['de', T.SUB_DE || T.SUB]].forEach(([k, v]) => { const el = $('#hero-sub-' + k); if (el) el.textContent = v || ''; });
 }
 
 // ---------------------------------------------------------------- bookings
@@ -880,7 +942,7 @@ function bookItems() {
   const out = []; const seenRef = new Set();
   (T.BOOK || []).forEach(b => {
     const ref = b.id.startsWith('x:') ? b.id : 'p:' + b.id; seenRef.add(ref); const p = PL[b.id];
-    out.push({ key: 'book:' + b.id, title: p ? placeName(p) : (seedFor(ref) ? (RL() ? seedFor(ref).ru : seedFor(ref).en) : b.id), sub: (b.day ? dayLabel(b.day) + ' · ' : '') + (RL() ? b.ru : b.en) + (b.by ? ' · ' + L('by', 'до') + ' ' + b.by.slice(5).replace('-', '/') : ''), url: p ? (p.tickets || p.reserve || p.web || '') : '', day: b.day });
+    out.push({ key: 'book:' + b.id, title: p ? placeName(p) : (seedFor(ref) ? stopLabel(seedFor(ref)) : b.id), sub: (b.day ? dayLabel(b.day) + ' · ' : '') + L(b.en, b.ru, b.de) + (b.by ? ' · ' + L('by', 'до', 'bis') + ' ' + b.by.slice(5).replace('-', '/') : ''), url: p ? (p.tickets || p.reserve || p.web || '') : '', day: b.day });
   });
   DAYKEYS.forEach(d => agIds(d).forEach(ref => {
     if (seenRef.has(ref)) return; const it = seedFor(ref); const p = it && it.place; if (!p) return;
@@ -890,7 +952,7 @@ function bookItems() {
 }
 function renderBookings() {
   const fl = $('#flights'); if (!fl) return;
-  fl.innerHTML = (T.FLIGHTS || []).map(f => '<div class="bk"><div class="bk-kind">' + (f.key === 'out' ? t('flightOut') : t('flightBack')) + ' · ' + esc(f.date) + '</div><div class="bk-title">' + esc(f.who) + '</div><div class="bk-line"></div>' + f.legs.map(l => '<div class="leg"><span class="fl">' + esc(l.flight) + '</span><span class="rt">' + esc(l.from) + ' ' + esc(l.dep) + ' → ' + esc(l.to) + ' ' + esc(l.arr) + '<small>' + esc(l.note) + '</small></span></div>').join('') + '</div>').join('');
+  fl.innerHTML = (T.FLIGHTS || []).map(f => '<div class="bk"><div class="bk-kind">' + (f.key === 'out' ? t('flightOut') : t('flightBack')) + ' · ' + esc(f.who) + '</div><div class="bk-title">' + esc(longDate(f.date)) + '</div><div class="bk-line"></div>' + f.legs.map(l => '<div class="leg"><span class="fl">' + esc(l.flight) + '</span><span class="rt">' + esc(l.from) + ' ' + esc(l.dep) + ' → ' + esc(l.to) + ' ' + esc(l.arr) + '<small>' + esc(l.note) + '</small></span></div>').join('') + '</div>').join('');
   const items = bookItems(); const done = items.filter(b => state.check[b.key] && state.check[b.key].on).length;
   $('#ptext').innerHTML = '<b>' + done + ' ' + t('lockedOf') + ' ' + items.length + '</b> ' + t('locked');
   $('#pfill').style.width = (items.length ? Math.round(done / items.length * 100) : 0) + '%';
@@ -925,7 +987,7 @@ function exportICS() {
 // ---------------------------------------------------------------- guide + notes
 function renderGuide() {
   const host = $('#guidesections'); if (!host) return;
-  host.innerHTML = (GUIDE.sections || []).map(s => '<details class="gsec" id="guide-' + esc(s.key) + '"><summary>' + esc(s.icon) + ' ' + esc(RL() ? (s.titleRu || s.title) : s.title) + '<span class="chev">▾</span></summary><div class="gbody">' + md(RL() ? (s.ru || s.en) : s.en) + '</div></details>').join('');
+  host.innerHTML = (GUIDE.sections || []).map(s => '<details class="gsec" id="guide-' + esc(s.key) + '"><summary>' + esc(s.icon) + ' ' + esc(fld(s, 'title') || s.title) + '<span class="chev">▾</span></summary><div class="gbody">' + md(L(s.en, s.ru, s.de)) + '</div></details>').join('');
   const ht = $('#hubtable');
   if (ht) ht.innerHTML = G.HUBS.filter(h => h.key !== 'home').sort((a, b) => a.home - b.home).map(h => '<div class="hubrow"><span>' + esc(h.name) + '</span><span class="m">~' + h.home + ' ' + t('minutes') + '</span></div>').join('');
   const ev = $('#eventlist');
@@ -940,10 +1002,10 @@ const PACK_DEFAULT = [['esta', 'ESTA approval screenshot + passport', 'Скри�
 function renderNotes() {
   const nl = $('#notelist'); if (!nl) return;
   const notes = Object.entries(state.note || {}).filter(([k, n]) => n && !n.deleted).sort((a, b) => Number(b[0]) - Number(a[0]));
-  nl.innerHTML = notes.length ? notes.map(([k, n]) => '<div class="exrow"><span>' + esc(n.text) + '<small>' + esc(n.who ? whoName(n.who) : '') + ' · ' + new Date(Number(k)).toLocaleDateString(RL() ? 'ru-RU' : 'en-US', { month: 'short', day: 'numeric' }) + '</small></span>' + (n.who === me ? '<button class="x" type="button" data-ndel="' + esc(k) + '">✕</button>' : '') + '</div>').join('') : '<p class="gsub">' + t('notesEmpty') + '</p>';
+  nl.innerHTML = notes.length ? notes.map(([k, n]) => '<div class="exrow"><span>' + esc(n.text) + '<small>' + esc(n.who ? whoName(n.who) : '') + ' · ' + new Date(Number(k)).toLocaleDateString(LOCALE[lang], { month: 'short', day: 'numeric' }) + '</small></span>' + (n.who === me ? '<button class="x" type="button" data-ndel="' + esc(k) + '">✕</button>' : '') + '</div>').join('') : '<p class="gsub">' + t('notesEmpty') + '</p>';
   $$('#notelist [data-ndel]').forEach(b => { b.onclick = () => put('note', b.dataset.ndel, Object.assign({}, state.note[b.dataset.ndel], { deleted: true })); });
   const pl = $('#packlist');
-  const items = PACK_DEFAULT.map(x => ({ key: 'pack:' + x[0], label: RL() ? x[2] : x[1] })).concat(Object.entries(state.pack || {}).filter(([k, p]) => p && !p.deleted).map(([k, p]) => ({ key: 'pack:' + k, label: p.text, custom: k })));
+  const items = PACK_DEFAULT.map(x => ({ key: 'pack:' + x[0], label: L(x[1], x[2], x[3]) })).concat(Object.entries(state.pack || {}).filter(([k, p]) => p && !p.deleted).map(([k, p]) => ({ key: 'pack:' + k, label: p.text, custom: k })));
   pl.innerHTML = items.map(it => '<label><input type="checkbox" data-chk="' + esc(it.key) + '" ' + (state.check[it.key] && state.check[it.key].on ? 'checked' : '') + ' /><span>' + esc(it.label) + '</span></label>').join('');
   $$('#packlist [data-chk]').forEach(c => { c.onchange = () => put('check', c.dataset.chk, { on: c.checked, who: me }); });
 }
@@ -954,7 +1016,7 @@ function buildMap() {
   if (map || !window.L || !$('#lmap')) return;
   map = window.L.map('lmap', { zoomControl: true }).setView([40.715, -73.975], 12);
   window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 }).addTo(map);
-  window.L.marker(HOMEPT, { icon: window.L.divIcon({ className: '', html: '<div class="pin home"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map).bindPopup('<b>🏠 ' + esc(RL() ? G.HOME.nameRu : G.HOME.name) + '</b>');
+  window.L.marker(HOMEPT, { icon: window.L.divIcon({ className: '', html: '<div class="pin home"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map).bindPopup('<b>🏠 ' + esc(fld(G.HOME, 'name') || G.HOME.name) + '</b>');
   drawMarkers();
   setTimeout(() => map.invalidateSize(), 200);
 }
@@ -963,11 +1025,11 @@ function drawMarkers() {
   markers.forEach(m => map.removeLayer(m)); markers = []; if (route) { map.removeLayer(route); route = null; }
   let pts = [];
   if (mapDay === 'all') pts = PLACES.filter(p => p.lat != null && activeCats.has(p.cat)).map(p => ({ p, pt: [p.lat, p.lng] }));
-  else { pts = agReflow(mapDay, agIds(mapDay)).map(r => ({ p: r.it.place, pt: r.it.p, it: r.it, start: r.start })).filter(x => x.pt); }
+  else { pts = agReflow(mapDay, agIds(mapDay)).map(r => ({ p: r.it.place, pt: r.it.pin || r.it.p, it: r.it, start: r.start })).filter(x => x.pt); }
   pts.forEach(x => {
     const color = x.p ? catColor(x.p.cat) : '#5D6170';
     const m = window.L.marker(x.pt, { icon: window.L.divIcon({ className: '', html: '<div class="pin" style="background:' + color + '"></div>', iconSize: [14, 14], iconAnchor: [7, 7] }) }).addTo(map);
-    const name = x.p ? placeName(x.p) : (RL() ? x.it.ru : x.it.en);
+    const name = x.p ? placeName(x.p) : stopLabel(x.it);
     m.bindPopup('<b>' + esc(name) + '</b><br>' + (x.p ? esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + '<br><a href="#" data-mopen="' + esc(x.p.id) + '">' + L('Open', 'Открыть') + ' →</a>' : (x.start != null ? agHM(x.start) : '')));
     m.on('popupopen', (e) => { const a = e.popup.getElement().querySelector('[data-mopen]'); if (a) a.onclick = (ev) => { ev.preventDefault(); openPlace(a.dataset.mopen); }; });
     markers.push(m);
@@ -1010,7 +1072,7 @@ async function sendChat(text) {
   const th = addMsg('assistant', '…', 'think');
   try {
     if (!navigator.onLine) throw new Error('offline');
-    const r = await fetch(CFG.CONCIERGE_URL.replace(/\/$/, '') + '/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trip-Key': CFG.TRIP_KEY || '' }, body: JSON.stringify({ messages: CHAT.msgs.slice(-12), today: new Date().toLocaleString(RL() ? 'ru-RU' : 'en-US', { timeZone: T.TIMEZONE || 'America/New_York', dateStyle: 'full', timeStyle: 'short' }), context: chatContext() }) });
+    const r = await fetch(CFG.CONCIERGE_URL.replace(/\/$/, '') + '/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trip-Key': CFG.TRIP_KEY || '' }, body: JSON.stringify({ messages: CHAT.msgs.slice(-12), today: new Date().toLocaleString(LOCALE[lang], { timeZone: T.TIMEZONE || 'America/New_York', dateStyle: 'full', timeStyle: 'short' }), context: chatContext() }) });
     const j = await r.json(); th.remove();
     const reply = (j && j.reply) || (j && j.error) || t('chatErr');
     addMsg('assistant', reply); CHAT.msgs.push({ role: 'assistant', content: reply });
@@ -1020,9 +1082,9 @@ async function sendChat(text) {
 function initChat() {
   if (!CFG.CONCIERGE_URL) { $('#chatsetup').hidden = false; $('#chatbox').hidden = true; return; }
   $('#chatsetup').hidden = true; $('#chatbox').hidden = false;
-  const paint = () => { $('#quickqs').innerHTML = (RL() ? (T.QUICKQS_RU || T.QUICKQS) : T.QUICKQS || []).map(q => '<button class="act" type="button">' + esc(q) + '</button>').join(''); $$('#quickqs .act').forEach(b => { b.onclick = () => sendChat(b.textContent); }); };
+  const paint = () => { $('#quickqs').innerHTML = (fld(T, 'QUICKQS_') || T.QUICKQS || []).map(q => '<button class="act" type="button">' + esc(q) + '</button>').join(''); $$('#quickqs .act').forEach(b => { b.onclick = () => sendChat(b.textContent); }); };
   paint(); document.addEventListener('langchange', paint);
-  if (!$('#msgs').children.length) addMsg('assistant', RL() ? (T.CHAT_HELLO_RU || T.CHAT_HELLO) : T.CHAT_HELLO);
+  if (!$('#msgs').children.length) addMsg('assistant', fld(T, 'CHAT_HELLO_') || T.CHAT_HELLO);
   $('#chatsend').onclick = () => sendChat($('#chatinput').value.trim());
   $('#chatinput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChat($('#chatinput').value.trim()); });
 }
@@ -1068,7 +1130,7 @@ function initNav() {
   document.addEventListener('touchstart', e => { if (currentTab !== 'days' || e.touches.length !== 1 || AG_DRAG) { tX = null; return; } if (e.target.closest('.daystrip, .tabbar, .aglist, .sheet')) { tX = null; return; } tX = e.touches[0].clientX; tY = e.touches[0].clientY; }, { passive: true });
   document.addEventListener('touchend', e => { if (tX === null || currentTab !== 'days') return; const dx = e.changedTouches[0].clientX - tX, dy = e.changedTouches[0].clientY - tY; tX = null; if (Math.abs(dx) < 64 || Math.abs(dy) > 56) return; const i = DAYKEYS.indexOf(currentDay); if (dx < 0 && i < DAYKEYS.length - 1) setDay(DAYKEYS[i + 1], 'slide-l'); else if (dx > 0 && i > 0) setDay(DAYKEYS[i - 1], 'slide-r'); }, { passive: true });
   document.addEventListener('tabshow', (e) => { if (e.detail === 'map') { if (window.L) buildMap(); else { const w = setInterval(() => { if (window.L) { clearInterval(w); buildMap(); } }, 200); setTimeout(() => clearInterval(w), 8000); } } if (e.detail === 'explore') renderExplore(); });
-  const relabel = () => chips.forEach(c => { const d = DAYBYKEY[c.dataset.day]; if (d) c.querySelector('.dw').textContent = RL() ? (d.dwRu || d.dw) : d.dw; });
+  const relabel = () => chips.forEach(c => { const d = DAYBYKEY[c.dataset.day]; if (d) c.querySelector('.dw').textContent = dayLabel(d.key).split(' ')[0]; });
   document.addEventListener('langchange', relabel); relabel();
   // smart start: during the trip open today's page
   const tk = DAYS.find(d => d.date === todayKey()); if (tk) { currentTab = 'days'; currentDay = tk.key; }
@@ -1083,27 +1145,37 @@ function renderTicker() {
   const now = new Date(); const nowMin = now.getHours() * 60 + now.getMinutes();
   const rows = agReflow(tk.key, agIds(tk.key)); const nxt = rows.find(r => r.start > nowMin);
   if (!nxt) { box.classList.remove('on'); return; }
-  box.querySelector('.un-k').textContent = t('nextUp'); box.querySelector('.un-t').textContent = agHM(nxt.start) + ' — ' + (RL() ? nxt.it.ru : nxt.it.en);
+  box.querySelector('.un-k').textContent = t('nextUp'); box.querySelector('.un-t').textContent = agHM(nxt.start) + ' — ' + stopLabel(nxt.it);
   box.querySelector('.un-s').textContent = nxt.it.place ? [placeSub(nxt.it.place), nxt.it.place.hood].filter(Boolean).join(' · ') : ''; box.classList.add('on');
 }
 function renderCount() {
   const els = $$('.tripcount'); if (!DAYS.length) return;
   const DD = DAYS.map(d => d.date.split('-').map(Number)); const start = new Date(DD[0][0], DD[0][1] - 1, DD[0][2]), end = new Date(DD[DD.length - 1][0], DD[DD.length - 1][1] - 1, DD[DD.length - 1][2]);
   const now = new Date(); const d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()); let txt = null;
-  if (d0 < start) { const n = Math.round((start - d0) / 864e5); txt = RL() ? ('<b>' + n + '</b> ' + ((n % 10 === 1 && n % 100 !== 11) ? 'день' : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 'дня' : 'дней')) + ' до поездки') : ('<b>' + n + '</b> day' + (n === 1 ? '' : 's') + ' to go'); }
-  else if (d0 <= end) { const n = Math.round((d0 - start) / 864e5) + 1; txt = RL() ? ('<b>День ' + n + '</b> из ' + DD.length) : ('<b>Day ' + n + '</b> of ' + DD.length); }
+  if (d0 < start) { const n = Math.round((start - d0) / 864e5); txt = L('<b>' + n + '</b> day' + (n === 1 ? '' : 's') + ' to go', '<b>' + n + '</b> ' + ((n % 10 === 1 && n % 100 !== 11) ? 'день' : ((n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 'дня' : 'дней')) + ' до поездки', '<b>noch ' + n + '</b> Tag' + (n === 1 ? '' : 'e')); }
+  else if (d0 <= end) { const n = Math.round((d0 - start) / 864e5) + 1; txt = L('<b>Day ' + n + '</b> of ' + DD.length, '<b>День ' + n + '</b> из ' + DD.length, '<b>Tag ' + n + '</b> von ' + DD.length); }
   if (txt) els.forEach(el => { el.innerHTML = txt; el.hidden = false; });
 }
 
 // ---------------------------------------------------------------- language + platform
+// A block with no translation in the current language falls back to English
+// rather than vanishing — so a half-translated page still reads.
+function paintFallbacks() {
+  const want = lang === 'en' ? null : 'L-' + lang;
+  $$('.L-en').forEach(el => {
+    if (!want) { el.classList.remove('L-fallback'); return; }
+    const sib = el.parentNode ? Array.from(el.parentNode.children).some(c => c !== el && c.classList && c.classList.contains(want)) : false;
+    el.classList.toggle('L-fallback', !sib);
+  });
+}
 function paintLang() {
   document.body.dataset.lang = lang; document.documentElement.lang = lang;
-  const btn = $('#langbtn'); if (btn) btn.textContent = RL() ? 'ENG' : 'РУС';
-  paintDayHeads();
+  const btn = $('#langbtn'); if (btn) btn.textContent = LANGBTN[lang];
+  paintFallbacks(); paintDayHeads();
 }
 function initLang() {
   paintLang();
-  $('#langbtn').addEventListener('click', () => { lang = RL() ? 'en' : 'ru'; try { localStorage.setItem(LSK + '-lang', lang); } catch (e) {} paintLang(); document.dispatchEvent(new CustomEvent('langchange', { detail: lang })); renderAll(); if (EX.deck) renderDeck(); });
+  $('#langbtn').addEventListener('click', () => { lang = LANGS[(LI() + 1) % LANGS.length]; try { localStorage.setItem(LSK + '-lang', lang); } catch (e) {} paintLang(); document.dispatchEvent(new CustomEvent('langchange', { detail: lang })); renderAll(); if (EX.deck) renderDeck(); });
 }
 function initPlatform() {
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
@@ -1115,8 +1187,10 @@ function initPlatform() {
   try {
     const ua = navigator.userAgent || ''; const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); const isAndroid = /Android/.test(ua);
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    if (isIOS && !standalone) document.body.classList.add('show-install');
-    if (isAndroid && !standalone) { $('#hint-ios').hidden = true; $('#hint-android').hidden = false; document.body.classList.add('show-install'); }
+    let dismissed = false; try { dismissed = localStorage.getItem(LSK + '-noinstall') === '1'; } catch (e) {}
+    if (!dismissed && isIOS && !standalone) document.body.classList.add('show-install');
+    if (!dismissed && isAndroid && !standalone) { $('#hint-ios').hidden = true; $('#hint-android').hidden = false; document.body.classList.add('show-install'); }
+    const ix = $('#installx'); if (ix) ix.onclick = () => { document.body.classList.remove('show-install'); try { localStorage.setItem(LSK + '-noinstall', '1'); } catch (e) {} };
     let deferred = null;
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferred = e; const b = $('#a2hs'); b.classList.add('on'); b.onclick = () => { deferred.prompt(); deferred.userChoice.finally(() => { document.body.classList.remove('show-install'); deferred = null; }); }; });
   } catch (e) {}

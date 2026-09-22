@@ -65,9 +65,19 @@ if (booted) {
   const firstId = cards.length ? cards[0].dataset.card : null;
   if (firstId && !(NYC.state.vote['p:' + firstId] && NYC.state.vote['p:' + firstId].Y === 'yes')) fail('voting from the sheet did not store the vote'); else ok('vote stored');
   document.querySelector('#sheet .closebtn') && click(document.querySelector('#sheet .closebtn'));
-  // language toggle
-  const lb = document.getElementById('langbtn'); click(lb); if (document.body.dataset.lang !== 'ru') fail('langbtn did not switch to ru'); click(lb); if (document.body.dataset.lang !== 'en') fail('langbtn did not switch back');
-  ok('language toggle works');
+  // language toggle cycles en → ru → de → en, and every day page re-renders in each
+  const lb = document.getElementById('langbtn');
+  for (const want of ['ru', 'de', 'en']) {
+    click(lb);
+    if (document.body.dataset.lang !== want) fail(`langbtn: expected ${want}, got ${document.body.dataset.lang}`);
+    if (document.documentElement.lang !== want) fail(`<html lang> not updated to ${want}`);
+    const d0 = document.querySelector('#' + T.DAYS[1].key + ' .dt');
+    if (!d0 || !d0.textContent.trim()) fail(`day title empty in ${want}`);
+    const rows = document.querySelectorAll('.agwrap[data-agday="' + T.DAYS[1].key + '"] .agrow');
+    if (!rows.length) fail(`running order empty in ${want}`);
+    for (const r of rows) if (!r.querySelector('.ag-t').textContent.trim()) fail(`empty stop label in ${want}`);
+  }
+  ok('language toggle cycles en → ru → de, every day renders in each');
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }

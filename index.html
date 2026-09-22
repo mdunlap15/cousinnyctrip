@@ -27,7 +27,7 @@
 </head>
 <body data-tab="home" data-lang="en">
 
-<button class="langbtn" id="langbtn" type="button" aria-label="Switch language">РУС</button>
+<button class="langbtn" id="langbtn" type="button" aria-label="Switch language / Sprache wechseln / Сменить язык">РУС</button>
 
 <!-- ============ HERO (home tab only) ============ -->
 <header class="hero">
@@ -40,13 +40,17 @@
     <div class="titleblock"><h1>Таня <span class="amp">в</span> <span class="q">Нью-Йорке</span></h1></div>
     <p class="sub" id="hero-sub-ru"></p>
     </div>
+    <div class="L-de"><div class="eyebrow">Neun Herbsttage · 26. Sep – 4. Okt 2026 · zum ersten Mal in der Stadt</div>
+    <div class="titleblock"><h1>Tatyana <span class="amp">in</span> <span class="q">New York</span></h1></div>
+    <p class="sub" id="hero-sub-de"></p>
+    </div>
     <div class="facts">
       <span class="fact tripcount" hidden></span>
       <span class="fact"><b>Sep 26 → Oct 4</b></span>
       <span class="fact"><b>Park Slope</b> · 490A 7th Ave</span>
       <span class="fact"><b>Yulia</b> · Tatyana · Mike</span>
     </div>
-    <button class="sharebtn" id="sharebtn" type="button"><span class="L-en">Share this app ↗</span><span class="L-ru">Поделиться приложением ↗</span></button>
+    <button class="sharebtn" id="sharebtn" type="button"><span class="L-en">Share this app ↗</span><span class="L-ru">Поделиться приложением ↗</span><span class="L-de">App teilen ↗</span></button>
   </div>
 </header>
 
@@ -63,10 +67,10 @@
   <section class="panel is-active" id="home" role="tabpanel">
     <div class="whoslot"></div>
     <div id="todaycard"></div>
-    <div class="grp"><h3><span class="L-en">The week at a glance</span><span class="L-ru">Неделя одним взглядом</span></h3>
+    <div class="grp"><h3><span class="L-en">The week at a glance</span><span class="L-ru">Неделя одним взглядом</span><span class="L-de">Die Woche auf einen Blick</span></h3>
       <div id="weekglance"></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Jump to</span><span class="L-ru">Перейти</span></h3>
+    <div class="grp"><h3><span class="L-en">Jump to</span><span class="L-ru">Перейти</span><span class="L-de">Direkt zu</span></h3>
       <div class="menu" id="homemenu"></div>
     </div>
     <div class="grp" id="homebook"></div>
@@ -78,16 +82,18 @@
   <!-- ============ EXPLORE ============ -->
   <section class="panel" id="explore" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">The library — tap anything to see links, tips and add it to a day</span><span class="L-ru">Библиотека — нажмите, чтобы увидеть ссылки, советы и добавить в день</span></span></div>
-      <h2><span class="L-en">Explore</span><span class="L-ru">Места</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">The library — tap anything to see links, tips and add it to a day</span><span class="L-ru">Библиотека — нажмите, чтобы увидеть ссылки, советы и добавить в день</span><span class="L-de">Die Sammlung — alles antippen für Links, Tipps und zum Einplanen</span></span></div>
+      <h2><span class="L-en">Explore</span><span class="L-ru">Места</span><span class="L-de">Entdecken</span></h2>
     </div>
     <div class="exbar">
       <input id="exsearch" type="search" placeholder="Search: rooftop, pizza, Sézane, Williamsburg…" autocomplete="off" />
-      <button class="act site" id="swipebtn" type="button"><span class="L-en">🃏 Swipe mode</span><span class="L-ru">🃏 Свайп</span></button>
+      <button class="act site" id="swipebtn" type="button"><span class="L-en">🃏 Swipe</span><span class="L-ru">🃏 Свайп</span><span class="L-de">🃏 Swipe</span></button>
     </div>
-    <div class="vchips" id="excats"></div>
-    <div class="vchips small" id="extags"></div>
-    <div class="exmeta"><span id="excount"></span><select id="exsort"><option value="rank">Sort: our votes</option><option value="near">Sort: closest to home</option><option value="az">Sort: A–Z</option><option value="hood">Sort: neighborhood</option></select></div>
+    <div class="exfilters" id="exfilters">
+      <div class="vchips row" id="excats"></div>
+      <div class="exmeta"><span id="excount"></span><button class="tagtoggle" id="tagtoggle" type="button"></button><select id="exsort"><option value="rank">Sort: our votes</option><option value="near">Sort: closest to home</option><option value="az">Sort: A–Z</option><option value="hood">Sort: neighborhood</option></select></div>
+      <div class="vchips small" id="extags" hidden></div>
+    </div>
     <div id="deck" hidden></div>
     <div id="exlist" class="cards"></div>
   </section>
@@ -95,38 +101,38 @@
   <!-- ============ PLAN ============ -->
   <section class="panel" id="plan" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Synced between your phones</span><span class="L-ru">Синхронизировано между телефонами</span></span></div>
-      <h2><span class="L-en">Build the week</span><span class="L-ru">Соберите неделю</span></h2>
-      <p class="lede"><span class="L-en">Rate places ❤️ 🤔 ✕ in Explore or Swipe mode — everyone sees everyone's votes. What you both want floats to the top here, and one tap slots it into the day that fits it best.</span><span class="L-ru">Оценивайте места ❤️ 🤔 ✕ в разделе «Места» или в свайпе — все видят голоса всех. То, чего хотите обе, всплывает здесь наверх, и одним нажатием встаёт в самый подходящий день.</span></p>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Synced between your phones</span><span class="L-ru">Синхронизировано между телефонами</span><span class="L-de">Zwischen euren Handys synchronisiert</span></span></div>
+      <h2><span class="L-en">Build the week</span><span class="L-ru">Соберите неделю</span><span class="L-de">Die Woche bauen</span></h2>
+      <p class="lede"><span class="L-en">Rate places ❤️ 🤔 ✕ in Explore or Swipe mode — everyone sees everyone's votes. What you both want floats to the top here, and one tap slots it into the day that fits it best.</span><span class="L-ru">Оценивайте места ❤️ 🤔 ✕ в разделе «Места» или в свайпе — все видят голоса всех. То, чего хотите обе, всплывает здесь наверх, и одним нажатием встаёт в самый подходящий день.</span><span class="L-de">Bewertet Orte mit ❤️ 🤔 ✕ unter „Entdecken“ oder im Swipe-Modus — alle sehen alle Stimmen. Was ihr beide wollt, steht hier oben, und ein Tipp setzt es in den Tag, der am besten passt.</span></p>
     </div>
     <div class="whoslot"></div>
     <div id="plansetup" class="setupcard" hidden></div>
     <div class="grp"><div class="planstats" id="planstats"></div>
-      <div class="acts wrap2"><button class="act site" id="buildweek" type="button"><span class="L-en">✨ Build my week from our votes</span><span class="L-ru">✨ Собрать неделю из наших голосов</span></button><button class="act" id="gotoswipe" type="button"><span class="L-en">🃏 Rate more places</span><span class="L-ru">🃏 Оценить ещё</span></button></div>
+      <div class="acts wrap2"><button class="act site" id="buildweek" type="button"><span class="L-en">✨ Build my week from our votes</span><span class="L-ru">✨ Собрать неделю из наших голосов</span><span class="L-de">✨ Woche aus unseren Stimmen bauen</span></button><button class="act" id="gotoswipe" type="button"><span class="L-en">🃏 Rate more places</span><span class="L-ru">🃏 Оценить ещё</span><span class="L-de">🃏 Mehr Orte bewerten</span></button></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Both want ❤️❤️</span><span class="L-ru">Хотите обе ❤️❤️</span></h3><p class="gsub"><span class="L-en">Tap 📅 to put it in a day — the day picker recommends the best fit.</span><span class="L-ru">Нажмите 📅, чтобы поставить в день — выбор дня подскажет, куда лучше.</span></p><div id="bothwant"></div></div>
-    <div class="grp"><h3><span class="L-en">One of you wants</span><span class="L-ru">Хочет одна из вас</span></h3><div id="onewants"></div></div>
-    <div class="grp"><h3><span class="L-en">Add your own idea</span><span class="L-ru">Добавьте свою идею</span></h3>
-      <div class="exform"><input id="propin" type="text" placeholder="e.g. Nails on Thursday? A Yankees game?" /><input id="propmin" type="number" inputmode="numeric" placeholder="min" value="90" /><button id="propadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span></button></div>
+    <div class="grp"><h3><span class="L-en">Both want ❤️❤️</span><span class="L-ru">Хотите обе ❤️❤️</span><span class="L-de">Wollen beide ❤️❤️</span></h3><p class="gsub"><span class="L-en">Tap 📅 to put it in a day — the day picker recommends the best fit.</span><span class="L-ru">Нажмите 📅, чтобы поставить в день — выбор дня подскажет, куда лучше.</span><span class="L-de">Tippt 📅, um es in einen Tag zu setzen — die Tagesauswahl schlägt den besten vor.</span></p><div id="bothwant"></div></div>
+    <div class="grp"><h3><span class="L-en">One of you wants</span><span class="L-ru">Хочет одна из вас</span><span class="L-de">Eine von euch will</span></h3><div id="onewants"></div></div>
+    <div class="grp"><h3><span class="L-en">Add your own idea</span><span class="L-ru">Добавьте свою идею</span><span class="L-de">Eigene Idee hinzufügen</span></h3>
+      <div class="exform"><input id="propin" type="text" placeholder="e.g. Nails on Thursday? A Yankees game?" /><input id="propmin" type="number" inputmode="numeric" placeholder="min" value="90" /><button id="propadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span><span class="L-de">Hinzufügen</span></button></div>
       <div id="proposals"></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Already in the plan</span><span class="L-ru">Уже в плане</span></h3><div id="scheduled"></div></div>
+    <div class="grp"><h3><span class="L-en">Already in the plan</span><span class="L-ru">Уже в плане</span><span class="L-de">Schon im Plan</span></h3><div id="scheduled"></div></div>
   </section>
 
   <!-- ============ MAP ============ -->
   <section class="panel" id="map" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Every spot, one map</span><span class="L-ru">Все места на одной карте</span></span></div>
-      <h2><span class="L-en">The map</span><span class="L-ru">Карта</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Every spot, one map</span><span class="L-ru">Все места на одной карте</span><span class="L-de">Alle Orte auf einer Karte</span></span></div>
+      <h2><span class="L-en">The map</span><span class="L-ru">Карта</span><span class="L-de">Die Karte</span></h2>
     </div>
     <div class="mapctl" id="mapfilters"></div>
     <div class="mapctl" id="mapdays"></div>
     <div class="maphold">
       <div id="lmap"></div>
-      <button class="homebtn" id="gohome" type="button">⌂ <span class="L-en">Get me home</span><span class="L-ru">Домой</span></button>
+      <button class="homebtn" id="gohome" type="button">⌂ <span class="L-en">Get me home</span><span class="L-ru">Домой</span><span class="L-de">Nach Hause</span></button>
     </div>
     <div class="mapctl" style="margin-top:14px">
-      <button class="act" id="nearme" type="button">📍 <span class="L-en">Near me now</span><span class="L-ru">Рядом со мной</span></button>
+      <button class="act" id="nearme" type="button">📍 <span class="L-en">Near me now</span><span class="L-ru">Рядом со мной</span><span class="L-de">In meiner Nähe</span></button>
       <span class="wx" id="nearstatus"></span>
     </div>
     <div class="nearlist" id="nearlist"></div>
@@ -135,137 +141,137 @@
   <!-- ============ CHAT ============ -->
   <section class="panel" id="chat" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Knows the plan, the library and the subway</span><span class="L-ru">Знает план, все места и метро</span></span></div>
-      <h2><span class="L-en">Concierge</span><span class="L-ru">Консьерж</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Knows the plan, the library and the subway</span><span class="L-ru">Знает план, все места и метро</span><span class="L-de">Kennt den Plan, die Sammlung und die U-Bahn</span></span></div>
+      <h2><span class="L-en">Concierge</span><span class="L-ru">Консьерж</span><span class="L-de">Concierge</span></h2>
     </div>
-    <div id="chatsetup" class="setupcard" hidden><span class="L-en"><b>Needs one hookup:</b> deploy the <code>concierge/</code> folder on Railway (root directory = <code>concierge</code>), then put its URL in <code>config.js</code>. Until then, the ✨ Replan button on each day uses the built-in planner.</span><span class="L-ru"><b>Нужна одна настройка:</b> задеплойте папку <code>concierge/</code> на Railway (root directory = <code>concierge</code>) и вставьте URL в <code>config.js</code>. До этого кнопка ✨ на каждом дне использует встроенный планировщик.</span></div>
+    <div id="chatsetup" class="setupcard" hidden><span class="L-en"><b>Needs one hookup:</b> deploy the <code>concierge/</code> folder on Railway (root directory = <code>concierge</code>), then put its URL in <code>config.js</code>. Until then, the ✨ Replan button on each day uses the built-in planner.</span><span class="L-ru"><b>Нужна одна настройка:</b> задеплойте папку <code>concierge/</code> на Railway (root directory = <code>concierge</code>) и вставьте URL в <code>config.js</code>. До этого кнопка ✨ на каждом дне использует встроенный планировщик.</span><span class="L-de"><b>Eine Einrichtung fehlt:</b> den Ordner <code>concierge/</code> auf Railway deployen (Root-Verzeichnis = <code>concierge</code>) und die URL in <code>config.js</code> eintragen. Bis dahin nutzt die ✨-Taste an jedem Tag den eingebauten Planer.</span></div>
     <div class="chatbox" id="chatbox" hidden>
       <div class="quickqs" id="quickqs"></div>
       <div class="msgs" id="msgs"></div>
-      <div class="chatin"><input id="chatinput" type="text" placeholder="e.g. Rain tomorrow — what do we swap?" enterkeyhint="send" /><button id="chatsend" type="button"><span class="L-en">Send</span><span class="L-ru">Отправить</span></button></div>
+      <div class="chatin"><input id="chatinput" type="text" placeholder="e.g. Rain tomorrow — what do we swap?" enterkeyhint="send" /><button id="chatsend" type="button"><span class="L-en">Send</span><span class="L-ru">Отправить</span><span class="L-de">Senden</span></button></div>
     </div>
   </section>
 
   <!-- ============ BOOKINGS ============ -->
   <section class="panel" id="bookings" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Flights, tickets to buy, tables to hold</span><span class="L-ru">Рейсы, билеты, столики</span></span></div>
-      <h2><span class="L-en">Bookings</span><span class="L-ru">Брони</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Flights, tickets to buy, tables to hold</span><span class="L-ru">Рейсы, билеты, столики</span><span class="L-de">Flüge, Tickets, Tischreservierungen</span></span></div>
+      <h2><span class="L-en">Bookings</span><span class="L-ru">Брони</span><span class="L-de">Buchungen</span></h2>
     </div>
-    <div class="grp"><h3><span class="L-en">Tatyana's flights</span><span class="L-ru">Рейсы Тани</span></h3><div class="bookings" id="flights"></div></div>
-    <div class="grp"><h3><span class="L-en">Book this now</span><span class="L-ru">Забронировать сейчас</span></h3>
-      <p class="gsub"><span class="L-en">Derived from the plan — tick things off as you book them (shared). Tap a name for the ticket link.</span><span class="L-ru">Составлено по плану — отмечайте по мере бронирования (общий список). Нажмите на название, чтобы открыть ссылку на билеты.</span></p>
+    <div class="grp"><h3><span class="L-en">Tatyana's flights</span><span class="L-ru">Рейсы Тани</span><span class="L-de">Tatyanas Flüge</span></h3><div class="bookings" id="flights"></div></div>
+    <div class="grp"><h3><span class="L-en">Book this now</span><span class="L-ru">Забронировать сейчас</span><span class="L-de">Jetzt buchen</span></h3>
+      <p class="gsub"><span class="L-en">Derived from the plan — tick things off as you book them (shared). Tap a name for the ticket link.</span><span class="L-ru">Составлено по плану — отмечайте по мере бронирования (общий список). Нажмите на название, чтобы открыть ссылку на билеты.</span><span class="L-de">Aus dem Plan abgeleitet — abhaken, sobald gebucht (für alle sichtbar). Auf den Namen tippen für den Ticket-Link.</span></p>
       <div class="progress"><div class="pt" id="ptext"></div><div class="pbar"><i id="pfill"></i></div></div>
       <div class="check" id="booklist"></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Reservations we hold</span><span class="L-ru">Наши брони</span></h3>
-      <div class="exform resv"><input id="resvplace" type="text" placeholder="Where" /><input id="resvwhen" type="datetime-local" /><input id="resvcode" type="text" placeholder="Code / notes" /><button id="resvadd" type="button"><span class="L-en">Save</span><span class="L-ru">Сохранить</span></button></div>
+    <div class="grp"><h3><span class="L-en">Reservations we hold</span><span class="L-ru">Наши брони</span><span class="L-de">Unsere Reservierungen</span></h3>
+      <div class="exform resv"><input id="resvplace" type="text" placeholder="Where" /><input id="resvwhen" type="datetime-local" /><input id="resvcode" type="text" placeholder="Code / notes" /><button id="resvadd" type="button"><span class="L-en">Save</span><span class="L-ru">Сохранить</span><span class="L-de">Speichern</span></button></div>
       <div id="resvlist"></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Calendar</span><span class="L-ru">Календарь</span></h3>
-      <p class="gsub"><span class="L-en">Export the live plan to your phone's calendar (Apple/Google) — every stop becomes an event with the address and the app link.</span><span class="L-ru">Экспортируйте актуальный план в календарь телефона (Apple/Google) — каждая остановка станет событием с адресом и ссылкой.</span></p>
-      <div class="acts wrap2"><button class="act site" id="icsexport" type="button"><span class="L-en">📅 Add the plan to my calendar</span><span class="L-ru">📅 Добавить план в календарь</span></button><a class="act" href="trip.ics" download="tatyana-nyc-2026.ics"><span class="L-en">Seeded plan (.ics)</span><span class="L-ru">Исходный план (.ics)</span></a></div>
+    <div class="grp"><h3><span class="L-en">Calendar</span><span class="L-ru">Календарь</span><span class="L-de">Kalender</span></h3>
+      <p class="gsub"><span class="L-en">Export the live plan to your phone's calendar (Apple/Google) — every stop becomes an event with the address and the app link.</span><span class="L-ru">Экспортируйте актуальный план в календарь телефона (Apple/Google) — каждая остановка станет событием с адресом и ссылкой.</span><span class="L-de">Den aktuellen Plan in den Handy-Kalender exportieren (Apple/Google) — jeder Stopp wird ein Termin mit Adresse und App-Link.</span></p>
+      <div class="acts wrap2"><button class="act site" id="icsexport" type="button"><span class="L-en">📅 Add the plan to my calendar</span><span class="L-ru">📅 Добавить план в календарь</span><span class="L-de">📅 Plan in meinen Kalender</span></button><a class="act" href="trip.ics" download="tatyana-nyc-2026.ics"><span class="L-en">Seeded plan (.ics)</span><span class="L-ru">Исходный план (.ics)</span><span class="L-de">Ursprungsplan (.ics)</span></a></div>
     </div>
   </section>
 
   <!-- ============ GUIDE ============ -->
   <section class="panel" id="guide" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Getting in, getting around, getting by</span><span class="L-ru">Как добраться, как ездить, как всё устроено</span></span></div>
-      <h2><span class="L-en">Guide</span><span class="L-ru">Гид</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Getting in, getting around, getting by</span><span class="L-ru">Как добраться, как ездить, как всё устроено</span><span class="L-de">Ankommen, herumkommen, zurechtkommen</span></span></div>
+      <h2><span class="L-en">Guide</span><span class="L-ru">Гид</span><span class="L-de">Infos</span></h2>
     </div>
     <div id="guidesections"></div>
-    <div class="grp"><h3><span class="L-en">From home, door to door</span><span class="L-ru">От дома, от двери до двери</span></h3><p class="gsub"><span class="L-en">Typical subway times from 490A 7th Ave. The running order uses these to space the day.</span><span class="L-ru">Типичное время на метро от 490A 7th Ave. Расписание дня рассчитано по ним.</span></p><div id="hubtable"></div></div>
-    <div class="grp"><h3><span class="L-en">On while you're here</span><span class="L-ru">Что происходит в эти дни</span></h3><div id="eventlist"></div></div>
+    <div class="grp"><h3><span class="L-en">From home, door to door</span><span class="L-ru">От дома, от двери до двери</span><span class="L-de">Von zu Hause, von Tür zu Tür</span></h3><p class="gsub"><span class="L-en">Typical subway times from 490A 7th Ave. The running order uses these to space the day.</span><span class="L-ru">Типичное время на метро от 490A 7th Ave. Расписание дня рассчитано по ним.</span><span class="L-de">Übliche U-Bahn-Zeiten ab 490A 7th Ave. Der Tagesablauf rechnet damit.</span></p><div id="hubtable"></div></div>
+    <div class="grp"><h3><span class="L-en">On while you're here</span><span class="L-ru">Что происходит в эти дни</span><span class="L-de">Was in diesen Tagen läuft</span></h3><div id="eventlist"></div></div>
   </section>
 
   <!-- ============ NOTES ============ -->
   <section class="panel" id="notes" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Shared between your phones</span><span class="L-ru">Общее для ваших телефонов</span></span></div>
-      <h2><span class="L-en">Notes &amp; packing</span><span class="L-ru">Заметки и сборы</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Shared between your phones</span><span class="L-ru">Общее для ваших телефонов</span><span class="L-de">Zwischen euren Handys geteilt</span></span></div>
+      <h2><span class="L-en">Notes &amp; packing</span><span class="L-ru">Заметки и сборы</span><span class="L-de">Notizen &amp; Packliste</span></h2>
     </div>
     <div class="whoslot"></div>
     <div id="notesetup" class="setupcard" style="margin-bottom:18px" hidden></div>
-    <div class="grp"><h3><span class="L-en">Notes</span><span class="L-ru">Заметки</span></h3>
-      <div class="exform two"><input id="notein" type="text" placeholder="e.g. Tanya wants to see a Yankees game 🙂" /><button id="noteadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span></button></div>
+    <div class="grp"><h3><span class="L-en">Notes</span><span class="L-ru">Заметки</span><span class="L-de">Notizen</span></h3>
+      <div class="exform two"><input id="notein" type="text" placeholder="e.g. Tanya wants to see a Yankees game 🙂" /><button id="noteadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span><span class="L-de">Hinzufügen</span></button></div>
       <div id="notelist"></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Packing &amp; before-you-fly</span><span class="L-ru">Сборы и до вылета</span></h3><div class="check" id="packlist"></div>
-      <div class="exform two" style="margin-top:10px"><input id="packin" type="text" placeholder="Add an item" /><button id="packadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span></button></div>
+    <div class="grp"><h3><span class="L-en">Packing &amp; before-you-fly</span><span class="L-ru">Сборы и до вылета</span><span class="L-de">Packen &amp; vor dem Abflug</span></h3><div class="check" id="packlist"></div>
+      <div class="exform two" style="margin-top:10px"><input id="packin" type="text" placeholder="Add an item" /><button id="packadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span><span class="L-de">Hinzufügen</span></button></div>
     </div>
   </section>
 
   <!-- ============ MORE ============ -->
   <section class="panel" id="more" role="tabpanel">
     <div class="phead">
-      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Everything else</span><span class="L-ru">Всё остальное</span></span></div>
-      <h2><span class="L-en">More</span><span class="L-ru">Ещё</span></h2>
+      <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Everything else</span><span class="L-ru">Всё остальное</span><span class="L-de">Alles Weitere</span></span></div>
+      <h2><span class="L-en">More</span><span class="L-ru">Ещё</span><span class="L-de">Mehr</span></h2>
     </div>
     <div class="menu">
-      <button class="mitem" data-go="bookings"><b><span class="L-en">Bookings</span><span class="L-ru">Брони</span></b><span><span class="L-en">Flights · tickets · tables · calendar</span><span class="L-ru">Рейсы · билеты · столики · календарь</span></span></button>
-      <button class="mitem" data-go="guide"><b><span class="L-en">Guide</span><span class="L-ru">Гид</span></b><span><span class="L-en">Airport · subway · money · safety</span><span class="L-ru">Аэропорт · метро · деньги · безопасность</span></span></button>
-      <button class="mitem" data-go="notes"><b><span class="L-en">Notes &amp; packing</span><span class="L-ru">Заметки и сборы</span></b><span><span class="L-en">Shared notes · checklist</span><span class="L-ru">Общие заметки · чек-лист</span></span></button>
-      <button class="mitem" data-go="chat"><b><span class="L-en">Concierge</span><span class="L-ru">Консьерж</span></b><span><span class="L-en">Ask anything, EN/RU</span><span class="L-ru">Спросите что угодно</span></span></button>
+      <button class="mitem" data-go="bookings"><b><span class="L-en">Bookings</span><span class="L-ru">Брони</span><span class="L-de">Buchungen</span></b><span><span class="L-en">Flights · tickets · tables · calendar</span><span class="L-ru">Рейсы · билеты · столики · календарь</span><span class="L-de">Flüge · Tickets · Tische · Kalender</span></span></button>
+      <button class="mitem" data-go="guide"><b><span class="L-en">Guide</span><span class="L-ru">Гид</span><span class="L-de">Infos</span></b><span><span class="L-en">Airport · subway · money · safety</span><span class="L-ru">Аэропорт · метро · деньги · безопасность</span><span class="L-de">Flughafen · U-Bahn · Geld · Sicherheit</span></span></button>
+      <button class="mitem" data-go="notes"><b><span class="L-en">Notes &amp; packing</span><span class="L-ru">Заметки и сборы</span><span class="L-de">Notizen &amp; Packliste</span></b><span><span class="L-en">Shared notes · checklist</span><span class="L-ru">Общие заметки · чек-лист</span><span class="L-de">Gemeinsame Notizen · Checkliste</span></span></button>
+      <button class="mitem" data-go="chat"><b><span class="L-en">Concierge</span><span class="L-ru">Консьерж</span><span class="L-de">Concierge</span></b><span><span class="L-en">Ask anything, EN/RU</span><span class="L-ru">Спросите что угодно</span><span class="L-de">Frag alles — DE/RU/EN</span></span></button>
     </div>
-    <div class="grp"><h3><span class="L-en">Settings</span><span class="L-ru">Настройки</span></h3>
+    <div class="grp"><h3><span class="L-en">Settings</span><span class="L-ru">Настройки</span><span class="L-de">Einstellungen</span></h3>
       <div class="whoslot"></div>
-      <div class="setrow"><label><span class="L-en">Show names as</span><span class="L-ru">Показывать имена как</span></label><div class="exform three"><input id="nameY" type="text" placeholder="Yulia" /><input id="nameT" type="text" placeholder="Tatyana" /><input id="nameM" type="text" placeholder="Mike" /></div></div>
-      <div class="setrow"><label><span class="L-en">Pace we're aiming for</span><span class="L-ru">Какой темп хотим</span></label><div class="vchips" id="pacepick"></div></div>
-      <div class="setrow"><label><span class="L-en">Install on your phone</span><span class="L-ru">Установить на телефон</span></label><p class="gsub"><span class="L-en">iPhone: open this page in Safari → Share (the square with the ↑) → <b>Add to Home Screen</b>. It gets its own icon and works offline.</span><span class="L-ru">iPhone: откройте эту страницу в Safari → «Поделиться» (квадрат со стрелкой ↑) → <b>«На экран “Домой”»</b>. У приложения будет своя иконка, и оно работает офлайн.</span></p><button id="a2hs" type="button"><span class="L-en">Install app</span><span class="L-ru">Установить</span></button></div>
+      <div class="setrow"><label><span class="L-en">Show names as</span><span class="L-ru">Показывать имена как</span><span class="L-de">Namen anzeigen als</span></label><div class="exform three"><input id="nameY" type="text" placeholder="Yulia" /><input id="nameT" type="text" placeholder="Tatyana" /><input id="nameM" type="text" placeholder="Mike" /></div></div>
+      <div class="setrow"><label><span class="L-en">Pace we're aiming for</span><span class="L-ru">Какой темп хотим</span><span class="L-de">Gewünschtes Tempo</span></label><div class="vchips" id="pacepick"></div></div>
+      <div class="setrow"><label><span class="L-en">Install on your phone</span><span class="L-ru">Установить на телефон</span><span class="L-de">Auf dem Handy installieren</span></label><p class="gsub"><span class="L-en">iPhone: open this page in Safari → Share (the square with the ↑) → <b>Add to Home Screen</b>. It gets its own icon and works offline.</span><span class="L-ru">iPhone: откройте эту страницу в Safari → «Поделиться» (квадрат со стрелкой ↑) → <b>«На экран “Домой”»</b>. У приложения будет своя иконка, и оно работает офлайн.</span><span class="L-de">iPhone: diese Seite in Safari öffnen → „Teilen“ (Quadrat mit ↑) → <b>„Zum Home-Bildschirm“</b>. Sie bekommt ein eigenes Symbol und funktioniert offline.</span></p><button id="a2hs" type="button"><span class="L-en">Install app</span><span class="L-ru">Установить</span><span class="L-de">App installieren</span></button></div>
     </div>
     <p class="gsub" style="margin-top:18px;text-align:center;font-family:'Space Mono',monospace;font-size:10px">
-      <span class="L-en">App version</span><span class="L-ru">Версия приложения</span>
+      <span class="L-en">App version</span><span class="L-ru">Версия приложения</span><span class="L-de">App-Version</span>
       <span id="buildstamp"></span> ·
-      <button type="button" id="forceupdate" class="linkbtn"><span class="L-en">check for update</span><span class="L-ru">проверить обновление</span></button> ·
+      <button type="button" id="forceupdate" class="linkbtn"><span class="L-en">check for update</span><span class="L-ru">проверить обновление</span><span class="L-de">nach Update suchen</span></button> ·
       <span id="syncstate"></span>
     </p>
-    <p class="gsub" style="text-align:center;font-size:11.5px"><span class="L-en">Hours, prices and links were compiled in September 2026 and can change — every card links to the source. Tap through before you rely on a time.</span><span class="L-ru">Часы, цены и ссылки собраны в сентябре 2026 года и могут меняться — каждая карточка ведёт на источник. Перепроверьте перед тем, как полагаться на время.</span></p>
+    <p class="gsub" style="text-align:center;font-size:11.5px"><span class="L-en">Hours, prices and links were compiled in September 2026 and can change — every card links to the source. Tap through before you rely on a time.</span><span class="L-ru">Часы, цены и ссылки собраны в сентябре 2026 года и могут меняться — каждая карточка ведёт на источник. Перепроверьте перед тем, как полагаться на время.</span><span class="L-de">Öffnungszeiten, Preise und Links stammen von September 2026 und können sich ändern — jede Karte verlinkt die Quelle. Vor Verlass auf eine Uhrzeit bitte durchtippen.</span></p>
   </section>
 
 </main>
 
 <footer>
   <div class="wrap">
-    <div class="sig">🗽 <span class="L-en">Yulia, Tatyana &amp; Mike</span><span class="L-ru">Юля, Таня и Майк</span></div>
-    <div class="mono"><span class="L-en">New York · Sep 26 – Oct 4 2026 · Park Slope, Brooklyn</span><span class="L-ru">Нью-Йорк · 26 сен – 4 окт 2026 · Парк-Слоуп, Бруклин</span></div>
+    <div class="sig">🗽 <span class="L-en">Yulia, Tatyana &amp; Mike</span><span class="L-ru">Юля, Таня и Майк</span><span class="L-de">Yulia, Tatyana &amp; Mike</span></div>
+    <div class="mono"><span class="L-en">New York · Sep 26 – Oct 4 2026 · Park Slope, Brooklyn</span><span class="L-ru">Нью-Йорк · 26 сен – 4 окт 2026 · Парк-Слоуп, Бруклин</span><span class="L-de">New York · 26. Sep – 4. Okt 2026 · Park Slope, Brooklyn</span></div>
   </div>
 </footer>
 
 <nav class="tabbar" role="tablist" aria-label="Sections">
   <button class="tbtn" role="tab" aria-selected="true" data-tabbtn="home">
     <svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6.5 10v9.5h11V10"/></svg>
-    <span class="L-en">Today</span><span class="L-ru">Сегодня</span>
+    <span class="L-en">Today</span><span class="L-ru">Сегодня</span><span class="L-de">Heute</span>
   </button>
   <button class="tbtn" role="tab" aria-selected="false" data-tabbtn="days">
     <svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>
-    <span class="L-en">Days</span><span class="L-ru">Дни</span>
+    <span class="L-en">Days</span><span class="L-ru">Дни</span><span class="L-de">Tage</span>
   </button>
   <button class="tbtn" role="tab" aria-selected="false" data-tabbtn="explore">
     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
-    <span class="L-en">Explore</span><span class="L-ru">Места</span>
+    <span class="L-en">Explore</span><span class="L-ru">Места</span><span class="L-de">Entdecken</span>
   </button>
   <button class="tbtn" role="tab" aria-selected="false" data-tabbtn="plan">
     <svg viewBox="0 0 24 24"><path d="M5 12.5 10 17 19 6.5"/><rect x="3.5" y="3.5" width="17" height="17" rx="4"/></svg>
-    <span class="L-en">Plan</span><span class="L-ru">План</span>
+    <span class="L-en">Plan</span><span class="L-ru">План</span><span class="L-de">Plan</span>
   </button>
   <button class="tbtn" role="tab" aria-selected="false" data-tabbtn="map">
     <svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.7-6.5-10.2A6.5 6.5 0 0 1 12 4.3a6.5 6.5 0 0 1 6.5 6.5C18.5 15.3 12 21 12 21Z"/><circle cx="12" cy="10.7" r="2.3"/></svg>
-    <span class="L-en">Map</span><span class="L-ru">Карта</span>
+    <span class="L-en">Map</span><span class="L-ru">Карта</span><span class="L-de">Karte</span>
   </button>
   <button class="tbtn" role="tab" aria-selected="false" data-tabbtn="chat">
     <svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H10l-4.6 3.6c-.6.5-1.4 0-1.4-.7Z"/></svg>
-    <span class="L-en">Chat</span><span class="L-ru">Чат</span>
+    <span class="L-en">Chat</span><span class="L-ru">Чат</span><span class="L-de">Chat</span>
   </button>
   <button class="tbtn" role="tab" aria-selected="false" data-tabbtn="more">
     <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>
-    <span class="L-en">More</span><span class="L-ru">Ещё</span>
+    <span class="L-en">More</span><span class="L-ru">Ещё</span><span class="L-de">Mehr</span>
   </button>
 </nav>
 
 <div class="install" role="dialog" aria-label="Install this itinerary as an app">
-  <button class="x" type="button" aria-label="Dismiss" onclick="document.body.classList.remove('show-install')">×</button>
-  <span id="hint-ios"><span class="L-en"><b>Put this on your home screen:</b> tap the Share button (the square with the ↑) in Safari, then <b>“Add to Home Screen.”</b></span><span class="L-ru"><b>Добавьте на главный экран:</b> нажмите кнопку «Поделиться» (квадрат со стрелкой ↑) в Safari, затем <b>«На экран “Домой”»</b>.</span></span><span id="hint-android" hidden><span class="L-en"><b>Install this as an app:</b> tap the ⋮ menu in Chrome, then <b>“Add to Home screen.”</b></span><span class="L-ru"><b>Установите как приложение:</b> нажмите меню ⋮ в Chrome, затем <b>«Добавить на главный экран»</b>.</span></span> <span class="L-en">Its own icon, full screen — and once installed, <b>everything works offline</b>.</span><span class="L-ru">Своя иконка, полный экран — и после установки <b>всё работает офлайн</b>.</span>
+  <button class="x" type="button" id="installx" aria-label="Dismiss">×</button>
+  <span id="hint-ios"><span class="L-en"><b>Add to your home screen</b> — Share ↑ then “Add to Home Screen”. Works offline.</span><span class="L-ru"><b>Добавьте на главный экран</b> — «Поделиться» ↑, затем «На экран “Домой”». Работает офлайн.</span><span class="L-de"><b>Zum Home-Bildschirm</b> — „Teilen“ ↑, dann „Zum Home-Bildschirm“. Funktioniert offline.</span></span><span id="hint-android" hidden><span class="L-en"><b>Install as an app</b> — the ⋮ menu, then “Add to Home screen”. Works offline.</span><span class="L-ru"><b>Установите как приложение</b> — меню ⋮, затем «Добавить на главный экран». Работает офлайн.</span><span class="L-de"><b>Als App installieren</b> — Menü ⋮, dann „Zum Startbildschirm“. Funktioniert offline.</span></span>
 </div>
 
 <div id="sheetback" class="sheetback" hidden></div>

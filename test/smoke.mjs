@@ -101,6 +101,24 @@ if (booted) {
   // closed-day conflicts in the seeded plan
   const DOW = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
   T.DAYS.forEach(d => { const dow = DOW[new Date(d.date + 'T12:00:00').getDay()]; (T.SEED[d.key] || []).forEach(([ref]) => { const p = window.NYC.PL[ref.slice(2)]; if (ref.startsWith('p:') && p && Array.isArray(p.closed) && p.closed.includes(dow)) fail(`seeded ${p.name} on ${d.key} (${dow}) but it is closed that day`); }); });
+  // stops scheduled before the door opens — a venue's own hours vs. the plan
+  const opensAt = (h) => {
+    if (!h) return null;
+    const m = String(h).match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*[–\-—]/i);
+    if (!m) return null;
+    let hh = Number(m[1]); const mm = Number(m[2] || 0); const ap = (m[3] || '').toLowerCase();
+    if (ap === 'pm' && hh < 12) hh += 12;
+    if (ap === 'am' && hh === 12) hh = 0;
+    if (!ap && hh <= 7) hh += 12;
+    return hh * 60 + mm;
+  };
+  T.DAYS.forEach(d => {
+    for (const r of NYC.agReflow(d.key, NYC.agIds(d.key))) {
+      const p = r.it.place; if (!p || !p.hours) continue;
+      const o = opensAt(p.hours); if (o == null) continue;
+      if (r.start < o - 5) console.warn(`  ! ${d.key}: ${p.name} is scheduled at ${Math.floor(r.start/60)}:${String(r.start%60).padStart(2,'0')} but opens ~${Math.floor(o/60)}:${String(o%60).padStart(2,'0')} ("${p.hours}")`);
+    }
+  });
   // pace of the seeded days
   T.DAYS.forEach(d => { const rows = NYC.agReflow(d.key, NYC.agIds(d.key)); const st = NYC.dayStats(d.key, rows); if (st.lvl >= 3) console.warn(`  ! ${d.key} seeded pace is crammed (${st.anchors} anchors, ${st.travel} min transit)`); });
   ok('seed/day sanity checked (' + PLACES.length + ' places)');

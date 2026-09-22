@@ -87,7 +87,17 @@ const S = {
   badMapLink: ['That is not a Google or Apple Maps link', 'Это не ссылка Google или Apple Карт', 'Das ist kein Google- oder Apple-Maps-Link'],
   badWebLink: ['That website link does not look right', 'Ссылка на сайт выглядит неверно', 'Der Website-Link sieht nicht richtig aus'],
   editLinks: ['Links & location', 'Ссылки и место', 'Links & Ort'],
-  pinnedName: ['📍 Pinned place', '📍 Место на карте', '📍 Markierter Ort'], customMin: ['min', 'мин', 'Min'], add: ['Add', 'Добавить', 'Hinzufügen'],
+  pinnedName: ['📍 Pinned place', '📍 Место на карте', '📍 Markierter Ort'],
+  fromConcierge: ['Suggested by the concierge', 'Совет консьержа', 'Tipp vom Concierge'],
+  onGoogleMaps: ['Google Maps', 'Google Карты', 'Google Maps'],
+  searchWeb: ['Search the web', 'Найти в интернете', 'Im Web suchen'],
+  approxLoc: ['📍 Approximate location, from the concierge. Travel times are estimates; paste a map link to pin it exactly.', '📍 Место приблизительное, со слов консьержа. Время в пути — оценка; вставьте ссылку на карту, чтобы уточнить.', '📍 Ungefährer Ort, laut Concierge. Fahrzeiten sind Schätzungen; mit einem Kartenlink wird er genau.'],
+  approxShort: ['approximate location', 'место приблизительно', 'Ort ungefähr'],
+  addAsIdeaH: ['Add it to your ideas', 'Добавить в идеи', 'Zu euren Ideen hinzufügen'],
+  addAsIdea: ['＋ Add as idea', '＋ В идеи', '＋ Als Idee'],
+  ideaAdded: ['Added to your ideas — it is in Plan', 'Добавлено в идеи — оно в «Плане»', 'Zu den Ideen hinzugefügt — steht im Plan'],
+  alreadyIdea: ['Already in your ideas', 'Уже в ваших идеях', 'Schon in euren Ideen'],
+  adjustFirst: ['Change the name, time or links first', 'Сначала изменить название, время или ссылки', 'Vorher Name, Dauer oder Links ändern'], customMin: ['min', 'мин', 'Min'], add: ['Add', 'Добавить', 'Hinzufügen'],
   breakTitle: ['A break near', 'Пауза рядом с', 'Eine Pause in der Nähe von'], breakNone: ['No café or bar in the library near that stop — add one from Explore.', 'В библиотеке нет кафе или бара рядом — добавьте из раздела «Места».', 'Kein Café und keine Bar in der Nähe dieses Stopps — füge eine über „Entdecken“ hinzu.'],
   replanTitle: ['Replan this day', 'Перепланировать день', 'Diesen Tag neu planen'], later: ['☀️ Start an hour later', '☀️ Начать на час позже', '☀️ Eine Stunde später starten'], lighter: ['🪶 Make it lighter — drop a stop', '🪶 Сделать легче — убрать пункт', '🪶 Leichter machen — einen Stopp streichen'], rainSwap: ['🌧 Swap outdoor stops for the rain plan', '🌧 Заменить уличное на план для дождя', '🌧 Außenstopps gegen den Regenplan tauschen'], askAI: ['✨ Ask the concierge', '✨ Спросить консьержа', '✨ Den Concierge fragen'], askPlaceholder: ['e.g. We\'re tired — one museum, a long lunch, home by 9', 'например: мы устали — один музей, долгий обед, домой к 9', 'z. B.: Wir sind müde — ein Museum, langes Mittagessen, um 21 Uhr zu Hause'], thinking: ['Drafting…', 'Думаю…', 'Entwurf läuft…'], applyDraft: ['✓ Apply this draft', '✓ Применить', '✓ Entwurf übernehmen'],
   aiOff: ['The concierge is not connected yet (see the Chat tab).', 'Консьерж пока не подключён (см. вкладку «Чат»).', 'Der Concierge ist noch nicht verbunden (siehe Tab „Chat“).'], shifted: ['Day shifted an hour later', 'День сдвинут на час позже', 'Tag um eine Stunde nach hinten verschoben'], whichDrop: ['Which stop goes?', 'Какой пункт убрать?', 'Welcher Stopp fällt weg?'],
@@ -253,7 +263,7 @@ function seedFor(ref) {
   if (ref.startsWith('c:')) {
     const c = (state.custom || {})[ref.slice(2)]; if (!c || c.deleted) return null;
     const la = coord(c.lat), ln = coord(c.lng);
-    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, de: c.name, p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea' };
+    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, de: c.name, p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea', approx: !!c.approx && la != null };
     return AGSEED[ref];
   }
   return null;
@@ -416,6 +426,7 @@ function rowTitleHtml(it) {
 }
 function rowSub(it, day) {
   if (it.custom && !it.p) return '<small class="nolocation">' + esc(t('noLocation')) + '</small>';
+  if (it.custom && it.approx) return '<small class="nolocation">' + esc(t('approxShort')) + '</small>';
   const p = it.place; if (!p) return '';
   const bits = [placeSub(p), p.hood].filter(Boolean);
   const dow = dowOf(day);
@@ -653,7 +664,7 @@ function openPlace(id) {
   let p = PL[id]; let ref = 'p:' + id; let custom = null;
   if (!p && id.startsWith('c:')) {
     custom = (state.custom || {})[id.slice(2)]; if (!custom) return; ref = id;
-    p = { id: id.slice(2), name: custom.name, cat: 'idea', hood: custom.hood || '', dur: custom.d || 60, why: '', tips: [], tags: [], custom: true,
+    p = { id: id.slice(2), name: custom.name, cat: CAT[custom.cat] ? custom.cat : 'idea', hood: custom.hood || '', dur: custom.d || 60, why: custom.note || '', tips: [], tags: [], custom: true,
       lat: (coord(custom.lat) != null && coord(custom.lng) != null) ? coord(custom.lat) : null, lng: (coord(custom.lat) != null && coord(custom.lng) != null) ? coord(custom.lng) : null,
       web: safeHref(custom.web), mapUrl: safeHref(custom.map) };
     // a share link that never got expanded (offline at the time): try again now
@@ -679,8 +690,8 @@ function openPlace(id) {
     (p.tags && p.tags.length ? '<div class="tags">' + p.tags.slice(0, 6).map(x => '<span class="tag">' + esc(tagLabel(x)) + '</span>').join('') + '</div>' : '') +
     '<div class="votebox"><div class="vl">' + t('yourVote') + (me ? ' · ' + esc(whoName(me)) : '') + '<small>' + TR.filter(tr => isVoter(tr[0])).map(tr => (v[tr[0]] ? (tr[3] || '') + ' ' + esc(whoName(tr[0])) + ': ' + (v[tr[0]] === 'yes' ? '❤️' : v[tr[0]] === 'maybe' ? '🤔' : '✕') : '')).filter(Boolean).join(' · ') + '</small></div>' +
     '<div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-vote="' + o[0] + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>' +
-    (custom ? '<p class="gsub custloc">' + (p.lat != null ? t('pinned') : t('unpinned')) + '</p>' +
-      '<details class="custedit"' + (p.lat == null ? ' open' : '') + '><summary>' + t('editLinks') + '</summary>' +
+    (custom ? '<p class="gsub custloc">' + (p.lat != null ? (custom.approx ? t('approxLoc') : t('pinned')) : t('unpinned')) + '</p>' +
+      '<details class="custedit"' + (p.lat == null || custom.approx ? ' open' : '') + '><summary>' + t('editLinks') + '</summary>' +
       '<div class="exform links"><input id="sh-cmap" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" value="' + esc(safeHref(custom.map)) + '" />' +
       '<input id="sh-cweb" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" value="' + esc(safeHref(custom.web)) + '" />' +
       '<button type="button" id="sh-csave">' + t('save') + '</button></div><p class="gsub">' + esc(t('mapLinkHow')) + '</p></details>' : '') +
@@ -694,8 +705,12 @@ function openPlace(id) {
     if (csave) csave.onclick = () => {
       const k = id.slice(2), mapRaw = $('#sh-cmap').value, webRaw = $('#sh-cweb').value;
       const L2 = customLinks(mapRaw, webRaw); if (L2.err) { toast(L2.err); return; }
-      // replacing the map link clears the old location, so a stale pin cannot survive an edit
-      const upd = Object.assign({}, custom, { map: '', web: '', lat: null, lng: null, needsResolve: false }, L2.fields);
+      // A changed map link replaces the location, so a stale pin cannot survive
+      // an edit; editing only the website leaves the location alone.
+      const mapChanged = String(mapRaw || '').trim() !== String(safeHref(custom.map) || '').trim();
+      const reset = mapChanged ? { map: '', lat: null, lng: null, needsResolve: false, approx: false } : {};
+      const upd = Object.assign({}, custom, { web: '' }, reset, L2.fields);
+      if (L2.fields.lat != null) upd.approx = false;
       delete upd.mapName; delete HOMEMIN[k];
       put('custom', k, upd); refreshCustomSeeds();
       if (upd.needsResolve) resolveCustom(k); else toast(t('saved'));
@@ -705,7 +720,8 @@ function openPlace(id) {
 }
 function tagLabel(x) { const tg = TAGS.find(z => z[0] === x); return tg ? L(tg[1], tg[2], tg[3]) : x.replace(/-/g, ' '); }
 function pickDay(ref, p) {
-  const fits = rankDays(p || seedFor(ref).place || { tags: [] });
+  const it0 = seedFor(ref);
+  const fits = rankDays(p || (it0 && it0.place) || (it0 && it0.p ? { lat: it0.p[0], lng: it0.p[1], tags: [] } : { tags: [] }));
   const html = '<h3>' + t('pickDay') + '</h3><p class="meta">' + esc(stopLabel(seedFor(ref))) + '</p>' +
     fits.map(f => { const d = DAYBYKEY[f.day]; const placed = agIds(f.day).indexOf(ref) >= 0; return '<div class="pkrow" data-pick="' + f.day + '"><div class="pn">' + dayLabel(f.day) + ' · ' + esc(dayTitle(d)) + '<small>' + (f.closed ? '⚠ ' + t('closedThatDay') : (f.why || '')) + '</small></div><button type="button" class="pk-b' + (f.rec ? ' rec' : '') + '" ' + (f.closed ? 'disabled' : '') + '>' + (placed ? '✓' : (f.rec ? '★ ' + t('recommended') : '📅')) + '</button></div>'; }).join('');
   openSheet(html, () => { $$('#sheet [data-pick]').forEach(r => { const b = r.querySelector('.pk-b'); if (b.disabled) return; r.onclick = () => { agInsert(r.dataset.pick, ref); closeSheet(); toast(t('applied') + ' · ' + dayLabel(r.dataset.pick)); }; }); });
@@ -762,7 +778,10 @@ async function resolveCustom(k, quiet) {
 }
 // Creates a custom stop from a name, a duration and the two optional links.
 // Returns its key, or null (with a toast) when a link is not usable.
-function makeCustom(name, mins, mapRaw, webRaw) {
+// extra: what the concierge knew about a place it suggested — neighbourhood, a
+// one-line note, and an approximate location, used only when no map link gives
+// an exact one, and always labelled as approximate.
+function makeCustom(name, mins, mapRaw, webRaw, extra) {
   const L2 = customLinks(mapRaw, webRaw);
   if (L2.err) { toast(L2.err); return null; }
   const f = L2.fields;
@@ -771,9 +790,24 @@ function makeCustom(name, mins, mapRaw, webRaw) {
   const k = String(Date.now());
   const c = Object.assign({ name: nm.slice(0, 120), d: Math.max(15, Number(mins) || 60), who: me, t: '14:00' }, f);
   delete c.mapName;
+  if (extra) {
+    const la = coord(extra.lat), ln = coord(extra.lng);
+    if (c.lat == null && la != null && ln != null) { c.lat = la; c.lng = ln; c.approx = true; }
+    if (extra.hood) c.hood = String(extra.hood).slice(0, 60);
+    if (extra.note) c.note = String(extra.note).slice(0, 240);
+    if (extra.cat && CAT[extra.cat]) c.cat = extra.cat;
+    if (extra.from) c.from = String(extra.from).slice(0, 20);
+  }
   state.custom[k] = c; put('custom', k, c); refreshCustomSeeds();
   if (c.needsResolve) resolveCustom(k);
   return k;
+}
+// Letters and digits from any script survive: a name in Cyrillic must not
+// collapse to nothing, or every Russian-named place would look like the same one.
+const normName = (x) => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/^the\s+/, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+function findCustomByName(name) {
+  const n = normName(name); if (!n) return null;
+  return Object.keys(state.custom || {}).find(k => { const c = state.custom[k]; return c && !c.deleted && normName(c.name) === n; }) || null;
 }
 function openAddStop(day) {
   const d = DAYBYKEY[day]; const hubs = d.hubs || [];
@@ -1197,7 +1231,139 @@ function nearMe() {
 }
 
 // ---------------------------------------------------------------- chat
-const CHAT = { msgs: [] };
+const CHAT = { msgs: [], chips: [] };
+// The library as the concierge sees it: one line per place, sorted so the text
+// is byte-for-byte the same on every request and the proxy's prompt cache holds.
+let CHATLIB = null;
+function chatLibrary() {
+  if (CHATLIB) return CHATLIB;
+  const flat = (x) => String(x == null ? '' : x).replace(/[|\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+  CHATLIB = PLACES.slice().sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
+    .map(p => [p.id, flat(p.name), p.cat, flat(p.hood), flat(p.hours).slice(0, 70), (p.closed || []).join(',')].join(' | ')).join('\n');
+  return CHATLIB;
+}
+// A library place the concierge named without its id: match on the exact name,
+// but only when any location it gave is close, so one branch of a chain is not
+// mistaken for another.
+let PLBYNAME = null;
+function libByName(name, la, ln) {
+  if (!PLBYNAME) { PLBYNAME = {}; PLACES.forEach(p => { const k = normName(p.name); if (k && !PLBYNAME[k]) PLBYNAME[k] = p; }); }
+  const hit = PLBYNAME[normName(name)] || null;
+  if (hit && la != null && ln != null && G.haversine(la, ln, hit.lat, hit.lng) > 1.5) return null;
+  return hit;
+}
+// What came back from the proxy is re-checked here: ids must be ours, names are
+// capped, locations must be in New York, and nothing is ever used as a URL.
+const inNycBox = (la, ln) => la != null && ln != null && la > 40.4 && la < 41.0 && ln > -74.35 && ln < -73.6;
+function normPlaces(raw) {
+  if (!Array.isArray(raw)) return [];
+  const out = [], seen = new Set();
+  raw.slice(0, 12).forEach(x => {
+    if (!x || typeof x !== 'object') return;
+    const id = typeof x.ref === 'string' && x.ref.indexOf('p:') === 0 ? x.ref.slice(2) : '';
+    const la0 = coord(x.lat), ln0 = coord(x.lng), here = inNycBox(la0, ln0);
+    const lib = (id && Object.prototype.hasOwnProperty.call(PL, id) ? PL[id] : null) || libByName(x.name, here ? la0 : null, here ? ln0 : null);
+    const name = (lib ? lib.name : String(typeof x.name === 'string' && x.name.trim() ? x.name : (x.mention || ''))).trim().slice(0, 120);
+    if (!name) return;
+    const key = lib ? 'p:' + lib.id : 'n:' + normName(name);
+    if (seen.has(key)) return; seen.add(key);
+    out.push({
+      lib, name,
+      mention: typeof x.mention === 'string' ? x.mention.slice(0, 160) : '',
+      hood: typeof x.hood === 'string' ? x.hood.slice(0, 60) : '',
+      cat: (typeof x.cat === 'string' && CAT[x.cat]) ? x.cat : 'idea',
+      lat: !lib && here ? la0 : null, lng: !lib && here ? ln0 : null,
+      minutes: Math.max(15, Math.min(480, parseInt(x.minutes, 10) || 60)),
+      why: typeof x.why === 'string' ? x.why.slice(0, 240) : '',
+    });
+  });
+  return out;
+}
+function chatPlaceState(pl) {
+  if (pl.lib) { const ref = 'p:' + pl.lib.id; return (scheduledDays(ref).length || (me && votesFor(ref)[me] === 'yes')) ? '✓' : '＋'; }
+  return findCustomByName(pl.name) ? '✓' : '＋';
+}
+function refreshChatChips() {
+  (CHAT.chips || []).forEach(x => { const st = chatPlaceState(x.pl); x.el.textContent = st; x.el.parentNode.classList.toggle('done', st === '✓'); });
+}
+function openChatPlace(pl) {
+  if (pl.lib) { openPlace(pl.lib.id); return; }
+  const k = findCustomByName(pl.name);
+  if (k) { openPlace('c:' + k); return; }
+  openSuggested(pl);
+}
+// A place the concierge suggested that is not in the library: what it said about
+// it, honest links to look it up, and the idea form already filled in.
+function openSuggested(pl) {
+  const q = pl.name + (pl.hood ? ', ' + pl.hood : '') + ', New York';
+  const hm = pl.lat != null ? G.fromHome(pl.lat, pl.lng) : null;
+  const html = '<div class="cat" style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--f)">' + catLabel(pl.cat) + ' · ' + esc(t('fromConcierge')) + '</div>' +
+    '<h3>' + esc(pl.name) + '</h3>' +
+    '<div class="meta">' + [esc(pl.hood), hm != null ? '~' + hm + ' ' + t('minutes') + ' ' + t('fromHome') : ''].filter(Boolean).join(' · ') + '</div>' +
+    (pl.why ? '<p class="why">' + esc(pl.why) + '</p>' : '') +
+    '<div class="linkrow"><a class="site" href="' + esc(G.mapsSearch(q)) + '" target="_blank" rel="noopener">' + esc(t('onGoogleMaps')) + '</a><a href="' + esc('https://www.google.com/search?q=' + encodeURIComponent(q)) + '" target="_blank" rel="noopener">' + esc(t('searchWeb')) + '</a></div>' +
+    // the two things you came here to do, before anything optional
+    '<div class="sheetacts"><button class="act go" type="button" id="sg-idea">' + esc(t('addAsIdea')) + '</button><button class="act" type="button" id="sg-day">' + esc(t('addToDay')) + '</button></div>' +
+    '<p class="gsub custloc">' + esc(pl.lat != null ? t('approxLoc') : t('unpinned')) + '</p>' +
+    '<details class="custedit"><summary>' + esc(t('adjustFirst')) + '</summary>' +
+    '<div class="exform nm"><input id="sg-name" type="text" value="' + esc(pl.name) + '" aria-label="' + esc(t('customName')) + '" /><input id="sg-min" type="number" inputmode="numeric" value="' + pl.minutes + '" aria-label="' + esc(t('minutes')) + '" /></div>' +
+    '<div class="exform links"><input id="sg-map" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" /><input id="sg-web" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" /></div>' +
+    '<p class="gsub">' + esc(t('mapLinkHow')) + '</p></details>';
+  openSheet(html, () => {
+    const create = () => {
+      const typed = $('#sg-name').value;
+      const dup = findCustomByName(typed || pl.name);
+      if (dup) { toast(t('alreadyIdea')); return dup; }
+      const k = makeCustom(typed, $('#sg-min').value, $('#sg-map').value, $('#sg-web').value, { lat: pl.lat, lng: pl.lng, hood: pl.hood, note: pl.why, cat: pl.cat, from: 'concierge' });
+      if (k && me) setVote('c:' + k, 'yes');
+      return k;
+    };
+    $('#sg-idea').onclick = () => { const k = create(); if (!k) return; closeSheet(); toast(t('ideaAdded')); refreshChatChips(); };
+    $('#sg-day').onclick = () => { const k = create(); if (!k) return; pickDay('c:' + k); };
+  });
+}
+// The concierge's reply, with the places it recommended made tappable: the
+// first mention of each in the text, and a row of chips beneath. Built from DOM
+// nodes, never innerHTML, so nothing the model writes can become markup.
+function addReply(text, places) {
+  const d = document.createElement('div'); d.className = 'msg a';
+  const body = document.createElement('div'); body.className = 'msgtext';
+  const spans = [], low = text.toLowerCase();
+  places.forEach((pl, i) => {
+    const m = String(pl.mention || pl.name || '').trim(); if (m.length < 2) return;
+    let at = text.indexOf(m); if (at < 0) at = low.indexOf(m.toLowerCase()); if (at < 0) return;
+    const end = at + m.length; if (spans.some(x => at < x.end && end > x.start)) return;
+    spans.push({ start: at, end, i });
+  });
+  spans.sort((a, b) => a.start - b.start);
+  let pos = 0;
+  spans.forEach(x => {
+    if (x.start > pos) body.appendChild(document.createTextNode(text.slice(pos, x.start)));
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chatplace'; b.textContent = text.slice(x.start, x.end);
+    b.onclick = () => openChatPlace(places[x.i]);
+    body.appendChild(b); pos = x.end;
+  });
+  if (pos < text.length) body.appendChild(document.createTextNode(text.slice(pos)));
+  d.appendChild(body);
+  if (places.length) {
+    const row = document.createElement('div'); row.className = 'chatchips';
+    places.forEach(pl => {
+      const c = document.createElement('button'); c.type = 'button'; c.className = 'chatchip';
+      const ico = document.createElement('span'); ico.className = 'ci'; ico.textContent = (CAT[pl.lib ? pl.lib.cat : pl.cat] || CAT.idea).ico;
+      const nm = document.createElement('span'); nm.className = 'cn'; nm.textContent = pl.lib ? placeName(pl.lib) : pl.name;
+      const st = document.createElement('span'); st.className = 'cp';
+      c.append(ico, nm, st); c.onclick = () => openChatPlace(pl);
+      row.appendChild(c); CHAT.chips.push({ el: st, pl });
+    });
+    d.appendChild(row);
+  }
+  $('#msgs').appendChild(d); refreshChatChips();
+  // Show the whole reply when it fits between the header and the message box;
+  // when it does not, open at its first line so it reads from the start.
+  const room = (window.innerHeight || 700) - 240;
+  d.scrollIntoView({ block: d.getBoundingClientRect().height > room ? 'start' : 'end' });
+  return d;
+}
 function addMsg(role, text, cls) { const d = document.createElement('div'); d.className = 'msg ' + (role === 'user' ? 'u' : 'a') + (cls ? ' ' + cls : ''); d.textContent = text; $('#msgs').appendChild(d); d.scrollIntoView({ block: 'end' }); return d; }
 function chatContext() {
   const tk = todayKey(); const dk = DAYS.find(d => d.date === tk) || DAYS[0];
@@ -1212,10 +1378,15 @@ async function sendChat(text) {
   const th = addMsg('assistant', '…', 'think');
   try {
     if (!navigator.onLine) throw new Error('offline');
-    const r = await fetch(CFG.CONCIERGE_URL.replace(/\/$/, '') + '/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trip-Key': CFG.TRIP_KEY || '' }, body: JSON.stringify({ messages: CHAT.msgs.slice(-12), today: new Date().toLocaleString(LOCALE[lang], { timeZone: T.TIMEZONE || 'America/New_York', dateStyle: 'full', timeStyle: 'short' }), context: chatContext() }) });
+    const r = await fetch(CFG.CONCIERGE_URL.replace(/\/$/, '') + '/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trip-Key': CFG.TRIP_KEY || '' }, body: JSON.stringify({ messages: CHAT.msgs.slice(-12), today: new Date().toLocaleString(LOCALE[lang], { timeZone: T.TIMEZONE || 'America/New_York', dateStyle: 'full', timeStyle: 'short' }), context: chatContext(), library: chatLibrary() }) });
     const j = await r.json(); th.remove();
-    const reply = (j && j.reply) || (j && j.error) || t('chatErr');
-    addMsg('assistant', reply); CHAT.msgs.push({ role: 'assistant', content: reply });
+    if (j && typeof j.reply === 'string' && j.reply) {
+      addReply(j.reply, normPlaces(j.places));
+      CHAT.msgs.push({ role: 'assistant', content: j.reply });
+    } else {
+      // an error is shown, but never fed back to the model as something it said
+      addMsg('assistant', (j && j.error) || t('chatErr'), 'think');
+    }
   } catch (e) { th.remove(); addMsg('assistant', navigator.onLine ? t('chatErr') : t('chatOffline'), 'think'); }
   btn.disabled = false;
 }
@@ -1513,7 +1684,7 @@ function tourSeen() { try { return !!localStorage.getItem(TOURKEY); } catch (e) 
 // ---------------------------------------------------------------- render all + init
 function renderAll() {
   refreshCustomSeeds();
-  renderWho(); renderAgendaAll(); renderPlan(); renderHome(); renderBookings(); renderNotes(); renderSettings(); renderTicker(); renderCount(); renderGuide();
+  renderWho(); renderAgendaAll(); renderPlan(); renderHome(); renderBookings(); renderNotes(); renderSettings(); renderTicker(); renderCount(); renderGuide(); refreshChatChips();
   if (currentTab === 'explore') renderExplore();
   if (map) { renderMapControls(); drawMarkers(); }
 }
@@ -1544,6 +1715,6 @@ function init() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderTicker(); renderHome(); } });
 }
 // expose a little for tests
-window.NYC = { agIds, agReflow, dayStats, rankDays, buildWeek, seedFor, state, setTab, setDay, openPlace, buildICS, tourStart, tourEnd, tourGo, TOURKEY, get tourStep() { return TI; }, get tourOn() { return TOURON; }, TOUR, get me() { return me; }, set me(v) { me = v; }, PL };
+window.NYC = { normPlaces, chatLibrary, addReply, agIds, agReflow, dayStats, rankDays, buildWeek, seedFor, state, setTab, setDay, openPlace, buildICS, tourStart, tourEnd, tourGo, TOURKEY, get tourStep() { return TI; }, get tourOn() { return TOURON; }, TOUR, get me() { return me; }, set me(v) { me = v; }, PL };
 init();
 })();

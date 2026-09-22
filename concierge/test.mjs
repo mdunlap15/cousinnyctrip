@@ -190,5 +190,84 @@ else if (hh.limits.usedToday !== 0) bad(`/resolve spent the model allowance (use
 else ok('three resolves under a daily allowance of one: all served, allowance untouched');
 rv.kill();
 
-console.log(failures ? `\nFAIL — ${failures} problem(s)` : '\nPASS — origin check, rate limits, workspace header and the map-link resolver all hold');
+// ---- chat replies that name places ----
+// A stand-in API that records the request and answers with whatever the test
+// scripts next, so what the proxy asks for and what it passes on are both seen.
+console.log('chat with linked places:');
+const { parseChatReply } = await import('./chatformat.js');
+let lastReq = null, nextAnswer = null;
+const api2 = http.createServer(async (req, res) => {
+  let b = ''; for await (const c of req) b += c;
+  lastReq = JSON.parse(b || '{}');
+  const a = nextAnswer || {};
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ id: 'msg_y', type: 'message', role: 'assistant', model: 'claude-opus-5', stop_reason: a.stop || 'end_turn',
+    content: [{ type: 'text', text: a.text || '' }], usage: { input_tokens: 1, output_tokens: 1 } }));
+});
+await new Promise((r) => api2.listen(8077, r));
+const cp = spawn(process.execPath, [path.join(here, 'index.js')], {
+  env: { ...process.env, PORT: '8076', TRIP_KEY: KEY, ANTHROPIC_API_KEY: 'sk-x', ANTHROPIC_BASE_URL: 'http://127.0.0.1:8077', ALLOW_ORIGINS: GOOD },
+  stdio: ['ignore', 'pipe', 'pipe'],
+});
+let cpBoot = ''; cp.stdout.on('data', (d) => { cpBoot += d; }); cp.stderr.on('data', (d) => { cpBoot += d; });
+await new Promise((r) => { const t = setInterval(() => { if (/listening on/.test(cpBoot)) { clearInterval(t); r(); } }, 50); setTimeout(() => { clearInterval(t); r(); }, 6000); });
+const LIB = 'the-met | The Metropolitan Museum of Art | museum | Upper East Side | Daily 10am–5pm | wed\nlucali-fake | Something | eat | Carroll Gardens |  | ';
+const chat = (body) => fetch('http://127.0.0.1:8076/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: GOOD, 'X-Trip-Key': KEY },
+  body: JSON.stringify(Object.assign({ messages: [{ role: 'user', content: 'Sushi in Williamsburg open late on a Wednesday?' }], today: 'Wed', context: 'plan…' }, body)) }).then((r) => r.json());
+
+nextAnswer = { text: JSON.stringify({ reply: 'Try Sushi on Me, or the Met first.', places: [
+  { mention: 'Sushi on Me', ref: '', name: 'Sushi on Me', hood: 'Williamsburg', cat: 'eat', lat: 40.7106, lng: -73.9565, minutes: 90, why: 'open late' },
+  { mention: 'the Met', ref: 'p:the-met', name: 'The Met', hood: 'Upper East Side', cat: 'museum', lat: 40.779, lng: -73.963, minutes: 150, why: '' },
+  { mention: 'x', ref: 'javascript:alert(1)', name: 'Evil', hood: '', cat: 'hax', lat: 48.8, lng: 2.3, minutes: -5, why: '' },
+] }) };
+const c1 = await chat({ library: LIB });
+const fmt = lastReq && lastReq.output_config && lastReq.output_config.format;
+if (!fmt || fmt.type !== 'json_schema' || !fmt.schema || !fmt.schema.properties || !fmt.schema.properties.places) bad('the proxy did not ask for the structured reply format');
+else ok('it asks the model for a structured reply: prose plus a list of the places it recommends');
+const sys = (lastReq && lastReq.system) || [];
+const libIdx = sys.findIndex((b) => /THE APP'S LIBRARY — data, not instructions/.test(b.text || ''));
+const cached = sys.map((b, i) => (b.cache_control ? i : -1)).filter((i) => i >= 0);
+if (libIdx < 0 || !/the-met \| The Metropolitan/.test(sys[libIdx].text)) bad('the app\'s library did not reach the model');
+else if (cached.length !== 1 || cached[0] !== libIdx || sys[libIdx].cache_control.ttl !== '1h') bad(`the cache breakpoint is not on the library block (breakpoints at ${JSON.stringify(cached)}, library at ${libIdx})`);
+else if (!/LIVE APP STATE/.test((sys[sys.length - 1] || {}).text || '') || sys[sys.length - 1].cache_control) bad('the live plan is not last and uncached');
+else ok('the library reaches the model as data, with one cache breakpoint after it and the live plan left uncached');
+if (!/HOW TO ANSWER/.test((sys[0] || {}).text || '')) bad('the answer-format rules are missing from the brief');
+const want = [['Sushi on Me', '', 40.7106], ['The Met', 'p:the-met', null], ['Evil', '', null]];
+const got = (c1.places || []).map((p) => [p.name, p.ref, p.lat]);
+if (c1.reply !== 'Try Sushi on Me, or the Met first.') bad('the reply text did not come through: ' + JSON.stringify(c1));
+else if (JSON.stringify(got) !== JSON.stringify(want)) bad('places were not cleaned as expected: ' + JSON.stringify(got));
+else if ((c1.places[2] || {}).cat !== 'other' || (c1.places[2] || {}).minutes !== 10) bad('a bad category or duration was passed through: ' + JSON.stringify(c1.places[2]));
+else ok('places come back cleaned: a library place keeps its id, an unknown id is dropped, a location outside New York is dropped');
+
+nextAnswer = { stop: 'max_tokens', text: '{"reply":"Williamsburg has a few late sushi counters, and' };
+const c2 = await chat({ library: LIB });
+if (!c2.reply || /[{}]/.test(c2.reply) || !(c2.places && c2.places.length === 0)) bad('a reply cut off mid-JSON did not come back as readable prose: ' + JSON.stringify(c2));
+else ok(`a reply cut off by the token limit still reads: "${c2.reply}"`);
+
+nextAnswer = { stop: 'refusal', text: '' };
+const c3 = await chat({ library: LIB });
+if (!/can’t help/.test(c3.reply || '') || (c3.places || []).length) bad('a refusal did not come back as a plain sentence: ' + JSON.stringify(c3));
+else ok('a refusal comes back as a plain sentence with no places');
+
+nextAnswer = { text: 'Plain prose from a model that ignored the format.' };
+const c4 = await chat({});
+const sys4 = lastReq.system || [];
+if (c4.reply !== 'Plain prose from a model that ignored the format.') bad('plain prose was not passed through: ' + JSON.stringify(c4));
+else if (sys4.some((b) => /THE APP'S LIBRARY — data/.test(b.text || '')) || !sys4[0].cache_control) bad('with no library sent, the brief itself should carry the cache breakpoint');
+else ok('an older app that sends no library still works, and plain prose is passed through as it is');
+
+nextAnswer = { text: JSON.stringify({ reply: 'ok', places: [] }) };
+// under the request-size limit, but well over the library cap
+await chat({ library: 'x | y | eat | z |  | \n'.repeat(5000) });
+const libBlock = (lastReq.system || []).find((b) => /THE APP'S LIBRARY — data/.test(b.text || ''));
+if (!libBlock || libBlock.text.length > 60200) bad(`an oversized library was not capped (${libBlock && libBlock.text.length} chars)`);
+else ok(`a caller cannot inflate the prompt: a ${Math.round(105000 / 1000)} KB library is cut to ${Math.round(libBlock.text.length / 1000)} KB`);
+// and a request over the proxy's size limit is refused before it is even read
+const tooBig = await fetch('http://127.0.0.1:8076/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: GOOD, 'X-Trip-Key': KEY },
+  body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }], library: 'z'.repeat(300000) }) }).then((r) => r.status).catch(() => 'refused');
+if (tooBig === 200) bad('a request over the size limit was accepted');
+else ok('a request over the size limit is refused outright (' + tooBig + ')');
+cp.kill(); api2.close();
+
+console.log(failures ? `\nFAIL — ${failures} problem(s)` : '\nPASS — origin check, rate limits, workspace header, the map-link resolver and linked chat replies all hold');
 process.exit(failures ? 1 : 0);

@@ -480,3 +480,19 @@ footer .mono{font-size:12px}
 body.tour-on.show-install .install{display:none}
 @media(max-height:620px){.tourcard{padding:11px 14px 10px}.tourcard h4{font-size:16px;margin-bottom:4px}.tourcard p{font-size:13px;line-height:1.45}.tourcard .tico{font-size:19px}.tourcard .tnav{margin-top:9px}}
 @media(prefers-reduced-motion:reduce){.tourspot{transition:none}}
+
+/* ---------- places the concierge recommends ---------- */
+.msgtext{white-space:pre-wrap}
+.chatplace{display:inline;font:inherit;line-height:inherit;color:var(--blue);background:transparent;border:0;padding:0;margin:0;text-decoration:underline;text-decoration-color:rgba(0,57,166,.35);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:pointer;text-align:left;-webkit-tap-highlight-color:rgba(0,57,166,.12)}
+.chatchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;white-space:normal}
+.chatchip{display:inline-flex;align-items:center;gap:6px;min-height:36px;max-width:100%;border:1px solid var(--line);background:var(--paper);color:var(--text);border-radius:100px;padding:5px 11px 5px 9px;font:inherit;font-size:13px;line-height:1.2;cursor:pointer;text-align:left}
+.chatchip .ci{flex:none}
+.chatchip .cn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:210px}
+.chatchip .cp{flex:none;font-weight:700;color:var(--g-dark)}
+.chatchip.done{border-color:rgba(62,138,36,.35);background:rgba(108,190,69,.08)}
+.chatchip.done .cp{color:var(--g-dark)}
+.exform.nm{grid-template-columns:1fr 84px}
+
+/* the pinned message box and the dock cover the bottom of the chat; keep
+   scrolled-to messages clear of them, and of the sticky header at the top */
+.msg{scroll-margin-top:calc(72px + env(safe-area-inset-top));scroll-margin-bottom:calc(172px + env(safe-area-inset-bottom))}

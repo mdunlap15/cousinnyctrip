@@ -52,6 +52,7 @@ npm run test:tour        # the onboarding walkthrough, in a real browser on 3 ph
 npm run test:proxy       # the concierge's origin check and rate limits (no API spend)
 npm run test:concierge   # the app in a browser talking to the real proxy across origins
 npm run test:custom      # adding your own stop with a map link, through the UI on a small phone
+npm run test:chat        # the concierge's recommended places: tappable, and one tap turns them into ideas
 npm run test:offline     # loads the app, kills the network, reloads
 npm run test:install     # manifest, iOS tags and the right install hint per phone
 npm run serve            # http://localhost:8080

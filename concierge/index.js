@@ -3,6 +3,7 @@
 import http from 'node:http';
 import Anthropic from '@anthropic-ai/sdk';
 import { resolveMapsLink } from './resolve.js';
+import { CHAT_SCHEMA, LINKING_RULES, libraryBlock, parseChatReply } from './chatformat.js';
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.MODEL || 'claude-opus-5';
@@ -210,18 +211,33 @@ const server = http.createServer(async (req, res) => {
 
   if (req.url === '/chat') {
     try {
-      const { messages = [], today = '', context = '' } = JSON.parse((await readBody(req, 200000)) || '{}');
+      const { messages = [], today = '', context = '', library = '' } = JSON.parse((await readBody(req, 200000)) || '{}');
       const clean = messages
         .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
         .slice(-20)
         .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
       if (!clean.length || clean[clean.length - 1].role !== 'user') return send(res, 400, { error: 'need a user message' }, {}, req);
-      const system = [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }];
+      // Stable first, volatile last. The brief, the answer format and the
+      // library only change when the app is redeployed, so they sit before one
+      // cache breakpoint and are read back cheaply for an hour between chats.
+      // Today's plan and the time go after it and are never cached.
+      const lib = libraryBlock(library);
+      const system = [{ type: 'text', text: SYSTEM + '\n\n' + LINKING_RULES }];
+      if (lib) system.push({ type: 'text', text: lib });
+      system[system.length - 1].cache_control = { type: 'ephemeral', ttl: '1h' };
       const volatile = [today ? `Right now for the travelers it is: ${today}.` : '', context ? `LIVE APP STATE:\n${String(context).slice(0, 6000)}` : ''].filter(Boolean).join('\n\n');
       if (volatile) system.push({ type: 'text', text: volatile });
-      const msg = await ask({ model: MODEL, max_tokens: 1200, output_config: { effort: 'medium' }, system, messages: clean });
-      if (msg.stop_reason === 'refusal') return send(res, 200, { reply: 'I can’t help with that one — ask me something about the trip.' }, {}, req);
-      return send(res, 200, { reply: textOf(msg) }, {}, req);
+      // Thinking counts against max_tokens, and a reply cut off mid-JSON is a
+      // broken reply, so leave generous room; only what is generated is billed.
+      const msg = await ask({
+        model: MODEL, max_tokens: 8000, system, messages: clean,
+        output_config: { effort: 'medium', format: { type: 'json_schema', schema: CHAT_SCHEMA } },
+      });
+      if (msg.stop_reason === 'refusal') return send(res, 200, { reply: 'I can’t help with that one — ask me something about the trip.', places: [] }, {}, req);
+      const out = parseChatReply(textOf(msg));
+      if (msg.stop_reason === 'max_tokens') console.warn('[chat] reply hit max_tokens; recovered ' + out.reply.length + ' chars, ' + out.places.length + ' places');
+      if (!out.reply) return send(res, 200, { reply: 'I lost my train of thought there — could you ask me again?', places: [] }, {}, req);
+      return send(res, 200, out, {}, req);
     } catch (e) { return apiError(res, e, req); }
   }
 

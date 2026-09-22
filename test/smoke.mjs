@@ -261,6 +261,131 @@ if (booted) {
   }
   NYC.state.agenda = {};
 
+  // ---- the concierge's recommendations, tappable ----
+  console.log('concierge replies with linked places:');
+  NYC.me = 'T';
+  const realFetch2 = window.fetch;
+  let chatBody = null, nextChat = null;
+  window.fetch = (url, opts) => {
+    if (String(url).endsWith('/chat')) { chatBody = JSON.parse(opts.body); return Promise.resolve({ ok: true, json: async () => nextChat }); }
+    return realFetch2(url, opts);
+  };
+  const ask = async (q) => {
+    click(document.querySelector('.tbtn[data-tabbtn="chat"]'));
+    document.getElementById('chatinput').value = q;
+    click(document.getElementById('chatsend'));
+    await new Promise(r => setTimeout(r, 60));
+    const msgs = [...document.querySelectorAll('#msgs .msg.a')];
+    return msgs[msgs.length - 1];
+  };
+  const libId = PLACES[0].id, libName = PLACES[0].name;
+  nextChat = { reply: 'For late sushi try Sushi on Me in Williamsburg. <b>Or</b> ' + libName + ' first. Also somewhere unnamed.', places: [
+    { mention: 'Sushi on Me', ref: '', name: 'Sushi on Me', hood: 'Williamsburg', cat: 'eat', lat: 40.7106, lng: -73.9565, minutes: 90, why: 'open until 1am' },
+    { mention: libName, ref: 'p:' + libId, name: libName, hood: '', cat: 'eat', lat: null, lng: null, minutes: 60, why: '' },
+    { mention: 'not in the text', ref: 'p:no-such-place', name: '<img src=x onerror=alert(1)>', hood: '', cat: 'eat', lat: 48.85, lng: 2.35, minutes: 60, why: '' },
+    { mention: 'Sushi on Me', ref: '', name: 'Sushi on Me', hood: 'Williamsburg', cat: 'eat', lat: 40.7106, lng: -73.9565, minutes: 90, why: 'dupe' },
+  ] };
+  const m1 = await ask('Sushi open late?');
+  if (!chatBody || typeof chatBody.library !== 'string' || chatBody.library.split('\n').length !== PLACES.length) fail('the chat request did not carry the library');
+  else ok(`the concierge is sent the whole library (${chatBody.library.split('\n').length} places), so it can recommend from it by id`);
+  if (!m1) fail('no reply rendered');
+  else {
+    const inline = [...m1.querySelectorAll('.chatplace')].map(b => b.textContent);
+    const chips = [...m1.querySelectorAll('.chatchip .cn')].map(b => b.textContent);
+    if (inline.join('|') !== ['Sushi on Me', libName].join('|')) fail('the places were not linked in the reply text: ' + JSON.stringify(inline));
+    if (chips.length !== 3) fail('expected 3 chips (duplicate dropped, unmatched mention still gets one), got ' + JSON.stringify(chips));
+    else ok(`the reply links "${inline.join('" and "')}" in the text, with ${chips.length} chips beneath; a repeat is dropped`);
+    if (m1.querySelector('b, img') || document.querySelector('#msgs [onerror]')) fail('text from the model became live HTML');
+    else if (!/<b>Or<\/b>/.test(m1.querySelector('.msgtext').textContent)) fail('the reply text was altered');
+    else ok('whatever the model writes stays text: "<b>" and an <img onerror> name render as plain characters');
+    // the library place opens its own full page
+    click([...m1.querySelectorAll('.chatchip')].find(c => c.textContent.includes(libName)));
+    if (document.getElementById('sheet').hidden || !document.querySelector('#sheet h3') || document.querySelector('#sheet h3').textContent !== libName) fail('tapping a library place did not open its page');
+    else ok('a library place opens its full page — website, menu, hours, vote, add to a day');
+    click(document.querySelector('#sheet .closebtn'));
+    // a new place opens a pre-filled idea
+    click(m1.querySelector('.chatplace'));
+    const sg = { name: (document.getElementById('sg-name') || {}).value, min: (document.getElementById('sg-min') || {}).value, links: [...document.querySelectorAll('#sheet .linkrow a')].map(a => a.getAttribute('href')), loc: (document.querySelector('#sheet .custloc') || {}).textContent || '' };
+    if (sg.name !== 'Sushi on Me' || sg.min !== '90') fail('the idea form was not pre-filled: ' + JSON.stringify(sg));
+    else if (!sg.links.some(h => /google\.com\/maps\/search/.test(h) && /Sushi%20on%20Me/.test(h)) || !sg.links.some(h => /google\.com\/search\?q=/.test(h))) fail('no Google Maps / web search links for the new place: ' + JSON.stringify(sg.links));
+    else if (!/Approximate/.test(sg.loc)) fail('the sheet does not say the location is approximate: ' + sg.loc);
+    else ok('a place new to the app opens with the idea already filled in, Google Maps and web search links, and its location marked approximate');
+    click(document.getElementById('sg-idea'));
+    await new Promise(r => setTimeout(r, 30));
+    const kS = Object.keys(NYC.state.custom).find(k => NYC.state.custom[k].name === 'Sushi on Me' && !NYC.state.custom[k].deleted);
+    const cS = kS && NYC.state.custom[kS];
+    if (!cS) fail('Add as idea did not create the idea');
+    else if (!(cS.approx && cS.lat === 40.7106 && cS.hood === 'Williamsburg' && cS.note === 'open until 1am' && cS.cat === 'eat' && cS.from === 'concierge')) fail('the idea did not keep what the concierge said: ' + JSON.stringify(cS));
+    else if (!(NYC.state.vote['c:' + kS] && NYC.state.vote['c:' + kS].T === 'yes')) fail('the idea was not voted for by the person who added it');
+    else ok('one tap adds it to the ideas, with its neighbourhood, the concierge\'s note, an approximate location and your vote');
+    await new Promise(r => setTimeout(r, 30));
+    const st = [...m1.querySelectorAll('.chatchip')].find(c => c.textContent.includes('Sushi on Me'));
+    if (!st || !st.classList.contains('done') || !/✓/.test(st.textContent)) fail('the chip did not change to ✓ after adding');
+    // tapping it again opens the idea it became, not a second copy
+    click(m1.querySelector('.chatplace'));
+    if (document.getElementById('sg-idea')) fail('tapping an added place offered to add it again');
+    else if (!document.getElementById('sh-cmap')) fail('tapping an added place did not open the idea it became');
+    else ok('its chip turns to ✓, and tapping it again opens the idea instead of adding a duplicate');
+    // editing just the website keeps the approximate location; a real map link replaces it
+    document.getElementById('sh-cweb').value = 'sushionme.com';
+    click(document.getElementById('sh-csave'));
+    await new Promise(r => setTimeout(r, 120));
+    if (NYC.state.custom[kS].lat !== 40.7106 || !NYC.state.custom[kS].approx) fail('editing only the website wiped the location');
+    NYC.openPlace('c:' + kS);
+    document.getElementById('sh-cmap').value = '40.7112, -73.9571';
+    click(document.getElementById('sh-csave'));
+    await new Promise(r => setTimeout(r, 120));
+    if (NYC.state.custom[kS].lat !== 40.7112 || NYC.state.custom[kS].approx) fail('a pasted location did not replace the approximate one');
+    else ok('editing the website keeps its location; pasting a map link makes it exact');
+    click(document.querySelector('#sheet .closebtn'));
+    // scheduled with an approximate location, the running order says so
+    NYC.state.custom[kS] = Object.assign({}, NYC.state.custom[kS], { approx: true });
+    NYC.state.agenda[DAY] = { ids: NYC.agIds(DAY).concat(['c:' + kS]), t: {}, d: {}, seen: [] };
+    // state was changed directly here, which the app never does; a language
+    // round-trip repaints everything the way a real save would
+    for (let i = 0; i < 3; i++) click(document.getElementById('langbtn'));
+    await new Promise(r => setTimeout(r, 40));
+    const rowA = document.querySelector('.agwrap[data-agday="' + DAY + '"] .agrow[data-id="c:' + kS + '"] .nolocation');
+    if (!rowA || !/approximate/.test(rowA.textContent)) fail('a stop with an approximate location is not labelled so in the running order');
+    else ok('on a day, a stop placed by the concierge\'s estimate is labelled "approximate location"');
+    delete NYC.state.custom[kS]; NYC.state.agenda = {};
+  }
+  // a reply in Russian: Cyrillic names must stay distinct places
+  nextChat = { reply: 'Попробуйте Суши-бар Юки или Кафе Пушкин, а ещё Бар Звезда.', places: [
+    { mention: 'Суши-бар Юки', ref: '', name: 'Суши-бар Юки', hood: 'Уильямсбург', cat: 'eat', lat: 40.71, lng: -73.96, minutes: 90, why: 'поздно открыт' },
+    { mention: 'Кафе Пушкин', ref: '', name: 'Кафе Пушкин', hood: 'Мидтаун', cat: 'cafe', lat: 40.76, lng: -73.98, minutes: 45, why: '' },
+    { mention: 'Бар Звезда', ref: '', name: 'Бар Звезда', hood: 'Сохо', cat: 'drink', lat: 40.72, lng: -74.0, minutes: 45, why: '' },
+  ] };
+  const mRu = await ask('Где поесть суши?');
+  const ruChips = mRu ? [...mRu.querySelectorAll('.chatchip .cn')].map(c => c.textContent) : [];
+  const ruLinks = mRu ? [...mRu.querySelectorAll('.chatplace')].map(c => c.textContent) : [];
+  if (ruChips.length !== 3 || ruLinks.length !== 3) fail(`a Russian reply lost places: chips ${JSON.stringify(ruChips)}, links ${JSON.stringify(ruLinks)}`);
+  else {
+    click(mRu.querySelectorAll('.chatchip')[1]);
+    click(document.getElementById('sg-idea'));
+    await new Promise(r => setTimeout(r, 30));
+    const added = Object.values(NYC.state.custom).filter(c => c && !c.deleted && /Пушкин|Юки|Звезда/.test(c.name)).map(c => c.name);
+    await new Promise(r => setTimeout(r, 30));
+    const states = [...mRu.querySelectorAll('.chatchip .cp')].map(c => c.textContent);
+    if (added.join() !== 'Кафе Пушкин') fail('adding one Russian-named idea did not add exactly that one: ' + JSON.stringify(added));
+    else if (states.join('') !== '＋✓＋') fail('only the added Russian-named place should show ✓, got ' + states.join(''));
+    else ok('a reply in Russian keeps its three Cyrillic-named places apart, and adding one marks only that one');
+    Object.keys(NYC.state.custom).forEach(k => { if (/Пушкин/.test((NYC.state.custom[k] || {}).name || '')) delete NYC.state.custom[k]; });
+  }
+
+  // an error from the proxy is shown, but never replayed to the model as its own words
+  const before2 = JSON.stringify(chatBody.messages);
+  nextChat = { error: 'Busy for a second — ask me again.' };
+  const m2 = await ask('And for dessert?');
+  nextChat = { reply: 'Fine.', places: [] };
+  await ask('Try again');
+  const hist = chatBody.messages.map(m => m.role + ':' + m.content);
+  if (!m2 || !/Busy/.test(m2.textContent)) fail('an error reply was not shown');
+  else if (hist.some(h => /Busy for a second/.test(h))) fail('an error message was sent back to the model as something it said');
+  else ok('an error is shown to the traveller but kept out of the conversation the model sees');
+  window.fetch = realFetch2;
+  click(document.querySelector('.tbtn[data-tabbtn="home"]'));
+
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }

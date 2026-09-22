@@ -373,15 +373,109 @@ if (booted) {
     Object.keys(NYC.state.custom).forEach(k => { if (/Пушкин/.test((NYC.state.custom[k] || {}).name || '')) delete NYC.state.custom[k]; });
   }
 
+  // ---- what the review found, each pinned by a test ----
+  // (1) a share link pasted on a suggested place outranks the concierge's guess
+  let resolved = 0;
+  const realFetch3 = window.fetch;
+  window.fetch = (url, opts) => {
+    if (String(url).endsWith('/resolve')) { resolved++; return Promise.resolve({ ok: true, json: async () => ({ url: 'https://www.google.com/maps/place/Rosella/@40.72,-73.98,17z/data=!3d40.726201!4d-73.983801' }) }); }
+    return window.__chatStub ? window.__chatStub(url, opts) : realFetch3(url, opts);
+  };
+  window.__chatStub = (url, opts) => String(url).endsWith('/chat') ? (chatBody = JSON.parse(opts.body), Promise.resolve({ ok: true, json: async () => nextChat })) : realFetch2(url, opts);
+  nextChat = { reply: 'Rosella is lovely. Skip the Mets game; the Met is open late. Also Constructor and Rosella Sushi.', places: [
+    { mention: 'Rosella', ref: '', name: 'Rosella', hood: 'East Village', cat: 'eat', lat: 40.7262, lng: -73.9838, minutes: 75, why: 'sushi' },
+    { mention: 'the Met', ref: 'p:the-met', name: 'The Met', hood: '', cat: 'museum', lat: null, lng: null, minutes: 150, why: '' },
+    { mention: 'Constructor', ref: '', name: 'Constructor', hood: '', cat: 'constructor', lat: null, lng: null, minutes: 60, why: '' },
+  ] };
+  const mR = await ask('Where for sushi?');
+  const aMet = [...mR.querySelectorAll('.chatplace')].find(a => a.textContent === 'the Met');
+  if (!aMet) fail('"the Met" was not linked');
+  else {
+    const before = aMet.previousSibling && aMet.previousSibling.textContent;
+    if (/Skip the $/.test(before || '') || aMet.nextSibling && /^s /.test(aMet.nextSibling.textContent)) fail('"the Met" was linked inside "the Mets"');
+    else ok('"the Met" is linked where it stands alone, not inside "the Mets"');
+  }
+  if ([...mR.querySelectorAll('.chatplace')].some(e => e.tagName !== 'A')) fail('inline mentions are not links, so they wrap as boxes');
+  else ok('inline mentions are real links, so they wrap with the text');
+  const cons = [...mR.querySelectorAll('.chatchip')].find(c => /Constructor/.test(c.textContent));
+  if (!cons || /Object/.test(cons.textContent)) fail('a place named "Constructor" was mistaken for a built-in: ' + (cons && cons.textContent));
+  else { click(cons); if (document.getElementById('sheet').hidden || !/Constructor/.test(document.querySelector('#sheet h3').textContent)) fail('tapping "Constructor" did not open its sheet'); else ok('a place named "Constructor" is just a place, not a built-in object'); click(document.querySelector('#sheet .closebtn')); }
+  // rename before adding, with a short share link pasted
+  click([...mR.querySelectorAll('.chatchip')].find(c => /Rosella/.test(c.textContent)));
+  document.getElementById('sg-name').value = 'Rosella Sushi (East Village)';
+  document.getElementById('sg-map').value = 'https://maps.app.goo.gl/Ros123';
+  click(document.getElementById('sg-idea'));
+  await new Promise(r => setTimeout(r, 80));
+  const kR = Object.keys(NYC.state.custom).find(k => (NYC.state.custom[k] || {}).name === 'Rosella Sushi (East Village)');
+  const cR = kR && NYC.state.custom[kR];
+  if (!cR) fail('the renamed idea was not created');
+  else if (!resolved) fail('the pasted share link was never sent to be expanded, because the concierge\'s guess got there first');
+  else if (cR.approx || cR.lat !== 40.726201 || cR.needsResolve) fail('the expanded link did not replace the approximate location: ' + JSON.stringify(cR));
+  else ok('a share link pasted on a suggested place is expanded and replaces the concierge\'s guess');
+  await new Promise(r => setTimeout(r, 30));
+  const chipR = [...mR.querySelectorAll('.chatchip')].find(c => /Rosella/.test(c.textContent));
+  click(chipR);
+  if (!/✓/.test(chipR.textContent)) fail('after renaming, the chip still offered ＋');
+  else if (document.getElementById('sg-idea')) fail('after renaming, tapping the chip offered to add it again');
+  else ok('renamed before adding, the chip still turns to ✓ and opens the idea it made');
+  click(document.querySelector('#sheet .closebtn'));
+  // (2) Directions to an approximate place go by name, never to the guessed point
+  const kA = Object.keys(NYC.state.custom).find(k => (NYC.state.custom[k] || {}).name === 'Rosella Sushi (East Village)');
+  NYC.state.custom[kA] = Object.assign({}, NYC.state.custom[kA], { approx: true, lat: 40.7262, lng: -73.9838, map: '' });
+  NYC.openPlace('c:' + kA);
+  const dir = [...document.querySelectorAll('#sheet .linkrow a')].find(a => a.textContent === 'Directions');
+  if (!dir) fail('no Directions button on an approximate place');
+  else if (/40\.72|-73\.98/.test(dir.getAttribute('href')) || !/destination=Rosella/.test(dir.getAttribute('href'))) fail('Directions to an approximate place used the guessed coordinates: ' + dir.getAttribute('href'));
+  else ok('Directions to an approximately placed stop ask Google for it by name, not the guessed point');
+  click(document.querySelector('#sheet .closebtn'));
+  // (6) renaming a suggestion to the name of an idea that already exists: no
+  //     second copy — it says so, casts the vote, and opens the existing idea
+  NYC.state.vote['c:' + kA] = {};
+  nextChat = { reply: 'Try Sushi Nomad tonight.', places: [{ mention: 'Sushi Nomad', ref: '', name: 'Sushi Nomad', hood: '', cat: 'eat', lat: null, lng: null, minutes: 60, why: '' }] };
+  const mD = await ask('And again?');
+  click(mD.querySelector('.chatchip'));
+  if (!document.getElementById('sg-idea')) fail('a new suggestion did not open its idea sheet');
+  else {
+    const countBefore = Object.keys(NYC.state.custom).length;
+    document.getElementById('sg-name').value = 'Rosella Sushi (East Village)';
+    click(document.getElementById('sg-idea'));
+    await new Promise(r => setTimeout(r, 30));
+    const shown = document.getElementById('toast').textContent;
+    if (Object.keys(NYC.state.custom).length !== countBefore) fail('adding an idea that already exists made a second one');
+    else if (!(NYC.state.vote['c:' + kA] && NYC.state.vote['c:' + kA].T === 'yes')) fail('adding an idea that already exists did not cast the vote');
+    else if (!/Already in your ideas/.test(shown)) fail('adding an idea that already exists did not say so (toast: "' + shown + '")');
+    else if (!document.getElementById('sh-cmap') || document.querySelector('#sheet h3').textContent !== 'Rosella Sushi (East Village)') fail('the existing idea was not opened');
+    else ok('adding an idea that already exists says so, votes for it and opens it, never duplicating it');
+    click(document.querySelector('#sheet .closebtn'));
+  }
+  // (9) a planted category that names a built-in shows as an idea, not "undefined"
+  NYC.state.custom.cproto = { name: 'Proto place', d: 60, t: '15:00', cat: 'constructor' };
+  NYC.openPlace('c:cproto');
+  const catTxt = (document.querySelector('#sheet .cat') || {}).textContent || '';
+  if (/undefined/.test(catTxt)) fail('a synced category naming a built-in rendered as "undefined": ' + catTxt);
+  else ok('a synced category that names a built-in falls back to "idea"');
+  click(document.querySelector('#sheet .closebtn'));
+  delete NYC.state.custom.cproto;
+  // (13) failures read in the traveller's own language
+  for (let i = 0; i < 1; i++) click(document.getElementById('langbtn'));   // → Russian
+  nextChat = { error: 'The concierge is not set up right — its API key was refused.', code: 'setup' };
+  const mSet = await ask('Привет');
+  if (!mSet || !/Консьерж настроен неправильно/.test(mSet.textContent)) fail('a setup failure was not shown in Russian: ' + (mSet && mSet.textContent));
+  else ok('a failure reads in the traveller\'s language: "' + mSet.textContent + '"');
+  for (let i = 0; i < 2; i++) click(document.getElementById('langbtn'));   // → back to English
+  Object.keys(NYC.state.custom).forEach(k => { if (/Rosella/.test((NYC.state.custom[k] || {}).name || '')) delete NYC.state.custom[k]; });
+  window.fetch = realFetch2 && ((url, opts) => (String(url).endsWith('/chat') ? (chatBody = JSON.parse(opts.body), Promise.resolve({ ok: true, json: async () => nextChat })) : realFetch2(url, opts)));
+  delete window.__chatStub;
+
   // an error from the proxy is shown, but never replayed to the model as its own words
   const before2 = JSON.stringify(chatBody.messages);
-  nextChat = { error: 'Busy for a second — ask me again.' };
+  nextChat = { error: 'Busy for a second — ask me again.', code: 'busy' };
   const m2 = await ask('And for dessert?');
   nextChat = { reply: 'Fine.', places: [] };
   await ask('Try again');
   const hist = chatBody.messages.map(m => m.role + ':' + m.content);
   if (!m2 || !/Busy/.test(m2.textContent)) fail('an error reply was not shown');
-  else if (hist.some(h => /Busy for a second/.test(h))) fail('an error message was sent back to the model as something it said');
+  else if (hist.some(h => /Busy/.test(h))) fail('an error message was sent back to the model as something it said');
   else ok('an error is shown to the traveller but kept out of the conversation the model sees');
   window.fetch = realFetch2;
   click(document.querySelector('.tbtn[data-tabbtn="home"]'));

@@ -107,9 +107,9 @@ window.TOUR = {
       title: 'Ask the concierge anything',
       titleRu: 'Спросите консьержа о чём угодно',
       titleDe: 'Fragt den Concierge alles',
-      body: 'It knows your plan, all three hundred places in here, and how long each one takes from Park Slope. Ask it in your own language: what to swap when it rains, somewhere to eat near the Met, whether a shop opens on a Sunday. Any place it suggests is tappable: open it, or add it to your ideas in one tap. The ✨ Replan button on each day asks it too.',
-      bodyRu: 'Он знает ваш план, все триста мест из этого приложения и сколько до каждого добираться от Парк-Слоуп. Спрашивайте на своём языке: что заменить в дождь, где поесть рядом с Метрополитен, работает ли магазин в воскресенье. Любое предложенное им место можно нажать: открыть или одним касанием добавить в идеи. Кнопка «✨ Перепланировать» на каждом дне обращается к нему же.',
-      bodyDe: 'Er kennt euren Plan, alle dreihundert Orte hier drin und wie lange jeder einzelne von Park Slope aus dauert. Fragt ihn in eurer eigenen Sprache: was man bei Regen tauscht, wo man in der Nähe des Met isst, ob ein Laden sonntags öffnet. Jeder Ort, den er vorschlägt, ist antippbar: öffnen oder mit einem Tipp zu euren Ideen hinzufügen. Die Taste „✨ Neu planen“ an jedem Tag fragt ihn ebenfalls.' },
+      body: 'It knows your plan, all three hundred places in here, and how long each one takes from Park Slope. Ask it in your own language: what to swap when it rains, somewhere to eat near the Met, whether a shop opens on a Sunday. Tap any place it suggests to open it, or to add it to your ideas. The ✨ Replan button on each day asks it too.',
+      bodyRu: 'Он знает ваш план, все триста мест из этого приложения и сколько до каждого добираться от Парк-Слоуп. Спрашивайте на своём языке: что заменить в дождь, где поесть рядом с Метрополитен, работает ли магазин в воскресенье. Нажмите на любое предложенное им место, чтобы открыть его или добавить в идеи. Кнопка «✨ Перепланировать» на каждом дне обращается к нему же.',
+      bodyDe: 'Er kennt euren Plan, alle dreihundert Orte hier drin und wie lange jeder einzelne von Park Slope aus dauert. Fragt ihn in eurer eigenen Sprache: was man bei Regen tauscht, wo man in der Nähe des Met isst, ob ein Laden sonntags öffnet. Tippt auf einen Ort, den er vorschlägt, um ihn zu öffnen oder zu euren Ideen hinzuzufügen. Die Taste „✨ Neu planen“ an jedem Tag fragt ihn ebenfalls.' },
 
     { key: 'lang', tab: 'home', sel: '#langbtn', icon: '🌍',
       title: 'English, Russian, German',

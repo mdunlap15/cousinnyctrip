@@ -200,6 +200,11 @@ const api2 = http.createServer(async (req, res) => {
   let b = ''; for await (const c of req) b += c;
   lastReq = JSON.parse(b || '{}');
   const a = nextAnswer || {};
+  if (a.status) {
+    res.writeHead(a.status, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ type: 'error', error: { type: a.errType || 'not_found_error', message: a.message || 'not found' } }));
+    return;
+  }
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ id: 'msg_y', type: 'message', role: 'assistant', model: 'claude-opus-5', stop_reason: a.stop || 'end_turn',
     content: [{ type: 'text', text: a.text || '' }], usage: { input_tokens: 1, output_tokens: 1 } }));
@@ -246,9 +251,22 @@ else ok(`a reply cut off by the token limit still reads: "${c2.reply}"`);
 
 nextAnswer = { stop: 'refusal', text: '' };
 const c3 = await chat({ library: LIB });
-if (!/can’t help/.test(c3.reply || '') || (c3.places || []).length) bad('a refusal did not come back as a plain sentence: ' + JSON.stringify(c3));
-else ok('a refusal comes back as a plain sentence with no places');
+if (c3.reply || c3.code !== 'refusal' || (c3.places || []).length) bad('a refusal should come back as a coded failure, not as the model\'s reply: ' + JSON.stringify(c3));
+else ok('a refusal comes back as a coded failure the app can translate, never as something the model said');
 
+nextAnswer = { text: '' };
+const cEmpty = await fetch('http://127.0.0.1:8076/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: GOOD, 'X-Trip-Key': KEY },
+  body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }], library: LIB }) });
+const cEmptyJ = await cEmpty.json();
+if (cEmpty.status === 200 || cEmptyJ.reply || !cEmptyJ.code) bad('an empty answer was passed off as a reply: ' + cEmpty.status + ' ' + JSON.stringify(cEmptyJ));
+else ok('an empty answer from the model is a coded failure, not an English stand-in reply');
+// a workspace id that is wrong, or that the key cannot use, comes back as a 404
+nextAnswer = { status: 404, message: 'Workspace `wrkspc_bad` not found.' };
+const c404 = await fetch('http://127.0.0.1:8076/chat', { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: GOOD, 'X-Trip-Key': KEY },
+  body: JSON.stringify({ messages: [{ role: 'user', content: 'hi' }] }) });
+const c404j = await c404.json();
+if (c404j.code !== 'setup') bad('a wrong workspace id should read as a setup problem, not "try again": ' + JSON.stringify(c404j));
+else ok('a wrong workspace id reads as a setup problem, not as something retrying will fix');
 nextAnswer = { text: 'Plain prose from a model that ignored the format.' };
 const c4 = await chat({});
 const sys4 = lastReq.system || [];

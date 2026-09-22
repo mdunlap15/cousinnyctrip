@@ -148,19 +148,22 @@ async function ask(params) {
 // The travellers see a sentence; the full upstream payload goes to the server
 // log, where whoever runs this can read it. Showing them raw JSON is both
 // useless to them and a way to leak configuration detail.
+// Each failure carries a code the app turns into a sentence in the reader's
+// language; the English here is for older app versions and for the log.
 function apiError(res, e, req) {
   console.error('[upstream] ' + (e && e.status ? e.status + ' ' : '') + (e && e.message ? e.message : String(e)));
   if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError) {
-    return send(res, 502, { error: 'The concierge is not set up right — its API key was refused.' }, {}, req);
+    return send(res, 502, { error: 'The concierge is not set up right — its API key was refused.', code: 'setup' }, {}, req);
   }
-  if (e instanceof Anthropic.RateLimitError) return send(res, 429, { error: 'Busy for a second — ask me again.' }, {}, req);
-  if (e instanceof Anthropic.BadRequestError) {
-    // A 400 here is a server misconfiguration, not anything the traveller did.
-    return send(res, 502, { error: 'The concierge is misconfigured — the trip organiser needs to check the server log.' }, {}, req);
+  if (e instanceof Anthropic.RateLimitError) return send(res, 429, { error: 'Busy for a second — ask me again.', code: 'busy' }, {}, req);
+  if (e instanceof Anthropic.BadRequestError || e instanceof Anthropic.NotFoundError) {
+    // A 400 or 404 here is a server misconfiguration (a bad workspace id, say),
+    // never anything the traveller did, and retrying will not fix it.
+    return send(res, 502, { error: 'The concierge is misconfigured — the trip organiser needs to check the server log.', code: 'setup' }, {}, req);
   }
-  if (e instanceof Anthropic.APIConnectionError) return send(res, 502, { error: 'Could not reach the concierge — try again in a moment.' }, {}, req);
-  if (e instanceof Anthropic.APIError) return send(res, 502, { error: 'The concierge had a problem — try again in a moment.' }, {}, req);
-  return send(res, 500, { error: 'Something went wrong on the concierge.' }, {}, req);
+  if (e instanceof Anthropic.APIConnectionError) return send(res, 502, { error: 'Could not reach the concierge — try again in a moment.', code: 'unreachable' }, {}, req);
+  if (e instanceof Anthropic.APIError) return send(res, 502, { error: 'The concierge had a problem — try again in a moment.', code: 'error' }, {}, req);
+  return send(res, 500, { error: 'Something went wrong on the concierge.', code: 'error' }, {}, req);
 }
 
 const server = http.createServer(async (req, res) => {
@@ -233,10 +236,10 @@ const server = http.createServer(async (req, res) => {
         model: MODEL, max_tokens: 8000, system, messages: clean,
         output_config: { effort: 'medium', format: { type: 'json_schema', schema: CHAT_SCHEMA } },
       });
-      if (msg.stop_reason === 'refusal') return send(res, 200, { reply: 'I can’t help with that one — ask me something about the trip.', places: [] }, {}, req);
+      if (msg.stop_reason === 'refusal') return send(res, 200, { error: 'I can’t help with that one — ask me something about the trip.', code: 'refusal', places: [] }, {}, req);
       const out = parseChatReply(textOf(msg));
       if (msg.stop_reason === 'max_tokens') console.warn('[chat] reply hit max_tokens; recovered ' + out.reply.length + ' chars, ' + out.places.length + ' places');
-      if (!out.reply) return send(res, 200, { reply: 'I lost my train of thought there — could you ask me again?', places: [] }, {}, req);
+      if (!out.reply) return send(res, 502, { error: 'The concierge returned nothing — ask again.', code: 'error', places: [] }, {}, req);
       return send(res, 200, out, {}, req);
     } catch (e) { return apiError(res, e, req); }
   }

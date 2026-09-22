@@ -96,7 +96,9 @@ export function parseChatReply(text) {
   const m = raw.match(/"reply"\s*:\s*"((?:[^"\\]|\\.)*)"?/);
   if (m) {
     let s = m[1];
-    try { s = JSON.parse('"' + s.replace(/\\$/, '') + '"'); } catch (e) { s = s.replace(/\\n/g, '\n').replace(/\\"/g, '"'); }
+    // a cut can land inside an escape: drop a half-written \uXXXX or a lone backslash
+    s = s.replace(/\\u[0-9a-fA-F]{0,3}$/, '').replace(/\\$/, '');
+    try { s = JSON.parse('"' + s + '"'); } catch (e) { s = s.replace(/\\n/g, '\n').replace(/\\"/g, '"'); }
     if (s.trim()) return { reply: s.trim().slice(0, 8000), places: [] };
   }
   // Not JSON at all: plain prose is fine to show as it is.

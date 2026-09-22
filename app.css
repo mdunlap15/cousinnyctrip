@@ -41,7 +41,7 @@ body[data-lang="ru"] .L-en,body[data-lang="ru"] .L-de{display:none!important}
 body[data-lang="de"] .L-en,body[data-lang="de"] .L-ru{display:none!important}
 /* a German block is optional: where none exists, fall back to English */
 body[data-lang="de"] .L-en.L-fallback,body[data-lang="ru"] .L-en.L-fallback{display:revert!important}
-.langbtn{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:1500;border:1px solid rgba(255,255,255,.35);background:rgba(17,19,24,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border-radius:100px;padding:7px 13px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;cursor:pointer}
+.langbtn{position:fixed;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:1700;border:1px solid rgba(255,255,255,.35);background:rgba(17,19,24,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border-radius:100px;padding:7px 13px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.08em;cursor:pointer}
 body:not([data-tab="home"]) .langbtn{background:var(--ink);border-color:var(--ink);box-shadow:0 3px 12px rgba(17,19,24,.28)}
 
 /* ---------- HERO ---------- */
@@ -441,3 +441,34 @@ footer .mono{font-size:12px}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 @media (display-mode: standalone){footer .wrap{padding-bottom:calc(28px + env(safe-area-inset-bottom))}.daystrip{padding-left:calc(14px + env(safe-area-inset-left));padding-right:calc(14px + env(safe-area-inset-right))}body{overscroll-behavior-y:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+
+/* ---------- guided tour (coach marks) ---------- */
+.tourwrap{position:fixed;inset:0;z-index:1600;-webkit-tap-highlight-color:transparent}
+.tourwrap[hidden]{display:none}
+.tourwrap.nospot{background:rgba(17,19,24,.76)}
+/* the "dim" is the spotlight's own shadow, so the hole is genuinely transparent */
+.tourspot{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(17,19,24,.76),0 0 0 2px var(--taxi),0 0 22px 2px rgba(245,183,0,.55);transition:top .26s cubic-bezier(.22,.9,.3,1),left .26s cubic-bezier(.22,.9,.3,1),width .26s cubic-bezier(.22,.9,.3,1),height .26s cubic-bezier(.22,.9,.3,1);pointer-events:none}
+.tourspot[hidden]{display:none}
+.tourcard{position:fixed;left:12px;right:12px;max-width:440px;margin:0 auto;background:var(--paper);color:var(--text);border:1px solid var(--line);border-radius:18px;padding:14px 16px 12px;box-shadow:0 14px 44px rgba(17,19,24,.42);animation:tourin .24s cubic-bezier(.22,.9,.3,1);display:flex;flex-direction:column}
+.tourcard>*{flex:0 0 auto}
+.tourcard.mid{top:50%;transform:translateY(-50%)}
+@keyframes tourin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tourcard.mid{animation:none}
+.tourcard .ttop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.tourcard .tico{font-size:22px;line-height:1}
+.tourcard .tskip{background:transparent;border:0;color:var(--soft);font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:6px 2px}
+.tourcard h4{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:18px;line-height:1.15;margin:0 0 6px}
+.tourcard p{margin:0;font-size:14px;line-height:1.5;color:var(--text);flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tourcard .tnav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.tourcard .tdots{display:flex;flex-wrap:wrap;gap:3px;align-items:center;max-width:52%}
+.tourcard .tdots i{width:5px;height:5px;border-radius:50%;background:var(--line);display:block}
+.tourcard .tdots i.was{background:var(--soft);opacity:.5}
+.tourcard .tdots i.on{background:var(--ink);width:14px;border-radius:100px}
+.tourcard .tbtns{display:flex;gap:8px}
+.tourcard .tbtns button{font:inherit;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:.06em;border-radius:100px;padding:9px 16px;cursor:pointer;border:1px solid var(--line);background:var(--paper-2);color:var(--text)}
+.tourcard .tnext{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tourcard .tprev[hidden]{display:none}
+.tourcard.clipped p{-webkit-mask-image:linear-gradient(#000 calc(100% - 20px),transparent);mask-image:linear-gradient(#000 calc(100% - 20px),transparent)}
+body.tour-on.show-install .install{display:none}
+@media(max-height:620px){.tourcard{padding:11px 14px 10px}.tourcard h4{font-size:16px;margin-bottom:4px}.tourcard p{font-size:13px;line-height:1.45}.tourcard .tico{font-size:19px}.tourcard .tnav{margin-top:9px}}
+@media(prefers-reduced-motion:reduce){.tourspot{transition:none}}

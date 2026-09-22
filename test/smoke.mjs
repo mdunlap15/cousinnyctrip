@@ -37,7 +37,7 @@ window.URL.createObjectURL = () => 'blob:x'; window.URL.revokeObjectURL = () => 
 try { window.localStorage.clear(); } catch (e) {}
 let booted = true;
 try {
-  for (const f of ['config.js', 'data/geo.js', 'data/plan.js', 'data/places.js', 'data/guide.js', 'app.js']) window.eval(read(f));
+  for (const f of ['config.js', 'data/geo.js', 'data/plan.js', 'data/places.js', 'data/guide.js', 'data/tour.js', 'app.js']) window.eval(read(f));
   ok('config + data + app.js eval\'d with no exception');
 } catch (e) { booted = false; fail('script eval threw: ' + (e && e.stack ? e.stack.split('\n').slice(0, 5).join(' | ') : e)); }
 
@@ -78,6 +78,56 @@ if (booted) {
     for (const r of rows) if (!r.querySelector('.ag-t').textContent.trim()) fail(`empty stop label in ${want}`);
   }
   ok('language toggle cycles en → ru → de, every day renders in each');
+  // guided tour: every step must switch tab, find its element and say something
+  console.log('tour:');
+  const TOUR = (window.TOUR && window.TOUR.steps) || [];
+  if (!TOUR.length) fail('data/tour.js defines no steps');
+  for (const st of TOUR) {
+    if (!st.key) fail('a tour step has no key');
+    for (const f of ['title', 'titleRu', 'titleDe', 'body', 'bodyRu', 'bodyDe']) {
+      if (!st[f] || !String(st[f]).trim()) fail(`tour step "${st.key}" has no ${f}`);
+    }
+    if (st.sel) { try { document.querySelector(st.sel); } catch (e) { fail(`tour step "${st.key}" selector is invalid: ${st.sel}`); } }
+    if (st.day && !T.DAYS.some(d => d.key === st.day)) fail(`tour step "${st.key}" points at unknown day ${st.day}`);
+  }
+  ok(`${TOUR.length} steps, all trilingual`);
+  for (const want of ['en', 'ru', 'de']) {
+    while (document.body.dataset.lang !== want) click(lb);
+    NYC.tourStart();
+    if (!NYC.tourOn) { fail(`tour did not start in ${want}`); break; }
+    const seen = [];
+    for (let guard = 0; guard < TOUR.length + 4 && NYC.tourOn; guard++) {
+      const i = NYC.tourStep;
+      if (i < 0) { fail(`tour lost its place in ${want}`); break; }
+      const ttl = document.getElementById('tourtitle').textContent.trim();
+      const bdy = document.getElementById('tourbody').textContent.trim();
+      if (!ttl) fail(`tour step ${TOUR[i].key} has an empty title in ${want}`);
+      if (!bdy) fail(`tour step ${TOUR[i].key} has an empty body in ${want}`);
+      if (want !== 'en' && ttl === TOUR[i].title && TOUR[i].title !== TOUR[i][want === 'ru' ? 'titleRu' : 'titleDe']) fail(`tour step ${TOUR[i].key} fell back to English in ${want}`);
+      const st = TOUR[i];
+      if (st.day && document.body.dataset.tab !== 'days') fail(`tour step ${st.key} did not open the day pages`);
+      if (st.tab && !st.day && document.body.dataset.tab !== st.tab) fail(`tour step ${st.key} did not switch to the ${st.tab} tab (on ${document.body.dataset.tab})`);
+      if (st.sel && !document.querySelector(st.sel)) fail(`tour step ${st.key} was shown but ${st.sel} is not in the DOM`);
+      seen.push(st.key);
+      click(document.getElementById('tournext'));
+    }
+    if (NYC.tourOn) { fail(`tour never finished in ${want}`); NYC.tourEnd(true); }
+    if (seen.length !== TOUR.length) fail(`tour showed ${seen.length}/${TOUR.length} steps in ${want}: ${seen.join(',')}`);
+    if (!document.getElementById('tourwrap').hidden) fail(`tour overlay stayed up after the last step in ${want}`);
+  }
+  ok('tour walks all ' + TOUR.length + ' steps in en, ru and de and closes at the end');
+  // Back steps backwards, Skip closes it, and both remember that it was seen
+  NYC.tourStart(); click(document.getElementById('tournext')); click(document.getElementById('tournext'));
+  const mid = NYC.tourStep;
+  click(document.getElementById('tourprev'));
+  if (NYC.tourStep >= mid) fail('tour Back did not go back a step');
+  click(document.getElementById('tourskip'));
+  if (NYC.tourOn) fail('tour Skip did not close the tour');
+  if (window.localStorage.getItem(NYC.TOURKEY) !== 'skipped') fail('Skip did not record that the tour was seen (' + NYC.TOURKEY + ')');
+  ok('Back, Skip and the replay button behave');
+  if (!document.getElementById('tourreplay')) fail('no "run the tour again" button in More');
+  while (document.body.dataset.lang !== 'en') click(lb);
+
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }

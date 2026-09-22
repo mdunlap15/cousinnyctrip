@@ -23,6 +23,8 @@ gets its own icon and works offline.
   reservations, and a calendar export of the live plan
 - **Guide** — airport, subway from 7th Avenue, money, tipping, phones, weather, safety
 - **Fully bilingual** — the РУС/ENG button switches the whole app; the choice sticks
+- **Shows itself around** — a fourteen-step walkthrough runs on the first visit and
+  can be replayed from More → Settings; edit the copy in `data/tour.js`
 
 ## Repo layout
 
@@ -33,7 +35,8 @@ app.js          the engine (navigation, running order, votes, map, chat, calenda
 data/plan.js    THE TRIP: dates, travelers, seeded running order, rain swaps, bookings
 data/places.js  the library (generated — see scripts/build-data.mjs)
 data/geo.js     home base, transit hubs, the travel-time model
-data/guide.js   the practical briefing (EN + RU)
+data/guide.js   the practical briefing (EN + RU + DE)
+data/tour.js    the first-run walkthrough: what each step points at and says
 concierge/      the Claude proxy to deploy on Railway
 ```
 
@@ -45,6 +48,9 @@ npm test                 # jsdom smoke test — run before every push
 npm run test:strict      # also fails on placeholder data / missing icons
 npm run build:data ../research   # regenerate data/places.js from research lanes
 npm run build:ics        # regenerate trip.ics from the seeded plan
+npm run test:tour        # the onboarding walkthrough, in a real browser on 3 phones
+npm run test:offline     # loads the app, kills the network, reloads
+npm run test:install     # manifest, iOS tags and the right install hint per phone
 npm run serve            # http://localhost:8080
 ```
 

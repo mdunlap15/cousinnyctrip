@@ -26,6 +26,10 @@ const errors = [];
 page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 await page.goto('http://127.0.0.1:8099/', { waitUntil: 'networkidle' });
+// the first-run tour covers the screen; scripts/tour-test.mjs walks it properly,
+// these shots are of the app underneath
+await page.waitForSelector('#tourwrap:not([hidden])', { timeout: 4000 }).catch(() => {});
+await page.click('#tourskip').catch(() => {});
 await page.waitForTimeout(600);
 
 const shot = async (name) => { await page.waitForTimeout(450); await page.screenshot({ path: path.join(out, name + '.png'), fullPage: false }); console.log('  · ' + name); };

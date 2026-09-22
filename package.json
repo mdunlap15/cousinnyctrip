@@ -10,7 +10,8 @@
     "serve": "npx http-server -p 8080 -c-1 .",
     "test:offline": "node scripts/offline-test.mjs",
     "shots": "node scripts/shots.mjs",
-    "test:install": "node scripts/install-test.mjs"
+    "test:install": "node scripts/install-test.mjs",
+    "test:tour": "node scripts/tour-test.mjs"
   },
   "devDependencies": {
     "jsdom": "^24.0.0",

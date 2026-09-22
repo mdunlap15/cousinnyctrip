@@ -1,0 +1,122 @@
+// ============================================================================
+// TOUR — the first-run walkthrough. Each step spotlights a real element and
+// explains it. `sel` is the element to highlight (the first match wins);
+// `tab` is the tab to switch to first; `day` opens a day page.
+// A step whose element is missing is skipped rather than shown pointing at
+// nothing, so the tour survives layout changes.
+// ============================================================================
+window.TOUR = {
+  steps: [
+    { key: 'welcome', tab: 'home', sel: null, icon: '🗽',
+      title: 'Welcome to your week',
+      titleRu: 'Добро пожаловать в вашу неделю',
+      titleDe: 'Willkommen zu eurer Woche',
+      body: 'Nine days in New York, already sketched out. Nothing here is fixed: every stop can be moved, retimed or swapped, and the two of you decide together what the week actually looks like. This takes a minute.',
+      bodyRu: 'Девять дней в Нью-Йорке — уже намечены. Ничего не высечено в камне: любую точку можно передвинуть, изменить время или заменить, и как именно пройдёт неделя, вы решаете вдвоём. Это займёт минуту.',
+      bodyDe: 'Neun Tage in New York, schon skizziert. Nichts davon steht fest: Jeder Stopp lässt sich verschieben, umlegen oder austauschen, und wie die Woche wirklich aussieht, entscheidet ihr beide. Das hier dauert eine Minute.' },
+
+    { key: 'who', tab: 'home', sel: '#home .who', icon: '👋',
+      title: 'Tap your name first',
+      titleRu: 'Сначала нажмите своё имя',
+      titleDe: 'Tippt zuerst euren Namen an',
+      body: 'This tells the app whose phone it is, so your ratings show up as yours and the other phone sees them within a second. Do it once; it remembers.',
+      bodyRu: 'Так приложение поймёт, чей это телефон: ваши оценки будут подписаны, а на другом телефоне появятся через секунду. Достаточно одного раза — дальше запомнит.',
+      bodyDe: 'Damit weiß die App, wessen Handy das ist: Eure Bewertungen werden euch zugeordnet und erscheinen auf dem anderen Handy binnen einer Sekunde. Einmal antippen genügt, den Rest merkt sie sich.' },
+
+    { key: 'today', tab: 'home', sel: '#todaycard .today', icon: '📍',
+      title: 'Today, at a glance',
+      titleRu: 'Сегодня — одним взглядом',
+      titleDe: 'Heute auf einen Blick',
+      body: 'Before the trip this counts down. During it, it shows the day\'s running order with the next stop marked, the weather, and a button that routes you home to 7th Avenue from wherever you are.',
+      bodyRu: 'До поездки здесь идёт обратный отсчёт. Во время — расписание дня с отмеченной следующей точкой, погода и кнопка, которая построит маршрут домой на 7-ю авеню, где бы вы ни были.',
+      bodyDe: 'Vor der Reise läuft hier der Countdown. Währenddessen zeigt es den Tagesablauf mit dem nächsten Stopp, das Wetter und eine Taste, die euch von überall nach Hause zur 7th Avenue navigiert.' },
+
+    { key: 'days', tab: 'days', day: 'd1', sel: '.daystrip', icon: '📅',
+      title: 'One page per day',
+      titleRu: 'Одна страница на каждый день',
+      titleDe: 'Eine Seite pro Tag',
+      body: 'Tap a date up here, or swipe left and right anywhere on the page to move between days. The little number under each date is that day\'s forecast.',
+      bodyRu: 'Нажмите дату наверху или листайте страницу влево-вправо, чтобы переходить между днями. Маленькая цифра под датой — прогноз погоды на этот день.',
+      bodyDe: 'Tippt oben auf ein Datum oder wischt auf der Seite nach links und rechts, um zwischen den Tagen zu wechseln. Die kleine Zahl unter dem Datum ist die Vorhersage für diesen Tag.' },
+
+    { key: 'order', tab: 'days', day: 'd1', sel: '.panel.is-active .agrow', icon: '✋',
+      title: 'This is the part you edit',
+      titleRu: 'Вот это вы и редактируете',
+      titleDe: 'Das hier ist der Teil, den ihr bearbeitet',
+      body: 'Hold a stop and drag it to reorder the day. Tap its time to pin it. Tap ⋯ to change how long you stay, move it to another day, or take it out. Everything recalculates as you go.',
+      bodyRu: 'Зажмите пункт и перетащите, чтобы изменить порядок дня. Нажмите на время, чтобы закрепить его. Нажмите ⋯, чтобы изменить длительность, перенести в другой день или убрать. Всё пересчитывается на ходу.',
+      bodyDe: 'Haltet einen Stopp gedrückt und zieht ihn, um den Tag umzusortieren. Tippt auf die Uhrzeit, um sie festzusetzen. Über ⋯ ändert ihr die Dauer, verschiebt ihn auf einen anderen Tag oder nehmt ihn heraus. Alles rechnet sich sofort neu.' },
+
+    { key: 'travel', tab: 'days', day: 'd1', sel: '.panel.is-active .aggap', icon: '🚇',
+      title: 'The gaps are real travel time',
+      titleRu: 'Промежутки — это реальная дорога',
+      titleDe: 'Die Lücken sind echte Fahrzeit',
+      body: 'Between stops the app works out how long it actually takes by subway or on foot from Park Slope, so a day cannot quietly become impossible. Where a gap is underlined, tap it and it offers something nearby you have both said yes to.',
+      bodyRu: 'Между точками приложение считает, сколько на самом деле занимает дорога на метро или пешком от Парк-Слоуп, — так что день не станет незаметно невыполнимым. Если промежуток подчёркнут, нажмите на него: приложение предложит что-то рядом, чему вы обе сказали «да».',
+      bodyDe: 'Zwischen den Stopps rechnet die App aus, wie lange es mit der U-Bahn oder zu Fuß ab Park Slope wirklich dauert — so wird ein Tag nicht unbemerkt unmöglich. Ist eine Lücke unterstrichen, tippt sie an: Dann schlägt sie etwas in der Nähe vor, zu dem ihr beide Ja gesagt habt.' },
+
+    { key: 'pace', tab: 'days', day: 'd1', sel: '.panel.is-active .pace', icon: '🟢',
+      title: 'How heavy the day is',
+      titleRu: 'Насколько день загружен',
+      titleDe: 'Wie voll der Tag ist',
+      body: 'Green is comfortable, amber is a full day, red means too much. It counts real minutes, not stops, and an evening sitting down at dinner or in a theatre counts as half. If it turns red, drop something.',
+      bodyRu: 'Зелёный — комфортно, жёлтый — насыщенный день, красный — перебор. Считаются реальные минуты, а не количество точек, и вечер за ужином или в зале считается за половину. Если загорелся красный — уберите что-нибудь.',
+      bodyDe: 'Grün heißt angenehm, Gelb ein voller Tag, Rot zu viel. Gezählt werden echte Minuten, nicht Stopps — und ein Abend beim Essen oder im Theater zählt nur halb. Wird es rot, streicht etwas.' },
+
+    { key: 'mike', tab: 'days', day: 'd1', sel: '.panel.is-active .mikebtn', icon: '🎷',
+      title: 'Evenings with Mike',
+      titleRu: 'Вечера с Майком',
+      titleDe: 'Abende mit Mike',
+      body: 'Mark the evenings he is joining. The app then leans towards places that suit a table of three when it suggests things for that day.',
+      bodyRu: 'Отметьте вечера, когда он с вами. После этого приложение будет предлагать на этот день места, где удобно втроём.',
+      bodyDe: 'Markiert die Abende, an denen er dabei ist. Die App schlägt für diesen Tag dann eher Orte vor, an denen ein Tisch für drei funktioniert.' },
+
+    { key: 'explore', tab: 'explore', sel: '#exlist .card', icon: '🔍',
+      title: 'Everything else worth doing',
+      titleRu: 'Всё остальное, что стоит сделать',
+      titleDe: 'Alles andere, was sich lohnt',
+      body: 'Over three hundred places: sights, museums, restaurants, bars, cafés and shops. Tap any card for the opening hours, the price, what to order, and links straight to the website, the menu, tickets or a table.',
+      bodyRu: 'Больше трёхсот мест: достопримечательности, музеи, рестораны, бары, кафе и магазины. Нажмите на любую карточку — там часы работы, цены, что заказать и ссылки прямо на сайт, меню, билеты или бронь.',
+      bodyDe: 'Über dreihundert Orte: Sehenswürdigkeiten, Museen, Restaurants, Bars, Cafés und Läden. Tippt eine Karte an für Öffnungszeiten, Preis, was man bestellt — und Links direkt zur Website, zur Karte, zu Tickets oder zum Tisch.' },
+
+    { key: 'swipe', tab: 'explore', sel: '#swipebtn', icon: '🃏',
+      title: 'The fast way to choose',
+      titleRu: 'Быстрый способ выбрать',
+      titleDe: 'Der schnelle Weg zu entscheiden',
+      body: 'Swipe mode deals the places one at a time: right for yes, left for no, up for maybe. Ten minutes each on the sofa and the app knows what your week should be.',
+      bodyRu: 'В режиме свайпа места показываются по одному: вправо — «да», влево — «нет», вверх — «может быть». По десять минут на диване каждой — и приложение уже знает, какой должна быть ваша неделя.',
+      bodyDe: 'Im Swipe-Modus kommen die Orte einzeln: rechts ja, links nein, hoch vielleicht. Zehn Minuten pro Person auf dem Sofa, und die App weiß, wie eure Woche aussehen sollte.' },
+
+    { key: 'plan', tab: 'plan', sel: '#buildweek', icon: '✨',
+      title: 'Turn the votes into a week',
+      titleRu: 'Превратить голоса в неделю',
+      titleDe: 'Aus den Stimmen eine Woche machen',
+      body: 'Everything you both said yes to gathers here. This button slots those into the days that actually fit them — right neighbourhood, open that weekday, without overfilling anything — and shows you the result before saving.',
+      bodyRu: 'Всё, чему вы обе сказали «да», собирается здесь. Эта кнопка расставит их по дням, которые действительно подходят: нужный район, открыто в этот день недели, без перегруза — и покажет результат до сохранения.',
+      bodyDe: 'Alles, wozu ihr beide Ja gesagt habt, sammelt sich hier. Diese Taste verteilt es auf die Tage, die wirklich passen — richtiges Viertel, an dem Wochentag geöffnet, ohne etwas zu überfüllen — und zeigt euch das Ergebnis vor dem Speichern.' },
+
+    { key: 'replan', tab: 'days', day: 'd1', sel: '.panel.is-active [data-replan]', icon: '🌧',
+      title: 'When the day goes wrong',
+      titleRu: 'Когда день пошёл не так',
+      titleDe: 'Wenn der Tag schiefgeht',
+      body: 'Rain, a late start, or simply too tired: this shifts the whole day an hour later, drops the stop you care least about, or swaps the outdoor things for indoor ones. If it rains, the day page offers the indoor swaps by itself.',
+      bodyRu: 'Дождь, поздний подъём или просто нет сил: здесь можно сдвинуть весь день на час позже, убрать то, что нужно меньше всего, или заменить уличное на то, что под крышей. Если пойдёт дождь, страница дня предложит замены сама.',
+      bodyDe: 'Regen, ein später Start oder einfach zu müde: Hier verschiebt ihr den ganzen Tag um eine Stunde, streicht den Stopp, der euch am wenigsten wichtig ist, oder tauscht Draußen gegen Drinnen. Bei Regen bietet die Tagesseite die Alternativen von selbst an.' },
+
+    { key: 'lang', tab: 'home', sel: '#langbtn', icon: '🌍',
+      title: 'English, Russian, German',
+      titleRu: 'Английский, русский, немецкий',
+      titleDe: 'Englisch, Russisch, Deutsch',
+      body: 'This button switches the whole app, every place description included. Each phone keeps its own language, so one of you can read it in Russian while the other reads German.',
+      bodyRu: 'Эта кнопка переключает всё приложение, включая описания всех мест. У каждого телефона свой язык, так что одна может читать по-русски, а другая — по-немецки.',
+      bodyDe: 'Diese Taste schaltet die ganze App um, samt aller Ortsbeschreibungen. Jedes Handy behält seine eigene Sprache — eine von euch liest auf Russisch, die andere auf Deutsch.' },
+
+    { key: 'done', tab: 'home', sel: null, icon: '🎉',
+      title: 'That\'s everything',
+      titleRu: 'Вот и всё',
+      titleDe: 'Das war alles',
+      body: 'Start by rating a few places, then press Build my week. You can run this tour again any time from More. Have a wonderful trip.',
+      bodyRu: 'Начните с оценки нескольких мест, потом нажмите «Собрать неделю». Этот тур можно запустить снова в любой момент из раздела «Ещё». Прекрасной вам поездки!',
+      bodyDe: 'Fangt damit an, ein paar Orte zu bewerten, und drückt dann „Woche bauen“. Diese Tour könnt ihr jederzeit unter „Mehr“ noch einmal starten. Habt eine wunderbare Reise.' },
+  ],
+};

@@ -38,6 +38,12 @@ const registered = await page.evaluate(async () => {
 });
 if (registered !== 'ready') bad('service worker did not register: ' + registered); else ok('service worker registered and ready');
 
+// a first visit opens the onboarding tour, which deliberately blocks taps; the
+// rest of this test is about the app, so dismiss it the way a reader would
+await page.waitForSelector('#tourwrap:not([hidden])', { timeout: 4000 }).catch(() => {});
+await page.click('#tourskip').catch(() => {});
+await page.waitForTimeout(200);
+
 // give the install handler time to populate the cache, then confirm what is in it
 await page.waitForTimeout(2500);
 const cached = await page.evaluate(async () => {
@@ -48,7 +54,7 @@ const cached = await page.evaluate(async () => {
   return { keys, urls: reqs.map(r => new URL(r.url).pathname) };
 });
 if (!cached.keys.length) bad('nothing was cached'); else ok(`cache "${cached.keys[0]}" holds ${cached.urls.length} entries`);
-for (const need of ['/index.html', '/app.js', '/app.css', '/data/places.js', '/data/plan.js']) {
+for (const need of ['/index.html', '/app.js', '/app.css', '/data/places.js', '/data/plan.js', '/data/tour.js']) {
   if (!cached.urls.includes(need)) bad(`${need} is not in the cache — it will not open offline`);
 }
 if (!failures) ok('every file the app needs is cached');

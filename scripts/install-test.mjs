@@ -61,7 +61,10 @@ for (const [label, device] of [['iPhone', devices['iPhone 13']], ['Android', dev
   const ctx = await browser.newContext({ ...device });
   const page = await ctx.newPage();
   await page.goto('http://127.0.0.1:8097/', { waitUntil: 'domcontentloaded' });
-  await page.waitForTimeout(700);
+  // the first-run tour hides the install banner while it is up — dismiss it first
+  await page.waitForSelector('#tourwrap:not([hidden])', { timeout: 4000 }).catch(() => {});
+  await page.click('#tourskip').catch(() => {});
+  await page.waitForTimeout(500);
   const seen = await page.evaluate(() => {
     const vis = (el) => !!el && !el.hidden && getComputedStyle(el).display !== 'none';
     const banner = document.querySelector('.install');

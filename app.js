@@ -62,6 +62,8 @@ const S = {
   yourVote: ['Your vote', 'Ваш голос', 'Deine Stimme'], pickWho: ['Whose phone is this?', 'Чей это телефон?', 'Wessen Handy ist das?'], pickWhoFirst: ['Tap your name first (Today tab)', 'Сначала выберите своё имя (вкладка «Сегодня»)', 'Zuerst den eigenen Namen antippen (Tab „Heute“)'],
   addToDay: ['📅 Add to a day', '📅 Добавить в день', '📅 Zu einem Tag hinzufügen'], inPlan: ['In the plan', 'В плане', 'Im Plan'], website: ['Website', 'Сайт', 'Website'], tickets: ['Tickets', 'Билеты', 'Tickets'], reserve: ['Reserve', 'Бронь', 'Reservieren'], menu: ['Menu', 'Меню', 'Speisekarte'], map: ['Map', 'Карта', 'Karte'], directions: ['Directions', 'Маршрут', 'Route'],
   fromHome: ['from home', 'от дома', 'von zu Hause'], hours: ['Hours', 'Часы', 'Öffnungszeiten'], price: ['Price', 'Цена', 'Preis'], booking: ['Booking', 'Бронирование', 'Buchung'], typical: ['Typical visit', 'Обычно', 'Übliche Dauer'], closed: ['Closed', 'Закрыто', 'Geschlossen'], address: ['Address', 'Адрес', 'Adresse'], confirm: ['Details compiled Sep 2026 from memory — confirm on the site.', 'Данные собраны в сентябре 2026 по памяти — проверьте на сайте.', 'Angaben von September 2026 — bitte auf der Website prüfen.'],
+  tourSkip: ['Skip', 'Пропустить', 'Überspringen'], tourBack: ['Back', 'Назад', 'Zurück'], tourNext: ['Next', 'Дальше', 'Weiter'], tourDone: ['Got it', 'Понятно', 'Alles klar'],
+  tourAgain: ['Tour — swipe or tap Next', 'Обзор — листайте или нажимайте «Дальше»', 'Rundgang — wischen oder auf Weiter tippen'],
   minutes: ['min', 'мин', 'Min'], places: ['places', 'мест', 'Orte'], noMatch: ['Nothing matches — try fewer filters.', 'Ничего не найдено — уберите фильтры.', 'Nichts gefunden — weniger Filter setzen.'],
   swipeHint: ['Swipe right = want, left = skip, up = maybe. Everyone\'s votes sync.', 'Вправо = хочу, влево = нет, вверх = может быть. Голоса синхронизируются.', 'Nach rechts = will ich, links = nein, hoch = vielleicht. Alle Stimmen werden synchronisiert.'],
   deckDone: ['You have rated everything in this view 🎉 — change the filter or head to Plan.', 'Вы оценили всё в этой подборке 🎉 — смените фильтр или загляните в План.', 'Du hast alles in dieser Auswahl bewertet 🎉 — Filter ändern oder weiter zum Plan.'],
@@ -1217,6 +1219,175 @@ function initPlatform() {
   } catch (e) {}
 }
 
+// ---------------------------------------------------------------- guided tour
+// A coach-mark walkthrough: each step switches to the right tab (and day),
+// spotlights a real element and explains it. Steps live in data/tour.js so the
+// copy can be edited without touching the engine. A step whose element is not
+// on screen is skipped rather than shown pointing at nothing.
+const TOURKEY = LSK + '-tour';
+const TOUR = (window.TOUR && Array.isArray(window.TOUR.steps)) ? window.TOUR.steps : [];
+let TI = -1, TOURON = false;
+
+// jsdom and other layout-less hosts report every box as 0x0; trust the DOM there.
+function hasLayout() { try { const b = document.body.getBoundingClientRect(); return b.width > 0 || b.height > 0; } catch (e) { return false; } }
+function tourFind(sel) {
+  let el = null; try { el = document.querySelector(sel); } catch (e) { return null; }
+  if (!el || el.closest('[hidden]')) return null;
+  if (!hasLayout()) return el;
+  const r = el.getBoundingClientRect();
+  return (r.width > 0 && r.height > 0) ? el : null;
+}
+function tourStage(s) {
+  if (s.day && DAYBYKEY[s.day]) { if (currentTab !== 'days' || currentDay !== s.day) setDay(s.day, null); return; }
+  if (s.tab === 'days') { if (currentTab !== 'days') setDay(currentDay, null); return; }
+  if (s.tab && s.tab !== currentTab) setTab(s.tab);
+}
+function tourSeek(i, dir) {
+  while (i >= 0 && i < TOUR.length) {
+    const s = TOUR[i]; tourStage(s);
+    if (!s.sel || tourFind(s.sel)) return i;
+    i += dir;
+  }
+  return -1;
+}
+// Is this element carried by the page (scrolling moves it) or pinned to the
+// screen? A sticky day strip or the fixed language button must not be scrolled at.
+function tourPinned(el) {
+  for (let n = el; n && n !== document.body; n = n.parentElement) {
+    const pos = getComputedStyle(n).position;
+    if (pos === 'fixed' || pos === 'sticky') return true;
+  }
+  return false;
+}
+// The band we are allowed to use: under the floating language pill, above the
+// dock. Both are measured rather than guessed, because the safe-area insets on
+// a notched phone move them and a fixed number would put the card behind one.
+function tourBand() {
+  const vh = window.innerHeight || 780;
+  let dock = 100, top = 54;
+  try {
+    const tb = document.querySelector('.tabbar'); const r = tb && tb.getBoundingClientRect();
+    if (r && r.height > 0) dock = Math.max(70, Math.round(vh - r.top) + 10);
+    const lb = document.getElementById('langbtn'); const lr = lb && lb.getBoundingClientRect();
+    if (lr && lr.height > 0) top = Math.max(12, Math.round(lr.bottom) + 10);
+  } catch (e) {}
+  return { top, vh, usable: Math.max(160, vh - dock - top) };
+}
+// Scroll so that the element and the card both fit in the band. A target taller
+// than the room left over keeps its top slab lit rather than pushing the card off.
+function tourScroll(el, ch) {
+  if (tourPinned(el)) return;
+  const b = tourBand(), r = el.getBoundingClientRect();
+  const want = Math.min(r.height + 16, Math.max(90, b.usable - ch - 28));
+  const ty = b.top + Math.max(0, Math.round((b.usable - want - ch - 28) / 2)) + 8;
+  const delta = Math.round(r.top - ty);
+  if (Math.abs(delta) < 3) return;
+  try { window.scrollBy(0, delta); } catch (e) {}
+}
+function tourPlace(el) {
+  const wrap = $('#tourwrap'), spot = $('#tourspot'), card = $('#tourcard');
+  if (!wrap) return;
+  const vw = window.innerWidth || 390, b = tourBand();
+  if (!el || !hasLayout()) { wrap.classList.add('nospot'); spot.hidden = true; card.classList.add('mid'); card.style.top = ''; card.style.bottom = ''; return; }
+  wrap.classList.remove('nospot'); card.classList.remove('mid');
+  card.style.maxHeight = ''; card.classList.remove('clipped');   // measure the card's natural height first
+  const ch = card.offsetHeight || 200, pad = 8, gap = 14;
+  const r = el.getBoundingClientRect();
+  let x = Math.max(6, r.left - pad), w = Math.min(vw - 12, r.width + pad * 2);
+  let y = r.top - pad, h = r.height + pad * 2;
+  // never let the spotlight eat the room the card needs
+  h = Math.min(h, Math.max(90, b.usable - ch - gap * 2));
+  // an element pinned to the screen (the language pill, the sticky day strip)
+  // sits where it sits — only page content gets pulled into the band
+  const lo = tourPinned(el) ? 6 : b.top;
+  y = Math.min(Math.max(y, lo), Math.max(lo, b.top + b.usable - h));
+  spot.hidden = false;
+  spot.style.left = x + 'px'; spot.style.top = y + 'px'; spot.style.width = w + 'px'; spot.style.height = h + 'px';
+  const below = Math.max(y + h + gap, b.top);
+  const roomBelow = (b.top + b.usable) - below, roomAbove = (y - gap) - b.top;
+  if (below + ch <= b.top + b.usable) card.style.top = below + 'px';
+  else if (ch <= roomAbove) card.style.top = (y - gap - ch) + 'px';
+  // Neither side fits the whole card — a small screen with a long paragraph.
+  // Take the roomier side and let the text scroll rather than cover the thing
+  // the step is pointing at.
+  else if (roomBelow >= roomAbove) { card.style.top = below + 'px'; card.style.maxHeight = Math.max(140, roomBelow) + 'px'; }
+  else { card.style.top = b.top + 'px'; card.style.maxHeight = Math.max(140, roomAbove) + 'px'; }
+  // a faded bottom edge says "there is more text here" rather than looking broken
+  card.classList.toggle('clipped', !!card.style.maxHeight);
+  card.style.bottom = '';
+}
+function tourPaint(i) {
+  TI = i; const s = TOUR[i]; if (!s) return;
+  $('#tourico').textContent = s.icon || '✦';
+  $('#tourtitle').textContent = fld(s, 'title') || s.title || '';
+  $('#tourbody').textContent = fld(s, 'body') || s.body || '';
+  $('#tourskip').textContent = t('tourSkip');
+  $('#tourprev').textContent = t('tourBack'); $('#tourprev').hidden = i === 0;
+  $('#tournext').textContent = i === TOUR.length - 1 ? t('tourDone') : t('tourNext');
+  $('#tourdots').innerHTML = TOUR.map((x, k) => '<i class="' + (k === i ? 'on' : (k < i ? 'was' : '')) + '"></i>').join('');
+  $('#tourcard').setAttribute('aria-label', (fld(s, 'title') || '') + ' — ' + (i + 1) + '/' + TOUR.length);
+  const el = s.sel ? tourFind(s.sel) : null;
+  if (el && hasLayout()) tourScroll(el, $('#tourcard').offsetHeight || 200);
+  tourPlace(el);
+  requestAnimationFrame(() => { if (TOURON && TI === i) tourPlace(s.sel ? tourFind(s.sel) : null); });
+}
+function tourGo(i, dir) {
+  if (!TOURON) return;
+  dir = dir < 0 ? -1 : 1;
+  const n = tourSeek(i, dir);
+  if (n >= 0) { tourPaint(n); return; }
+  if (dir < 0 && TI >= 0) { tourStage(TOUR[TI]); tourPaint(TI); return; }
+  tourEnd(true);
+}
+function tourBuild() {
+  if ($('#tourwrap')) return;
+  const w = document.createElement('div');
+  w.className = 'tourwrap'; w.id = 'tourwrap'; w.hidden = true;
+  w.innerHTML = '<div class="tourspot" id="tourspot" hidden></div>' +
+    '<div class="tourcard" id="tourcard" role="dialog" aria-modal="true" aria-live="polite">' +
+    '<div class="ttop"><span class="tico" id="tourico"></span><button type="button" class="tskip" id="tourskip"></button></div>' +
+    '<h4 id="tourtitle"></h4><p id="tourbody"></p>' +
+    '<div class="tnav"><span class="tdots" id="tourdots" aria-hidden="true"></span>' +
+    '<span class="tbtns"><button type="button" class="tprev" id="tourprev"></button><button type="button" class="tnext" id="tournext"></button></span></div></div>';
+  document.body.appendChild(w);
+  // tapping the dimmed area moves on; the card itself is for reading
+  w.addEventListener('click', (e) => { if (e.target.closest('#tourcard')) return; tourGo(TI + 1, 1); });
+  $('#tourskip').onclick = (e) => { e.stopPropagation(); tourEnd(false); };
+  $('#tourprev').onclick = (e) => { e.stopPropagation(); tourGo(TI - 1, -1); };
+  $('#tournext').onclick = (e) => { e.stopPropagation(); tourGo(TI + 1, 1); };
+  document.addEventListener('keydown', (e) => {
+    if (!TOURON) return;
+    if (e.key === 'Escape') { e.preventDefault(); tourEnd(false); }
+    else if (e.key === 'ArrowRight') { e.preventDefault(); tourGo(TI + 1, 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); tourGo(TI - 1, -1); }
+  });
+  let rz = null, sq = false;
+  const reposition = () => { const s = TOUR[TI]; tourPlace(s && s.sel ? tourFind(s.sel) : null); };
+  window.addEventListener('resize', () => { if (!TOURON) return; clearTimeout(rz); rz = setTimeout(reposition, 120); });
+  window.addEventListener('scroll', () => { if (!TOURON || sq) return; sq = true; requestAnimationFrame(() => { sq = false; if (TOURON) reposition(); }); }, { passive: true });
+  document.addEventListener('langchange', () => { if (TOURON && TI >= 0) tourPaint(TI); });
+}
+function tourStart() {
+  if (!TOUR.length) return;
+  try { if (EX.deck) deckStop(); } catch (e) {}
+  try { closeSheet(); } catch (e) {}
+  tourBuild();
+  TOURON = true; document.body.classList.add('tour-on');
+  // the app scrolls smoothly by default; during the tour that animation would
+  // fight the spotlight, so pin it to instant for the duration
+  try { document.documentElement.style.scrollBehavior = 'auto'; } catch (e) {}
+  $('#tourwrap').hidden = false;
+  tourGo(0, 1);
+}
+function tourEnd(done) {
+  TOURON = false; TI = -1;
+  const w = $('#tourwrap'); if (w) { w.hidden = true; w.classList.remove('nospot'); }
+  document.body.classList.remove('tour-on');
+  try { document.documentElement.style.scrollBehavior = ''; } catch (e) {}
+  try { localStorage.setItem(TOURKEY, done ? 'done' : 'skipped'); } catch (e) {}
+}
+function tourSeen() { try { return !!localStorage.getItem(TOURKEY); } catch (e) { return true; } }
+
 // ---------------------------------------------------------------- render all + init
 function renderAll() {
   refreshCustomSeeds();
@@ -1235,15 +1406,17 @@ function init() {
   $('#noteadd').onclick = () => { const v = $('#notein').value.trim(); if (!v) return; put('note', String(Date.now()), { who: me, text: v.slice(0, 500) }); $('#notein').value = ''; };
   $('#packadd').onclick = () => { const v = $('#packin').value.trim(); if (!v) return; put('pack', String(Date.now()), { text: v.slice(0, 120), who: me }); $('#packin').value = ''; };
   $('#resvadd').onclick = () => { const p = $('#resvplace').value.trim(); if (!p) return; put('resv', String(Date.now()), { place: p.slice(0, 120), when: $('#resvwhen').value, code: $('#resvcode').value.trim().slice(0, 120), who: me }); $('#resvplace').value = ''; $('#resvcode').value = ''; toast(t('saved')); };
+  const trb = $('#tourreplay'); if (trb) trb.onclick = () => tourStart();
   $('#icsexport').onclick = exportICS;
   $('#nearme').onclick = nearMe;
   $('#gohome').onclick = () => window.open(G.mapsDir(null, HOMEPT), '_blank', 'noopener');
   renderMapControls(); initChat();
   renderAll(); loadWeather(); sbInit();
+  if (TOUR.length && !tourSeen()) setTimeout(() => { if (!TOURON) tourStart(); }, 900);
   setInterval(() => { renderTicker(); }, 60000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderTicker(); renderHome(); } });
 }
 // expose a little for tests
-window.NYC = { agIds, agReflow, dayStats, rankDays, buildWeek, seedFor, state, setTab, setDay, openPlace, buildICS, get me() { return me; }, set me(v) { me = v; }, PL };
+window.NYC = { agIds, agReflow, dayStats, rankDays, buildWeek, seedFor, state, setTab, setDay, openPlace, buildICS, tourStart, tourEnd, tourGo, TOURKEY, get tourStep() { return TI; }, get tourOn() { return TOURON; }, TOUR, get me() { return me; }, set me(v) { me = v; }, PL };
 init();
 })();

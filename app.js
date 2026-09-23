@@ -11,10 +11,12 @@ const T = window.TRIP || { DAYS: [], TRAVELERS: [], STOPS: {}, SEED: {}, RAIN: {
 const G = window.GEO;
 const PLACES = Array.isArray(window.PLACES) ? window.PLACES : [];
 const GUIDE = window.GUIDE || { sections: [] };
-const PL = {}; PLACES.forEach(p => { PL[p.id] = p; });
+const PL = Object.create(null); PLACES.forEach(p => { PL[p.id] = p; });
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
 const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+// own properties only: keys can come from the shared table, and 'constructor' is not a place
+const hasOwn = (o, k) => !!o && typeof o === 'object' && Object.prototype.hasOwnProperty.call(o, k);
 const LSK = CFG.TRIP_ID || 'nyc-trip';
 window.APP_BUILD = 'v1 · 22 Sep 2026';
 const DAYS = T.DAYS || [];
@@ -37,21 +39,21 @@ const DE = () => lang === 'de';
 // L(en, ru, de) — falls back to Russian then English when a translation is missing
 const L = (en, ru, de) => (lang === 'ru' ? (ru || en) : (lang === 'de' ? (de || en) : en));
 // pick a per-language field off an object: fld(p,'why') -> p.whyDe / p.whyRu / p.why
-const fld = (o, base) => {
+const fld = (o, base) => fldIn(o, base, lang);
+function fldIn(o, base, lg) {
   if (!o) return '';
-  if (lang === 'en') return o[base] || '';
-  const suffix = lang === 'ru' ? 'Ru' : 'De';
+  if (lg === 'en') return o[base] || '';
+  const suffix = lg === 'ru' ? 'Ru' : 'De';
   // Two naming conventions live side by side: camelCase fields on places and days
   // (whyDe), SHOUTY ones on the trip object (CHAT_HELLO_DE). Try both.
   return o[base + suffix] || o[base + suffix.toUpperCase()] || o[base] || '';
-};
+}
 const S = {
   runningOrder: ['Running order', 'Расписание дня', 'Tagesablauf'], stops: ['stops', 'пункт(ов)', 'Stopps'],
   dragHint: ['hold a stop to drag it · tap a time to pin it · ⋯ moves, retimes or removes', 'зажмите пункт и тяните · нажмите на время, чтобы закрепить · ⋯ — перенести, изменить или убрать', 'Stopp halten und ziehen · auf die Zeit tippen, um sie festzusetzen · ⋯ verschiebt, ändert oder entfernt'],
   resetDay: ['↺ reset to the plan', '↺ вернуть план', '↺ Plan wiederherstellen'], homeBy: ['Home by', 'Дома к', 'Zu Hause gegen'], anchors: ['anchors', 'точек', 'Programmpunkte'], transit: ['in transit', 'в пути', 'unterwegs'],
   paceRelaxed: ['🟢 Relaxed', '🟢 Спокойно', '🟢 Entspannt'], paceComfy: ['🟢 Comfortable', '🟢 Комфортно', '🟢 Angenehm'], paceFull: ['🟡 Full day', '🟡 Насыщенно', '🟡 Voller Tag'], paceCrammed: ['🔴 Crammed', '🔴 Перегружено', '🔴 Zu voll'],
   paceHint: ['Too much for one day — the ⋯ menu on any stop moves it to a lighter day.', 'Слишком много для одного дня — через ⋯ у любого пункта его можно перенести в более свободный день.', 'Zu viel für einen Tag — über das ⋯-Menü lässt sich ein Stopp auf einen ruhigeren Tag schieben.'],
-  mikeOn: ['🎷 Mike joins tonight', '🎷 Майк вечером с нами', '🎷 Mike ist heute Abend dabei'], mikeOff: ['🎷 Mike joins?', '🎷 Майк придёт?', '🎷 Kommt Mike mit?'],
   addStop: ['＋ Add a stop', '＋ Добавить пункт', '＋ Stopp hinzufügen'], suggestBreak: ['☕ Suggest a break', '☕ Предложить паузу', '☕ Pause vorschlagen'], replan: ['✨ Replan', '✨ Перепланировать', '✨ Neu planen'], shareDay: ['↗ Share day', '↗ Поделиться днём', '↗ Tag teilen'], rainPlan: ['🌧 Rain plan', '🌧 План на дождь', '🌧 Regenplan'],
   dayNotes: ['Day notes — shared with the others', 'Заметки к дню — видят все', 'Notizen zum Tag — für alle sichtbar'],
   walk: ['min walk', 'мин пешком', 'Min zu Fuß'], subway: ['min by subway', 'мин на метро', 'Min mit der U-Bahn'], free: ['min free', 'мин свободно', 'Min frei'], travel: ['min travel', 'мин в пути', 'Min Fahrt'], slack: ['min slack', 'мин запаса', 'Min Puffer'],
@@ -133,7 +135,7 @@ const CATS = [
 const CAT = Object.create(null); CATS.forEach(c => { CAT[c[0]] = { key: c[0], ico: c[1], en: c[2], ru: c[3], de: c[4], color: c[5] }; });
 const catLabel = (k) => { const c = CAT[k] || CAT.idea; return c.ico + ' ' + L(c.en, c.ru, c.de); };
 const catColor = (k) => (CAT[k] || CAT.idea).color;
-const TAGS = [['first-timer', 'First-timer', 'Обязательно', 'Für Erstbesucher'], ['near-home', 'Near home', 'Рядом с домом', 'Nah bei uns'], ['rainy-day', 'Rainy day', 'На дождь', 'Bei Regen'], ['free', 'Free', 'Бесплатно', 'Kostenlos'], ['view', 'Views', 'Виды', 'Aussicht'], ['mike-evening', 'With Mike', 'С Майком', 'Mit Mike'], ['pre-dinner', 'Pre-dinner drink', 'Аперитив', 'Aperitif'], ['brunch', 'Brunch', 'Бранч', 'Brunch'], ['hidden-gem', 'Hidden gem', 'Нетуристическое', 'Geheimtipp'], ['splurge', 'Splurge', 'Роскошь', 'Luxus'], ['late-night', 'Late night', 'Поздний вечер', 'Spätabends'], ['dessert', 'Dessert', 'Десерт', 'Dessert']];
+const TAGS = [['first-timer', 'First-timer', 'Обязательно', 'Für Erstbesucher'], ['near-home', 'Near home', 'Рядом с домом', 'Nah bei uns'], ['rainy-day', 'Rainy day', 'На дождь', 'Bei Regen'], ['free', 'Free', 'Бесплатно', 'Kostenlos'], ['view', 'Views', 'Виды', 'Aussicht'], ['pre-dinner', 'Pre-dinner drink', 'Аперитив', 'Aperitif'], ['brunch', 'Brunch', 'Бранч', 'Brunch'], ['hidden-gem', 'Hidden gem', 'Нетуристическое', 'Geheimtipp'], ['splurge', 'Splurge', 'Роскошь', 'Luxus'], ['late-night', 'Late night', 'Поздний вечер', 'Spätabends'], ['dessert', 'Dessert', 'Десерт', 'Dessert']];
 const DOW = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const DOWL = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], ru: ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'], de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'] };
 const MON = { en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], ru: ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'], de: ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'] };
@@ -148,9 +150,9 @@ const stopLabel = (it) => { if (!it) return ''; if (it.place) return placeName(i
 const TR = T.TRAVELERS || [];
 let me = null; try { me = localStorage.getItem(LSK + '-who'); } catch (e) {}
 // (validated against TRIP.VOTERS once the voter list is built, below)
-function whoName(k) { const o = ((state.settings.names || {}).v || state.settings.names || {})[k]; if (o) return o; const tr = TR.find(x => x[0] === k); return tr ? L(tr[1], tr[2], tr[4] || tr[1]) : k; }
+function whoName(k) { const nm = ((state.settings.names || {}).v || state.settings.names || {}), o = hasOwn(nm, k) ? nm[k] : null; if (typeof o === 'string' && o.trim()) return o.slice(0, 30); const tr = TR.find(x => x[0] === k); return tr ? L(tr[1], tr[2], tr[4] || tr[1]) : k; }
 function whoEmoji(k) { const tr = TR.find(x => x[0] === k); return tr ? (tr[3] || '') : ''; }
-const state = { vote: {}, agenda: {}, custom: {}, mike: {}, daynote: {}, note: {}, check: {}, resv: {}, settings: {}, pack: {} };
+const state = { vote: {}, agenda: {}, custom: {}, daynote: {}, note: {}, check: {}, resv: {}, settings: {}, pack: {} };
 function localLoad() { try { const s = JSON.parse(localStorage.getItem(LSK + '-shared') || '{}'); Object.keys(s).forEach(k => { state[k] = Object.assign({}, state[k] || {}, s[k]); }); } catch (e) {} }
 function localSave() { try { localStorage.setItem(LSK + '-shared', JSON.stringify(state)); } catch (e) {} }
 localLoad();
@@ -196,8 +198,8 @@ function dayOfKey(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return null; ret
 function dowOf(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return null; const p = d.date.split('-').map(Number); return DOW[new Date(p[0], p[1] - 1, p[2]).getDay()]; }
 const DWL = { ru: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'], de: ['So','Mo','Di','Mi','Do','Fr','Sa'] };
 function dayLabel(dayKey) { const d = DAYBYKEY[dayKey]; if (!d) return dayKey; const p = d.date.split('-').map(Number); const wd = new Date(p[0], p[1]-1, p[2]).getDay(); const nm = lang === 'en' ? d.dw : (DWL[lang] ? DWL[lang][wd] : d.dw); return nm + ' ' + d.dn; }
-function dayTitle(d) { return fld(d, 'title'); }
-function dayLede(d) { return fld(d, 'lede'); }
+function dayTitle(d) { return d ? dayStory(d.key).title : ''; }
+function dayLede(d) { return d ? dayStory(d.key).lede : ''; }
 function placeName(p) { return fld(p, 'name') || p.name; }
 function placeWhy(p) { return fld(p, 'why'); }
 function placeSub(p) { return fld(p, 'sub'); }
@@ -222,8 +224,7 @@ function md(txt) {
 
 // ---------------------------------------------------------------- votes
 const VOTEV = { yes: 2, maybe: 1, no: -2 };
-// Only the people in TRIP.VOTERS rate places. Everyone else stays a traveler:
-// they still appear on the days they join and in the "with Mike" suggestions.
+// Only the people in TRIP.VOTERS rate places (all the travellers unless it says otherwise).
 const VOTERS = (Array.isArray(T.VOTERS) && T.VOTERS.length) ? T.VOTERS.filter(k => TR.some(t => t[0] === k)) : TR.map(t => t[0]);
 const isVoter = (k) => VOTERS.indexOf(k) >= 0;
 if (me && !isVoter(me)) { me = null; try { localStorage.removeItem(LSK + '-who'); } catch (e) {} }
@@ -244,9 +245,10 @@ function voteBadges(ref) {
 function scheduledDays(ref) { const out = []; DAYKEYS.forEach(d => { if (agIds(d).indexOf(ref) >= 0) out.push(d); }); return out; }
 
 // ---------------------------------------------------------------- running order data
-const AGSEED = {}, AGDAYS = {}, SEEDT = {};
+const AGSEED = Object.create(null), AGDAYS = {}, SEEDT = Object.create(null), AGSETS = {};
 function bestTime(p) { return { morning: '10:00', afternoon: '14:00', sunset: '17:30', evening: '18:30', night: '21:00' }[p.best] || '12:00'; }
 function seedFor(ref) {
+  if (typeof ref !== 'string') return null;   // a synced row can hold anything
   if (AGSEED[ref]) return AGSEED[ref];
   if (ref.startsWith('p:')) {
     const p = PL[ref.slice(2)];
@@ -259,14 +261,16 @@ function seedFor(ref) {
     return AGSEED[ref];
   }
   if (ref.startsWith('x:')) {
-    const s = (T.STOPS || {})[ref.slice(2)]; if (!s) return null;
+    const s = hasOwn(T.STOPS, ref.slice(2)) ? T.STOPS[ref.slice(2)] : null; if (!s) return null;
     AGSEED[ref] = { id: ref, t: s.t, d: s.d || 30, lock: !!s.lock, en: s.en, ru: s.ru || s.en, de: s.de || s.en, p: s.p || null, q: s.q || null, link: s.link || null, x: true };
     return AGSEED[ref];
   }
   if (ref.startsWith('c:')) {
-    const c = (state.custom || {})[ref.slice(2)]; if (!c || c.deleted) return null;
-    const la = coord(c.lat), ln = coord(c.lng);
-    AGSEED[ref] = { id: ref, t: c.t || '12:00', d: c.d || 60, lock: false, en: c.name, ru: c.name, de: c.name, p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea', approx: !!c.approx && la != null };
+    const c = hasOwn(state.custom, ref.slice(2)) ? state.custom[ref.slice(2)] : null; if (!c || typeof c !== 'object' || c.deleted) return null;
+    // synced from the shared table: a bounded name, a real time and a sane length
+    const la = coord(c.lat), ln = coord(c.lng), nm = String(c.name == null ? '' : c.name).slice(0, 120), dn = Number(c.d);
+    const tm = (typeof c.t === 'string' && /^\d{1,2}:\d{2}$/.test(c.t)) ? c.t : '12:00';
+    AGSEED[ref] = { id: ref, t: tm, d: (dn >= 5 && dn <= 720) ? dn : 60, lock: false, en: nm, ru: nm, de: nm, p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea', approx: !!c.approx && la != null };
     return AGSEED[ref];
   }
   return null;
@@ -274,25 +278,108 @@ function seedFor(ref) {
 Object.entries(T.SEED || {}).forEach(([day, arr]) => {
   AGDAYS[day] = arr.map(it => { const ref = it[0]; const s = seedFor(ref); if (!s) return null; SEEDT[day + '|' + ref] = { t: it[1], d: it[2] }; return ref; }).filter(Boolean);
 });
-DAYKEYS.forEach(d => { AGDAYS[d] = AGDAYS[d] || []; });
+DAYKEYS.forEach(d => { AGDAYS[d] = AGDAYS[d] || []; AGSETS[d] = new Set(AGDAYS[d]); });
+// A saved day stores the list it had when it was last edited, and the plan it
+// was edited against ("seen"). The plan can change afterwards — a redeploy that
+// moves a whole day, say — so a saved list is read as the edits it records,
+// never as a frozen copy: stops the traveller put there stay, stops the plan
+// still puts there stay, and stops the plan has since moved to another day
+// follow the plan. Reading it as a frozen copy is how one small edit made
+// before a reshuffle once left one day with two days' stops and the next empty.
+function agClaims(day) {
+  const st = agState(day); if (!isRow(st) || st.plan) return null;
+  const base = new Set(Array.isArray(st.seen) ? st.seen : (AGDAYS[day] || []));
+  const now = new Set(AGDAYS[day] || []);
+  return st.ids.filter(id => seedFor(id) && (!base.has(id) || now.has(id)));
+}
+// The same stop can only live on one day; if two saved days both hold it (two
+// phones editing at once), the earlier day keeps it.
 function agClaimedBy(id, beforeDay) {
-  const all = state.agenda || {};
-  for (const d of DAYKEYS) { if (d === beforeDay) break; const s2 = all[d]; if (s2 && Array.isArray(s2.ids) && s2.ids.indexOf(id) >= 0) return d; }
+  for (const d of DAYKEYS) { if (d === beforeDay) break; const c = agClaims(d); if (c && c.indexOf(id) >= 0) return d; }
   return null;
 }
 function agIds(day) {
-  const all = state.agenda || {}; const st = all[day]; const claimed = new Set();
-  Object.entries(all).forEach(([d2, s2]) => { if (d2 !== day && s2 && Array.isArray(s2.ids)) s2.ids.forEach(id => claimed.add(id)); });
-  if (st && Array.isArray(st.ids)) {
-    const mine = st.ids.filter(id => seedFor(id) && !agClaimedBy(id, day));
-    const seen = new Set(st.seen || AGDAYS[day] || []); const have = new Set(st.ids);
-    return mine.concat((AGDAYS[day] || []).filter(id => !seen.has(id) && !have.has(id) && !claimed.has(id)));
-  }
-  return (AGDAYS[day] || []).filter(id => !claimed.has(id));
+  const claimed = new Set();
+  DAYKEYS.forEach(d2 => { if (d2 === day) return; const c = agClaims(d2); if (c) c.forEach(id => claimed.add(id)); });
+  const seed = AGDAYS[day] || [];
+  const mine = agClaims(day);
+  if (!mine) return seed.filter(id => !claimed.has(id));
+  const st = agState(day);
+  const base = new Set(Array.isArray(st.seen) ? st.seen : seed), had = new Set(st.ids);
+  const kept = mine.filter(id => !agClaimedBy(id, day));
+  // what the plan has put on this day since it was saved, slotted in by its
+  // planned time among what the traveller kept, in the traveller's order
+  const arrivals = seed.filter(id => !base.has(id) && !had.has(id) && !claimed.has(id));
+  if (!arrivals.length) return kept;
+  const out = []; let a = 0;
+  kept.forEach(id => { const tk = agBase(day, id); while (a < arrivals.length && agBase(day, arrivals[a]) <= tk) out.push(arrivals[a++]); out.push(id); });
+  while (a < arrivals.length) out.push(arrivals[a++]);
+  return out;
 }
-function agState(day) { return (state.agenda || {})[day] || {}; }
-function agOv(day) { return agState(day).t || {}; }
-function agDur(day, id) { const st = agState(day); const o = (st.d || {})[id]; if (o) return o; const sd = SEEDT[day + '|' + id]; if (sd && sd.d) return sd.d; return seedFor(id).d; }
+// Where a saved day's edits belong now. Normally its own day. But if the plan
+// has since moved that day's stops elsewhere as a block (a reshuffle), the
+// edits follow the stops: pins, removals and additions made to "the Liberty
+// day" belong to the Liberty day, whichever date it is on now. Judged by which
+// day's current plan holds most of what the saved day was edited against.
+function agHome(key, st) {
+  if (!st || !Array.isArray(st.seen) || !st.seen.length) return key;
+  const seen = st.seen;
+  const overlap = (d) => { const s2 = AGSETS[d]; let n = 0; seen.forEach(id => { if (s2 && s2.has(id)) n++; }); return n; };
+  let best = key, bestN = overlap(key);
+  DAYKEYS.forEach(d => { const n = overlap(d); if (n > bestN) { best = d; bestN = n; } });
+  return (best !== key && bestN * 2 >= seen.length) ? best : key;
+}
+const isRow = (st) => !!st && typeof st === 'object' && Array.isArray(st.ids);
+// When a row was saved. Rows from before this was recorded count as oldest; a
+// time from the future (the shared table is writable by anyone) counts as none.
+function agAt(st) { const at = Number(st && st.at); return (Number.isFinite(at) && at > 0 && at < Date.now() + 864e5) ? at : 0; }
+// The saved row that speaks for each day. Candidates are every stored row and
+// every row carried inside another (see agWrite), each at the day its edits now
+// belong to; the newest wins, and between rows of the same age the day's own.
+// Worked out once per change: every write (and every synced row) replaces the
+// stored row object, so the same objects mean the same answer.
+let AGROWS = null;
+function agRows() {
+  const all = state.agenda || {};
+  if (AGROWS && AGROWS.all === all && DAYKEYS.every(k => AGROWS.refs[k] === all[k])) return AGROWS.rows;
+  const best = {}, refs = {};
+  const offer = (h, st, own) => { const at = agAt(st), cur = best[h]; if (!cur || at > cur.at || (at === cur.at && own && !cur.own)) best[h] = { st, at, own }; };
+  DAYKEYS.forEach(k => {
+    const st = all[k]; refs[k] = st;
+    if (!st || typeof st !== 'object') return;
+    if (isRow(st)) { const h = agHome(k, st); offer(h, st, h === k); }
+    const c = st.carry;
+    if (c && typeof c === 'object') DAYKEYS.forEach(d => { if (hasOwn(c, d) && isRow(c[d])) offer(agHome(d, c[d]), c[d], false); });
+  });
+  const rows = {}; Object.keys(best).forEach(h => { rows[h] = best[h].st; });
+  AGROWS = { all, refs, rows };
+  return rows;
+}
+function agState(day) { return agRows()[day] || {}; }
+// Every write to a day goes through here, and it only ever writes that day's
+// own row: the other phone may have newer rows for the other days that this
+// one has not seen yet. A row stored under this day that still speaks for
+// another day (its edits followed a reshuffle there) travels inside the new
+// row as `carry`, so saving Monday never loses Tuesday's edits. Resetting a day
+// writes a newer "as planned" row, which outranks any older edits for it,
+// wherever they are stored.
+function agWrite(day, row) {
+  const all = state.agenda || {}, speak = agRows(), old = all[day], carry = {};
+  if (old && typeof old === 'object') {
+    const held = [];
+    if (isRow(old)) held.push(old);
+    if (old.carry && typeof old.carry === 'object') DAYKEYS.forEach(d => { if (hasOwn(old.carry, d) && isRow(old.carry[d])) held.push(old.carry[d]); });
+    held.forEach(r => DAYKEYS.forEach(h => { if (h !== day && speak[h] === r) carry[h] = { ids: r.ids, t: r.t, d: r.d, seen: r.seen, at: agAt(r) }; }));
+  }
+  const out = row === null ? { plan: true, ids: [], t: {}, d: {}, seen: (AGDAYS[day] || []).slice() } : Object.assign({}, row);
+  delete out.carry; out.at = Date.now();
+  if (Object.keys(carry).length) out.carry = carry;
+  put('agenda', day, out);
+}
+// Pinned times and durations come from the shared table: only well-formed ones count.
+function agOv(day) { const t = agState(day).t, o = {}; if (t && typeof t === 'object') Object.keys(t).forEach(k => { if (typeof t[k] === 'string' && /^\d{1,2}:\d{2}$/.test(t[k])) o[k] = t[k]; }); return o; }
+function agDurs(day) { const d = agState(day).d, o = {}; if (d && typeof d === 'object') Object.keys(d).forEach(k => { const v = Number(d[k]); if (Number.isFinite(v) && v >= 5 && v <= 720) o[k] = v; }); return o; }
+function agDur(day, id) { const st = agState(day); const o = Number(hasOwn(st.d, id) ? st.d[id] : NaN); if (Number.isFinite(o) && o >= 5 && o <= 720) return o; const sd = SEEDT[day + '|' + id]; if (sd && sd.d) return sd.d; return seedFor(id).d; }
 function agBase(day, id) { const ov = agOv(day); if (ov[id]) return agMin(ov[id]); const sd = SEEDT[day + '|' + id]; if (sd && sd.t) return agMin(sd.t); return agMin(seedFor(id).t); }
 // How far people will walk depends on what they are walking to: approaching a park
 // or a named walk IS the outing, so allow a longer stroll before calling it a ride.
@@ -301,14 +388,25 @@ function walkCap(a, b) {
   return (big(a) || big(b)) ? 2.6 : 1.7;
 }
 function agTravel(from, to, cap) { const m = G.travelMin(from, to, cap); return m == null ? null : m; }
-function agTouched(day) {
-  const st = agState(day); if (!st || !Array.isArray(st.ids)) return false;
-  const seedOrder = AGDAYS[day] || []; const ids = st.ids.filter(x => seedOrder.indexOf(x) >= 0);
+function agTouched(day, cur) {
+  const st = agState(day); if (!isRow(st) || st.plan) return false;
+  const on = cur || agIds(day), here = new Set(on);
+  const seedOrder = AGDAYS[day] || []; const ids = on.filter(x => seedOrder.indexOf(x) >= 0);
   const reordered = ids.some((x, i) => i > 0 && seedOrder.indexOf(x) < seedOrder.indexOf(ids[i - 1]));
-  return reordered || Object.keys(st.t || {}).length > 0;
+  // a pinned time only counts while its stop is still on this day
+  return reordered || Object.keys(agOv(day)).some(k => here.has(k));
 }
+// Does the day differ from the plan in any way worth offering to undo?
+function agDiffers(day, cur) {
+  const st = agState(day); if (!isRow(st) || st.plan) return false;
+  const on = cur || agIds(day), plan = (AGDAYS[day] || []).filter(id => on.indexOf(id) >= 0 || !agClaimedElsewhere(id, day));
+  if (on.join() !== plan.join()) return true;
+  const here = new Set(on);
+  return Object.keys(agOv(day)).some(k => here.has(k)) || on.some(k => hasOwn(st.d, k));
+}
+function agClaimedElsewhere(id, day) { return DAYKEYS.some(d2 => d2 !== day && (agClaims(d2) || []).indexOf(id) >= 0); }
 function agReflow(day, ids) {
-  const touched = agTouched(day); const ov = agOv(day);
+  const touched = agTouched(day, ids); const ov = agOv(day);
   const rows = []; let cur = null, prevQ = null;
   const isSeed = (id) => (AGDAYS[day] || []).indexOf(id) >= 0;
   const dayStart = ids.length ? Math.min.apply(null, ids.map(id => agBase(day, id))) : 600;
@@ -329,9 +427,12 @@ function agReflow(day, ids) {
   });
   return rows;
 }
-function agSave(day, ids) { const st = agState(day); put('agenda', day, { ids, t: st.t || {}, d: st.d || {}, seen: (AGDAYS[day] || []).slice() }); }
-function agSetTime(day, id, val) { const st = agState(day); const tt = Object.assign({}, st.t || {}); if (val) tt[id] = val; else delete tt[id]; put('agenda', day, { ids: Array.isArray(st.ids) ? st.ids : agIds(day), t: tt, d: st.d || {}, seen: (AGDAYS[day] || []).slice() }); }
-function agSetDur(day, id, val) { const st = agState(day); const dd = Object.assign({}, st.d || {}); if (val) dd[id] = val; else delete dd[id]; put('agenda', day, { ids: Array.isArray(st.ids) ? st.ids : agIds(day), t: st.t || {}, d: dd, seen: (AGDAYS[day] || []).slice() }); }
+function agSave(day, ids) { agWrite(day, { ids, t: agOv(day), d: agDurs(day), seen: (AGDAYS[day] || []).slice() }); }
+// A pin or a duration saves the day as it now stands (agIds), not the raw
+// stored list: a stored list can still hold stops the plan has since moved
+// away, and writing it back against today's plan would pin them here again.
+function agSetTime(day, id, val) { const tt = agOv(day); if (val) tt[id] = val; else delete tt[id]; agWrite(day, { ids: agIds(day), t: tt, d: agDurs(day), seen: (AGDAYS[day] || []).slice() }); }
+function agSetDur(day, id, val) { const dd = agDurs(day); if (val) dd[id] = val; else delete dd[id]; agWrite(day, { ids: agIds(day), t: agOv(day), d: dd, seen: (AGDAYS[day] || []).slice() }); }
 function agInsert(day, ref, opts) {
   opts = opts || {};
   const it = seedFor(ref); if (!it) return;
@@ -379,6 +480,180 @@ function dayStats(day, rows) {
 }
 function paceLabel(lvl) { return [t('paceRelaxed'), t('paceComfy'), t('paceFull'), t('paceCrammed')][lvl]; }
 
+// ---------------------------------------------------------------- what the day is about
+// Each day has a title and a summary written for it as planned. Once its stops
+// change (moved to another day, removed, added), those can describe a day that
+// no longer exists, so they are written afresh from what is actually on it: the
+// title from the neighbourhoods where the day is spent and anything headline
+// (a concert, a show, the flight), the summary by morning, afternoon and evening.
+const STOP_STORY = T.STOP_STORY || {};
+const STORYW = {
+  en: { parts: ['Morning', 'Afternoon', 'Evening'], sep: ': ', and: ' and ', amp: ' & ', more: (n) => n + ' more',
+    free: 'Free day', home: 'A quiet day at home', freeLede: 'Nothing planned yet — add a stop, or move one here from another day with its ⋯ menu.',
+    brunch: 'brunch at', lunch: 'lunch at', bite: 'a bite at', dinner: 'dinner at', breakfast: 'breakfast at', coffee: 'coffee at', dessert: 'dessert at', drinks: 'drinks at' },
+  ru: { parts: ['Утром', 'Днём', 'Вечером'], sep: ' — ', and: ' и ', amp: ' и ', more: (n) => 'ещё ' + n,
+    free: 'Свободный день', home: 'Тихий день дома', freeLede: 'Пока ничего не запланировано — добавьте пункт или перенесите сюда пункт из другого дня через его меню ⋯.',
+    brunch: 'бранч в', lunch: 'обед в', bite: 'перекус в', dinner: 'ужин в', breakfast: 'завтрак в', coffee: 'кофе в', dessert: 'десерт в', drinks: 'по бокалу в' },
+  de: { parts: ['Vormittags', 'Nachmittags', 'Abends'], sep: ': ', and: ' und ', amp: ' & ', more: (n) => n + ' weitere',
+    free: 'Freier Tag', home: 'Ein ruhiger Tag zu Hause', freeLede: 'Noch nichts geplant — einen Stopp hinzufügen oder über sein ⋯-Menü einen von einem anderen Tag hierher verschieben.',
+    brunch: 'Brunch im', lunch: 'Mittagessen im', bite: 'ein Happen im', dinner: 'Abendessen im', breakfast: 'Frühstück im', coffee: 'Kaffee im', dessert: 'Nachtisch im', drinks: 'Drinks im' },
+};
+const LGI = { en: 0, ru: 1, de: 2 };
+// What a stop contributes to the story, or null for a ride between places.
+function storyOf(id) {
+  const it = seedFor(id); if (!it) return null;
+  if (it.x) { const s = hasOwn(STOP_STORY, id.slice(2)) ? STOP_STORY[id.slice(2)] : null; return s ? { it, event: s.event || null, brief: s.brief || null, common: !!s.common } : null; }
+  const c = it.custom && hasOwn(state.custom, id.slice(2)) ? state.custom[id.slice(2)] : null;
+  return { it, cat: it.place ? it.place.cat : (c && typeof c.cat === 'string' && CAT[c.cat] ? c.cat : 'idea') };
+}
+const isStory = (id) => !!storyOf(id);
+// A name without its explanatory tail: "Tin Building by Jean-Georges (South
+// Street Seaport)" → "Tin Building by Jean-Georges", "Лоди — кафе в …" → "Лоди".
+function shortName(nm) {
+  // no backtracking regexes: a name can come from the shared table
+  const full = String(nm == null ? '' : nm).slice(0, 160).trim();
+  let s = full;
+  if (s.endsWith(')')) { const i = s.lastIndexOf('('); if (i > 0) s = s.slice(0, i).trim(); }
+  const m = s.search(/\s[—–]\s/); if (m > 0) s = s.slice(0, m).trim();
+  return s || full;
+}
+// The name to use in a given language. Russian texts name restaurants, cafés and
+// bars by their own (Latin) names, the way the written summaries do, so that
+// "ужин в L'Artusi" never has to decline a transliteration.
+function nameIn(it, lg, venue) {
+  let nm;
+  if (it.place) nm = lg === 'en' || (lg === 'ru' && venue) ? it.place.name : (fldIn(it.place, 'name', lg) || it.place.name);
+  else nm = lg === 'ru' ? it.ru : (lg === 'de' ? (it.de || it.en) : it.en);
+  nm = shortName(nm);
+  return lg === 'en' ? nm.replace(/^The /, 'the ') : nm;
+}
+function dayPoint(it, pin) { const p = (pin && it.pin) || it.p; return (p && coord(p[0]) != null && coord(p[1]) != null) ? p : null; }
+const atHome = (p) => G.haversine(p[0], p[1], HOMEPT[0], HOMEPT[1]) < 0.25;
+function joinList(items, lg, max) {
+  const W = STORYW[lg]; let list = items.slice();
+  if (max && list.length > max) { const extra = list.length - (max - 1); list = list.slice(0, max - 1).concat([W.more(extra)]); }
+  if (list.length < 2) return list.join('');
+  return list.slice(0, -1).join(', ') + W.and + list[list.length - 1];
+}
+const upFirst = (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+function storyPhrase(row, lg) {
+  const st = row.story, W = STORYW[lg];
+  if (st.brief) return st.brief[LGI[lg]] || st.brief[0];
+  const m = row.start, tags = (st.it.place && st.it.place.tags) || [];
+  let kind = null;
+  if (st.cat === 'eat') kind = m < 11 * 60 + 30 ? 'brunch' : (m < 15 * 60 + 30 ? 'lunch' : (m < 17 * 60 ? 'bite' : 'dinner'));
+  else if (st.cat === 'cafe') kind = m < 11 * 60 ? 'breakfast' : (m >= 11 * 60 + 30 && m < 15 * 60 + 30 && row.d >= 60 ? 'lunch' : (tags.indexOf('dessert') >= 0 ? 'dessert' : 'coffee'));
+  else if (st.cat === 'drink') kind = 'drinks';
+  return kind ? W[kind] + ' ' + nameIn(st.it, lg, true) : nameIn(st.it, lg, false);
+}
+function storyRows(day, ids) {
+  return agReflow(day, ids).map(r => Object.assign({}, r, { story: storyOf(r.it.id) })).filter(r => r.story);
+}
+// The title's parts are chosen once for all three languages, so switching
+// language never changes what the title says, only the words.
+function genTitle(rows, lg) {
+  const W = STORYW[lg];
+  if (!rows.length) return W.free;
+  const parts = [], used = new Set();
+  const named = (it) => ({ en: nameIn(it, 'en', false), ru: nameIn(it, 'ru', false), de: nameIn(it, 'de', false) });
+  // headliners: the fixed events, and any long show or dated event from the library
+  rows.forEach(r => {
+    const st = r.story, p = st.it.place;
+    if (st.event) { parts.push({ txt: { en: st.event[0], ru: st.event[1] || st.event[0], de: st.event[2] || st.event[0] }, at: r.start, w: Infinity, common: !!st.common }); used.add(r); }
+    else if (p && p.cat === 'show' && (r.d >= 120 || eventDate(p))) { parts.push({ txt: named(st.it), at: r.start, w: Infinity }); used.add(r); }
+  });
+  // one sight big enough to be the day's reason (the Statue, the Met), by name
+  const star = rows.filter(r => !used.has(r) && ['see', 'museum', 'park', 'walk', 'daytrip'].indexOf(r.story.cat) >= 0 && r.d >= 150).sort((a, b) => b.d - a.d)[0];
+  if (star) { parts.push({ txt: named(star.story.it), at: star.start, w: star.d }); used.add(star); }
+  // then where the rest of the day is spent, by time there (home doesn't count)
+  const areas = {}, unplaced = [];
+  rows.forEach(r => {
+    if (used.has(r)) return; const pt = dayPoint(r.story.it, true); if (pt && atHome(pt)) return;
+    const a = pt ? G.areaOf(pt[0], pt[1]) : null; if (!a) { unplaced.push(r); return; }
+    const o = areas[a.key] || (areas[a.key] = { a, w: 0, at: r.start }); o.w += r.d; o.at = Math.min(o.at, r.start);
+  });
+  // never the same name twice ("Coney Island & Coney Island"): an area already
+  // said by a headliner's name is not said again
+  const said = (tx) => parts.some(x => LANGS.some(l => { const a = x.txt[l].toLowerCase(), b = tx[l].toLowerCase(); return a.indexOf(b) >= 0 || b.indexOf(a) >= 0; }));
+  const ranked = Object.values(areas).sort((x, y) => y.w - x.w);
+  const total = ranked.reduce((sum, o) => sum + o.w, 0);
+  ranked.forEach((o, i) => { const tx = { en: o.a.en, ru: o.a.ru, de: o.a.de }; if ((i === 0 || o.w >= total * 0.25) && !said(tx)) parts.push({ txt: tx, at: o.at, w: o.w }); });
+  // stops with no neighbourhood (your own ideas without a map link, somewhere
+  // far out) are named themselves when nothing else describes the day, or
+  // when one of them is the biggest thing in it
+  unplaced.sort((a, b) => b.d - a.d).forEach((r, i) => { if (i < 2 && (!ranked.length || r.d >= ranked[0].w)) { const tx = named(r.story.it); if (!said(tx)) parts.push({ txt: tx, at: r.start, w: r.d }); } });
+  if (!parts.length) return W.home;
+  // at most three parts, short enough for a phone in every language: the
+  // smallest part goes first
+  // "Park Slope & flight home": a common noun is lower-case after the first part (German capitalises nouns anyway)
+  const join = (list, l) => { const tx = list.map((x, i) => (i > 0 && x.common && l !== 'de') ? x.txt[l].charAt(0).toLowerCase() + x.txt[l].slice(1) : x.txt[l]); return tx.length < 2 ? tx[0] : tx.slice(0, -1).join(', ') + STORYW[l].amp + tx[tx.length - 1]; };
+  const keep = parts.slice().sort((x, y) => y.w - x.w);
+  while (keep.length > 1 && (keep.length > 3 || LANGS.some(l => join(keep, l).length > 44))) keep.pop();
+  keep.sort((x, y) => x.at - y.at);
+  return upFirst(join(keep, lg));
+}
+function genLede(rows, lg) {
+  const W = STORYW[lg];
+  if (!rows.length) return W.freeLede;
+  const parts = [[], [], []];
+  rows.forEach(r => { parts[r.start < 12 * 60 ? 0 : (r.start < 17 * 60 ? 1 : 2)].push(storyPhrase(r, lg)); });
+  return parts.map((ph, i) => { if (!ph.length) return ''; const tx = W.parts[i] + W.sep + joinList(ph, lg, 4); return /[.!?…]$/.test(tx) ? tx : tx + '.'; }).filter(Boolean).join(' ');
+}
+// The stops that carry the story, as a set.
+const storySet = (ids) => ids.filter(isStory).slice().sort().join('|');
+function dayIsAsPlanned(day, ids) { return storySet(ids) === storySet(AGDAYS[day] || []); }
+// The written title survives smaller changes: every stop it names is still
+// there, and at least three quarters of the day (by time) is still the plan.
+function titleHolds(day, ids) {
+  const d = DAYBYKEY[day]; const plan = (AGDAYS[day] || []).filter(isStory), cur = ids.filter(isStory);
+  if ((d.titled || []).some(id => cur.indexOf(id) < 0)) return false;
+  const seedDur = (id) => { const sd = SEEDT[day + '|' + id]; return (sd && sd.d) || seedFor(id).d || 30; };
+  let kept = 0, lost = 0, added = 0;
+  plan.forEach(id => { if (cur.indexOf(id) >= 0) kept += agDur(day, id); else lost += seedDur(id); });
+  cur.forEach(id => { if (plan.indexOf(id) < 0) added += agDur(day, id); });
+  return kept > 0 && kept >= 0.75 * (kept + lost) && kept >= 0.75 * (kept + added);
+}
+// How far the day has moved from its plan: 'planned' (the same stops),
+// 'close' (the written title still holds) or 'changed'.
+function dayMode(day, ids) { return dayIsAsPlanned(day, ids) ? 'planned' : (titleHolds(day, ids) ? 'close' : 'changed'); }
+function dayStory(day, lg) {
+  lg = lg || lang;
+  const d = DAYBYKEY[day]; if (!d) return { title: '', lede: '', mode: 'planned' };
+  const ids = agIds(day), mode = dayMode(day, ids);
+  if (mode === 'planned') return { title: fldIn(d, 'title', lg), lede: fldIn(d, 'lede', lg), mode };
+  const rows = storyRows(day, ids);
+  return { title: mode === 'close' ? fldIn(d, 'title', lg) : genTitle(rows, lg), lede: genLede(rows, lg), mode };
+}
+// Where the day happens, for "which day suits this place?", the stop picker and
+// the rain plan: the written hubs while the title still holds, else the travel
+// hubs where its stops are, by time spent (none at all for an empty day).
+function dayHubs(day) {
+  const d = DAYBYKEY[day]; const ids = agIds(day);
+  if (dayMode(day, ids) !== 'changed') return d.hubs || [];
+  const w = {};
+  ids.filter(isStory).forEach(id => { const it = seedFor(id); const pt = dayPoint(it, false); if (!pt) return; const h = G.nearestHub(pt[0], pt[1]).hub.key; w[h] = (w[h] || 0) + agDur(day, id); });
+  const ranked = Object.keys(w).sort((a, b) => w[b] - w[a]); const total = ranked.reduce((s, h) => s + w[h], 0);
+  return ranked.filter((h, i) => i === 0 || w[h] >= total * 0.15).slice(0, 3);
+}
+// Indoor swaps for a rainy day: the written list while the title still holds,
+// else museums and indoor rainy-day places near wherever the day now is.
+function dayRain(day) {
+  const ids = agIds(day);
+  const dow = dowOf(day), open = (p) => !(Array.isArray(p.closed) && p.closed.indexOf(dow) >= 0);
+  // anything already on another day is left out: adding it here would quietly take it off that day
+  const elsewhere = (id) => DAYKEYS.some(d2 => d2 !== day && agIds(d2).indexOf('p:' + id) >= 0);
+  if (dayMode(day, ids) !== 'changed') return ((T.RAIN || {})[day] || []).filter(id => PL[id] && open(PL[id]) && !elsewhere(id));
+  const hubs = dayHubs(day); if (!hubs.length) return [];
+  const on = new Set(); DAYKEYS.forEach(d2 => agIds(d2).forEach(id => on.add(id)));
+  return PLACES.filter(p => {
+    if (p.lat == null || on.has('p:' + p.id)) return false;
+    const tags = p.tags || [];
+    if (tags.indexOf('outdoor') >= 0 || !open(p)) return false;
+    return p.cat === 'museum' || (tags.indexOf('rainy-day') >= 0 && (p.cat === 'see' || p.cat === 'shop'));
+  }).map(p => { const h = G.nearestHub(p.lat, p.lng).hub.key; return { p, n: Math.min.apply(null, hubs.map(x => G.hubToHub(x, h))), s: voteScore('p:' + p.id) }; })
+    .filter(x => x.s >= 0 && x.n <= 25).sort((a, b) => (a.n - b.n) || (b.s - a.s)).slice(0, 5).map(x => x.p.id);
+}
+
 // ---------------------------------------------------------------- day panels
 function buildDayPanels() {
   const host = $('#dayhost'); if (!host) return;
@@ -386,7 +661,7 @@ function buildDayPanels() {
     return '<section class="panel" id="' + d.key + '" role="tabpanel">' +
       '<div class="dayhead"><div class="kicker"><span class="no">' + t('dayOf').toUpperCase() + ' ' + (i + 1) + '</span><span class="eyebrow"><span class="dl"></span><span class="wxsep"></span><span class="wx" data-wxday="' + d.key + '"></span></span></div>' +
       '<h2 class="dt"></h2><p class="lede dlede"></p>' +
-      '<div class="daytools"><button class="mikebtn" type="button" data-mike="' + d.key + '" aria-pressed="false"></button><span class="pace" data-pace="' + d.key + '"></span></div><p class="pacehint" data-pacehint="' + d.key + '" hidden></p></div>' +
+      '<div class="daytools"><span class="pace" data-pace="' + d.key + '"></span></div><p class="pacehint" data-pacehint="' + d.key + '" hidden></p></div>' +
       '<div class="rainbox" data-rainbox="' + d.key + '" hidden></div>' +
       '<div class="agwrap open" data-agday="' + d.key + '"></div>' +
       '<div class="dayacts"><button class="act ok" type="button" data-addstop="' + d.key + '"></button><button class="act" type="button" data-break="' + d.key + '"></button><button class="act site" type="button" data-replan="' + d.key + '"></button><button class="act" type="button" data-share="' + d.key + '"></button></div>' +
@@ -397,7 +672,6 @@ function buildDayPanels() {
   $$('[data-break]').forEach(b => { b.onclick = () => suggestBreak(b.dataset.break); });
   $$('[data-replan]').forEach(b => { b.onclick = () => openReplan(b.dataset.replan); });
   $$('[data-share]').forEach(b => { b.onclick = () => shareDay(b.dataset.share); });
-  $$('[data-mike]').forEach(b => { b.onclick = () => { const d = b.dataset.mike; put('mike', d, { on: !(state.mike[d] && state.mike[d].on) }); }; });
   $$('[data-daynote]').forEach(ta => { let h = null; ta.addEventListener('input', () => { clearTimeout(h); h = setTimeout(() => put('daynote', ta.dataset.daynote, { text: ta.value.slice(0, 2000) }), 700); }); });
 }
 function paintDayHeads() {
@@ -439,7 +713,7 @@ function rowSub(it, day) {
 function renderAgenda(day) {
   const box = document.querySelector('.agwrap[data-agday="' + day + '"]'); if (!box) return;
   const ids = agIds(day); const rows = agReflow(day, ids);
-  const touched = !!(agState(day) && Array.isArray(agState(day).ids));
+  const touched = agDiffers(day, ids);
   const range = rows.length ? agHM(rows[0].start) + '–' + agHM(rows[rows.length - 1].end) : '';
   const st = dayStats(day, rows);
   box.innerHTML = '<div class="aghead" data-agtoggle><span>🕐 <b>' + t('runningOrder') + '</b> · ' + rows.length + ' ' + t('stops') + ' · ' + range + '</span><span class="chev">▾</span></div>' +
@@ -483,7 +757,7 @@ function renderAgenda(day) {
   });
   box.querySelector('[data-agtoggle]').onclick = () => { box.classList.toggle('open'); };
   box.querySelectorAll('[data-gap]').forEach(gp => { gp.onclick = (e) => { e.stopPropagation(); fillGap(day, Number(gp.dataset.gap)); }; });
-  const rst = box.querySelector('[data-agreset]'); if (rst) rst.onclick = (e) => { e.stopPropagation(); put('agenda', day, null); toast(L('Day reset to the plan', 'День возвращён к плану')); };
+  const rst = box.querySelector('[data-agreset]'); if (rst) rst.onclick = (e) => { e.stopPropagation(); agWrite(day, null); toast(L('Day reset to the plan', 'День возвращён к плану', 'Tag auf den Plan zurückgesetzt')); };
   box.querySelectorAll('[data-openplace]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); openPlace(b.dataset.openplace); }; });
   box.querySelectorAll('[data-goguide]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); goGuide(b.dataset.goguide); }; });
   box.querySelectorAll('[data-goexplore]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); EX.cat = b.dataset.goexplore; setTab('explore'); }; });
@@ -543,21 +817,18 @@ function renderAgenda(day) {
       if (ev.target.closest('.ag-handle')) { ev.preventDefault(); begin(); } else timer = setTimeout(() => { timer = null; begin(); }, 320);
     });
   });
-  // rain box + mike + notes
+  // rain box + notes
   const rb = document.querySelector('[data-rainbox="' + day + '"]');
   if (rb) {
-    const w = WX[day]; const list2 = (T.RAIN || {})[day] || [];
-    if (w && w.rain && list2.length) {
+    const w = WX[day]; const list2 = (w && w.rain) ? dayRain(day) : [];
+    if (list2.length) {
       rb.hidden = false;
-      rb.innerHTML = '<div class="rt">' + t('rainTitle') + '</div><div class="acts">' + list2.filter(id => PL[id]).map(id => '<button class="act" type="button" data-rainadd="' + esc(id) + '">' + (agIds(day).indexOf('p:' + id) >= 0 ? '✓ ' : '＋ ') + esc(placeName(PL[id])) + '</button>').join('') + '</div>';
+      rb.innerHTML = '<div class="rt">' + t('rainTitle') + '</div><div class="acts">' + list2.map(id => '<button class="act" type="button" data-rainadd="' + esc(id) + '">' + (agIds(day).indexOf('p:' + id) >= 0 ? '✓ ' : '＋ ') + esc(placeName(PL[id])) + '</button>').join('') + '</div>';
       rb.querySelectorAll('[data-rainadd]').forEach(b => { b.onclick = () => { const ref = 'p:' + b.dataset.rainadd; if (agIds(day).indexOf(ref) >= 0) openPlace(b.dataset.rainadd); else { agInsert(day, ref); toast(t('applied')); } }; });
     } else rb.hidden = true;
   }
-  const mb = document.querySelector('[data-mike="' + day + '"]');
-  if (mb) { const on = !!(state.mike[day] && state.mike[day].on); mb.setAttribute('aria-pressed', String(on)); mb.textContent = on ? t('mikeOn') : t('mikeOff'); }
   const ta = document.querySelector('[data-daynote="' + day + '"]');
   if (ta && document.activeElement !== ta) { const n = state.daynote[day]; ta.value = (n && n.text) || ''; }
-  const chip = document.querySelector('.chip[data-day="' + day + '"]'); if (chip) chip.classList.toggle('mike', !!(state.mike[day] && state.mike[day].on));
 }
 function renderAgendaAll() { if (AG_DRAG) return; DAYKEYS.forEach(renderAgenda); }
 
@@ -571,14 +842,14 @@ function rankDays(p, opts) {
     const closed = Array.isArray(p.closed) && p.closed.indexOf(dow) >= 0;
     let score = 0, why = '';
     if (dated) { if (dated === d.date) { score += 100; why = L('on that date', 'в эту дату'); } else score -= 100; }
-    if (hub && d.hubs) {
-      if (d.hubs.indexOf(hub) >= 0) { score += 10; why = why || L('same neighborhood that day', 'в тот же район в этот день'); }
-      else { const m = Math.min.apply(null, d.hubs.map(h => G.hubToHub(h, hub))); score += Math.max(0, (60 - m) / 6); if (!why && m <= 20) why = L('a short hop from that day\'s area', 'недалеко от района того дня'); }
+    const hubs = dayHubs(day);
+    if (hub && hubs.length) {
+      if (hubs.indexOf(hub) >= 0) { score += 10; why = why || L('same neighborhood that day', 'в тот же район в этот день'); }
+      else { const m = Math.min.apply(null, hubs.map(h => G.hubToHub(h, hub))); score += Math.max(0, (60 - m) / 6); if (!why && m <= 20) why = L('a short hop from that day\'s area', 'недалеко от района того дня'); }
     }
     const rows = agReflow(day, agIds(day)); const st = dayStats(day, rows);
     score -= Math.max(0, st.anchors - 4) * 2; if (st.lvl >= 3) score -= 20;
     if (day === 'd0') score -= 15; if (day === 'd8') score -= (p.tags || []).indexOf('near-home') >= 0 ? 0 : 25;
-    if (p.mike && state.mike[day] && state.mike[day].on) { score += 3; why = why || L('Mike is with you that night', 'в этот вечер с вами Майк'); }
     if (closed) score -= 1000;
     return { day, score, closed, why };
   });
@@ -695,14 +966,14 @@ function openPlace(id) {
     (kv.length ? '<div class="kv">' + kv.map(x => '<div class="k">' + esc(x[0]) + '</div><div>' + esc(x[1]) + '</div>').join('') + '</div>' : '') +
     (placeTips(p).length ? '<ul class="tips">' + placeTips(p).map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '') +
     (p.tags && p.tags.length ? '<div class="tags">' + p.tags.slice(0, 6).map(x => '<span class="tag">' + esc(tagLabel(x)) + '</span>').join('') + '</div>' : '') +
-    '<div class="votebox"><div class="vl">' + t('yourVote') + (me ? ' · ' + esc(whoName(me)) : '') + '<small>' + TR.filter(tr => isVoter(tr[0])).map(tr => (v[tr[0]] ? (tr[3] || '') + ' ' + esc(whoName(tr[0])) + ': ' + (v[tr[0]] === 'yes' ? '❤️' : v[tr[0]] === 'maybe' ? '🤔' : '✕') : '')).filter(Boolean).join(' · ') + '</small></div>' +
+    '<div class="shdecide"><div class="votebox"><div class="vl">' + t('yourVote') + (me ? ' · ' + esc(whoName(me)) : '') + '<small>' + TR.filter(tr => isVoter(tr[0])).map(tr => (v[tr[0]] ? (tr[3] || '') + ' ' + esc(whoName(tr[0])) + ': ' + (v[tr[0]] === 'yes' ? '❤️' : v[tr[0]] === 'maybe' ? '🤔' : '✕') : '')).filter(Boolean).join(' · ') + '</small></div>' +
     '<div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-vote="' + o[0] + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>' +
     (custom ? '<p class="gsub custloc">' + (p.lat != null ? (custom.approx ? t('approxLoc') : t('pinned')) : t('unpinned')) + '</p>' +
       '<details class="custedit"' + (p.lat == null || custom.approx ? ' open' : '') + '><summary>' + t('editLinks') + '</summary>' +
       '<div class="exform links"><input id="sh-cmap" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" value="' + esc(safeHref(custom.map)) + '" />' +
       '<input id="sh-cweb" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" value="' + esc(safeHref(custom.web)) + '" />' +
       '<button type="button" id="sh-csave">' + t('save') + '</button></div><p class="gsub">' + esc(t('mapLinkHow')) + '</p></details>' : '') +
-    '<div class="sheetacts"><button class="act go" type="button" id="sh-add">' + t('addToDay') + '</button>' + (custom ? '<button class="act" type="button" id="sh-del">' + t('delete') + '</button>' : '') + '</div>' +
+    '<div class="sheetacts"><button class="act go" type="button" id="sh-add">' + t('addToDay') + '</button>' + (custom ? '<button class="act" type="button" id="sh-del">' + t('delete') + '</button>' : '') + '</div></div>' +
     (p.conf && p.conf !== 'high' ? '<p class="gsub" style="margin-top:10px">' + t('confirm') + '</p>' : '');
   openSheet(html, () => {
     $$('#sheet [data-vote]').forEach(b => { b.onclick = () => { setVote(ref, b.dataset.vote); setTimeout(() => openPlace(id), 60); }; });
@@ -819,7 +1090,7 @@ function findCustomByName(name) {
   return Object.keys(state.custom || {}).find(k => { const c = state.custom[k]; return c && !c.deleted && normName(c.name) === n; }) || null;
 }
 function openAddStop(day) {
-  const d = DAYBYKEY[day]; const hubs = d.hubs || [];
+  const hubs = dayHubs(day);
   const near = (p) => { if (p.lat == null || !hubs.length) return 99; const h = G.nearestHub(p.lat, p.lng).hub.key; return Math.min.apply(null, hubs.map(x => G.hubToHub(x, h))); };
   const inDay = new Set(agIds(day));
   let cat = 'all', q = '';
@@ -830,7 +1101,7 @@ function openAddStop(day) {
     $$('#pk-list [data-add]').forEach(r => { r.onclick = () => { agInsert(day, 'p:' + r.dataset.add); closeSheet(); toast(t('applied')); }; });
   };
   const html = '<h3>' + t('pickStop') + ' · ' + dayLabel(day) + '</h3><input class="pksearch" id="pk-q" type="search" placeholder="' + t('searchPh') + '" />' +
-    '<div class="vchips small" id="pk-cats"><button class="vchip" type="button" data-c="all" aria-pressed="true">' + L('All', 'Все') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park'].map(c => '<button class="vchip" type="button" data-c="' + c + '">' + catLabel(c) + '</button>').join('') + '</div>' +
+    '<div class="vchips small" id="pk-cats"><button class="vchip" type="button" data-c="all" aria-pressed="true">' + L('All', 'Все', 'Alle') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park'].map(c => '<button class="vchip" type="button" data-c="' + c + '">' + catLabel(c) + '</button>').join('') + '</div>' +
     '<div id="pk-list"></div><div class="grp"><h3 style="font-size:16px">' + t('custom') + '</h3><div class="exform"><input id="pk-cname" type="text" placeholder="' + t('customName') + '" /><input id="pk-cmin" type="number" inputmode="numeric" value="60" /><button type="button" id="pk-cadd">' + t('add') + '</button></div>' +
     '<div class="exform links"><input id="pk-cmap" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" /><input id="pk-cweb" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" /></div><p class="gsub">' + esc(t('mapLinkHow')) + '</p></div>';
   openSheet(html, () => {
@@ -891,10 +1162,10 @@ function openReplan(day) {
     '<div class="sheetacts" style="flex-direction:column;align-items:stretch">' +
     '<button class="act" type="button" id="rp-later">' + t('later') + '</button>' +
     '<button class="act" type="button" id="rp-lighter">' + t('lighter') + '</button>' +
-    (((T.RAIN || {})[day] || []).length ? '<button class="act" type="button" id="rp-rain">' + t('rainSwap') + '</button>' : '') +
-    '</div><div class="grp"><h3 style="font-size:16px">' + t('askAI') + '</h3><div class="exform two"><input id="rp-q" type="text" placeholder="' + t('askPlaceholder') + '" /><button type="button" id="rp-ask">✨</button></div><div id="rp-out"></div></div>';
+    (dayRain(day).length ? '<button class="act" type="button" id="rp-rain">' + t('rainSwap') + '</button>' : '') +
+    '</div><div class="grp" id="rp-askgrp"><h3 style="font-size:16px">' + t('askAI') + '</h3><div class="exform two"><input id="rp-q" type="text" placeholder="' + t('askPlaceholder') + '" /><button type="button" id="rp-ask">✨</button></div><div id="rp-out"></div></div>';
   openSheet(html, () => {
-    $('#rp-later').onclick = () => { if (!rows.length) return; const first = rows[0]; const st = agState(day); put('agenda', day, { ids: agIds(day), t: Object.assign({}, st.t || {}, { [first.it.id]: agPad(first.start + 60) }), d: st.d || {}, seen: (AGDAYS[day] || []).slice() }); closeSheet(); toast(t('shifted')); };
+    $('#rp-later').onclick = () => { if (!rows.length) return; const first = rows[0]; agWrite(day, { ids: agIds(day), t: Object.assign(agOv(day), { [first.it.id]: agPad(first.start + 60) }), d: agDurs(day), seen: (AGDAYS[day] || []).slice() }); closeSheet(); toast(t('shifted')); };
     $('#rp-lighter').onclick = () => {
       const cands = rows.filter(r => !r.it.lock).map(r => ({ r, s: r.it.place ? voteScore('p:' + r.it.place.id) : 0 })).sort((a, b) => a.s - b.s);
       const h = '<h3>' + t('whichDrop') + '</h3>' + cands.map(c => '<div class="pkrow" data-drop="' + esc(c.r.it.id) + '"><div class="pn">' + agHM(c.r.start) + ' ' + esc(stopLabel(c.r.it)) + '<small>' + (c.r.it.place ? voteBadges('p:' + c.r.it.place.id) : '') + '</small></div><button type="button" class="pk-b">✕</button></div>').join('');
@@ -902,7 +1173,7 @@ function openReplan(day) {
     };
     const rr = $('#rp-rain'); if (rr) rr.onclick = () => {
       const ids = agIds(day).filter(id => { const it = seedFor(id); return !(it.place && (it.place.tags || []).indexOf('outdoor') >= 0 && !it.lock); });
-      const adds = ((T.RAIN || {})[day] || []).map(x => 'p:' + x).filter(r => PL[r.slice(2)] && ids.indexOf(r) < 0).slice(0, 3);
+      const adds = dayRain(day).map(x => 'p:' + x).filter(r => ids.indexOf(r) < 0).slice(0, 3);
       agSave(day, ids); adds.forEach(r => agInsert(day, r)); closeSheet(); toast(t('applied'));
     };
     $('#rp-ask').onclick = () => askPlanner(day, $('#rp-q').value.trim());
@@ -914,7 +1185,7 @@ async function askPlanner(day, req) {
   if (!CFG.CONCIERGE_URL) { out.innerHTML = '<p class="gsub">' + t('aiOff') + '</p>'; return; }
   out.innerHTML = '<p class="gsub">' + t('thinking') + '</p>';
   const d = DAYBYKEY[day]; const rows = agReflow(day, agIds(day));
-  const hubs = d.hubs || [];
+  const hubs = dayHubs(day);
   const lib = PLACES.filter(p => p.lat != null).map(p => ({ p, n: hubs.length ? Math.min.apply(null, hubs.map(h => G.hubToHub(h, G.nearestHub(p.lat, p.lng).hub.key))) : 0, s: voteScore('p:' + p.id) }))
     .sort((a, b) => (b.s - a.s) || (a.n - b.n)).slice(0, 220).map(x => ({ id: x.p.id, name: x.p.name, cat: x.p.cat, hood: x.p.hood, dur: x.p.dur, best: x.p.best, closed: x.p.closed || [], lat: x.p.lat, lng: x.p.lng, votes: x.s }));
   const body = { day, date: d.date, request: req, lang, weather: WX[day] ? (WX[day].ico + ' ' + WX[day].hi + '°/' + WX[day].lo + '°' + (WX[day].rain ? ' rain' : '')) : '',
@@ -931,7 +1202,7 @@ async function askPlanner(day, req) {
       const ids = j.stops.map(s => s.ref).filter(ref => seedFor(ref)); const tt = {}, dd = {};
       j.stops.forEach(s => { if (seedFor(s.ref)) { tt[s.ref] = s.t.padStart(5, '0'); if (s.d) dd[s.ref] = s.d; } });
       DAYKEYS.forEach(d2 => { if (d2 !== day) { const rest = agIds(d2).filter(x => ids.indexOf(x) < 0); if (rest.length !== agIds(d2).length) agSave(d2, rest); } });
-      put('agenda', day, { ids, t: tt, d: dd, seen: (AGDAYS[day] || []).slice() }); closeSheet(); toast(t('applied'));
+      agWrite(day, { ids, t: tt, d: dd, seen: (AGDAYS[day] || []).slice() }); closeSheet(); toast(t('applied'));
     };
   } catch (e) { out.innerHTML = '<p class="gsub">' + t('chatErr') + '</p>'; }
 }
@@ -949,7 +1220,7 @@ function exFiltered() {
   let list = PLACES.filter(p => {
     if (EX.cat !== 'all' && !(p.cat === EX.cat || (EX.cat === 'park' && p.cat === 'walk'))) return false;
     for (const tg of EX.tags) if ((p.tags || []).indexOf(tg) < 0) return false;
-    if (q) { const hay = [p.name, p.nameRu, p.hood, p.sub, p.subRu, p.why, (p.tags || []).join(' ')].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
+    if (q) { const hay = [p.name, p.nameRu, p.nameDe, p.hood, p.sub, p.subRu, p.subDe, p.why, p.whyRu, p.whyDe, (p.tags || []).join(' ')].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
     return true;
   });
   if (EX.cat === 'all' || EX.cat === 'idea') Object.entries(state.custom || {}).forEach(([k, c]) => { if (c && !c.deleted && (!q || c.name.toLowerCase().indexOf(q) >= 0) && !EX.tags.size) list.push({ id: 'c:' + k, name: c.name, cat: 'idea', hood: '', sub: t('idea'), why: '', tags: [], custom: true, dur: c.d }); });
@@ -971,7 +1242,7 @@ function cardHtml(p) {
 function renderExplore() {
   const host = $('#exlist'); if (!host) return;
   const cats = $('#excats');
-  cats.innerHTML = '<button class="vchip" type="button" data-c="all" aria-pressed="' + String(EX.cat === 'all') + '">' + L('All', 'Все') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park', 'daytrip', 'idea'].map(c => '<button class="vchip" type="button" data-c="' + c + '" aria-pressed="' + String(EX.cat === c) + '">' + catLabel(c) + '</button>').join('');
+  cats.innerHTML = '<button class="vchip" type="button" data-c="all" aria-pressed="' + String(EX.cat === 'all') + '">' + L('All', 'Все', 'Alle') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park', 'daytrip', 'idea'].map(c => '<button class="vchip" type="button" data-c="' + c + '" aria-pressed="' + String(EX.cat === c) + '">' + catLabel(c) + '</button>').join('');
   cats.querySelectorAll('.vchip').forEach(b => { b.onclick = () => { EX.cat = b.dataset.c; renderExplore(); if (EX.deck) deckStart(); }; });
   const tg = $('#extags');
   const tt = $('#tagtoggle');
@@ -1038,7 +1309,7 @@ function renderPlan() {
   $('#bothwant').innerHTML = both.length ? both.map(r => item(r, '')).join('') : '<p class="gsub">' + t('nothingYet') + '</p>';
   $('#onewants').innerHTML = one.length ? one.map(r => item(r, 'one')).join('') : '<p class="gsub">' + t('nothingYet') + '</p>';
   const props = Object.entries(state.custom || {}).filter(([k, c]) => c && !c.deleted).sort((a, b) => Number(b[0]) - Number(a[0]));
-  $('#proposals').innerHTML = props.map(([k, c]) => { const ref = 'c:' + k; const v = votesFor(ref); return '<div class="voterow"><div class="vn"><a href="#" data-open="' + esc(ref) + '">' + esc(c.name) + '</a><small>' + (c.who ? whoName(c.who) + ' · ' : '') + (c.d || 60) + ' ' + t('minutes') + ' · ' + voteBadges(ref) + '</small></div><div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-v="' + o[0] + '" data-ref="' + esc(ref) + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>'; }).join('');
+  $('#proposals').innerHTML = props.map(([k, c]) => { const ref = 'c:' + k; const v = votesFor(ref); return '<div class="voterow"><div class="vn"><a href="#" data-open="' + esc(ref) + '">' + esc(c.name) + '</a><small>' + (c.who ? esc(whoName(c.who)) + ' · ' : '') + (c.d || 60) + ' ' + t('minutes') + ' · ' + voteBadges(ref) + '</small></div><div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-v="' + o[0] + '" data-ref="' + esc(ref) + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>'; }).join('');
   const schedRefs = Array.from(sched).filter(x => !x.startsWith('x:'));
   $('#scheduled').innerHTML = schedRefs.length ? DAYKEYS.map(d => { const ids = agIds(d).filter(x => !x.startsWith('x:')); if (!ids.length) return ''; return '<div class="glg" style="margin-top:10px">' + dayLabel(d) + ' · ' + esc(dayTitle(DAYBYKEY[d])) + '</div>' + ids.map(ref => '<div class="voterow"><div class="vn"><a href="#" data-open="' + esc(seedFor(ref).place ? seedFor(ref).place.id : ref) + '">' + esc(nameOf(ref)) + '</a><small>' + voteBadges(ref) + '</small></div><div class="vwho">' + agHM(agReflow(d, agIds(d)).find(r => r.it.id === ref).start) + '</div></div>').join(''); }).join('') : '<p class="gsub">' + t('nothingYet') + '</p>';
   $$('#plan [data-open]').forEach(b => { b.onclick = (e) => { e.preventDefault(); openPlace(b.dataset.open); }; });
@@ -1094,7 +1365,7 @@ function renderHome() {
     const showTomorrow = nowMin > 22 * 60 && DAYKEYS.indexOf(dayKey) < DAYKEYS.length - 1;
     const useKey = showTomorrow ? DAYKEYS[DAYKEYS.indexOf(dayKey) + 1] : dayKey; const useRows = showTomorrow ? agReflow(useKey, agIds(useKey)) : rows;
     const d = DAYBYKEY[useKey]; const w = WX[useKey];
-    html = '<div class="today"><div class="eyebrow">' + (showTomorrow ? t('tomorrow') : t('today')) + ' · ' + dayLabel(useKey) + (w ? ' · ' + w.ico + ' ' + w.hi + '°/' + w.lo + '°' : '') + (state.mike[useKey] && state.mike[useKey].on ? ' · 🎷' : '') + '</div><h3>' + esc(dayTitle(d)) + '</h3>' +
+    html = '<div class="today"><div class="eyebrow">' + (showTomorrow ? t('tomorrow') : t('today')) + ' · ' + dayLabel(useKey) + (w ? ' · ' + w.ico + ' ' + w.hi + '°/' + w.lo + '°' : '') + '</div><h3>' + esc(dayTitle(d)) + '</h3>' +
       useRows.map((r, i) => '<div class="trow' + (!showTomorrow && i === nextIdx ? ' next' : '') + '"><span class="tt">' + agHM(r.start) + '</span><span>' + (!showTomorrow && i === nextIdx ? '▶ ' : '') + esc(stopLabel(r.it)) + '</span></div>').join('') +
       '<div class="acts wrap2"><button class="act site" type="button" data-goday="' + useKey + '">' + t('openDay') + '</button><a class="act" href="' + esc(G.mapsDir(null, HOMEPT)) + '" target="_blank" rel="noopener">' + t('getHome') + '</a><button class="act" type="button" data-go="chat">✨ ' + L('Ask', 'Спросить') + '</button></div></div>';
   } else {
@@ -1106,7 +1377,7 @@ function renderHome() {
   // week glance
   const wg = $('#weekglance');
   if (wg) {
-    wg.innerHTML = '<div class="wxstrip">' + DAYS.map(d => { const w = WX[d.key]; return '<div class="wxd' + (d.date === tk ? ' today' : '') + (state.mike[d.key] && state.mike[d.key].on ? ' mike' : '') + '" data-goday="' + d.key + '"><div class="d">' + dayLabel(d.key) + '</div><div class="i">' + (w ? w.ico : '·') + '</div><div class="t">' + (w ? w.hi + '°' : '') + '</div><div class="n">' + esc(dayTitle(d)) + '</div></div>'; }).join('') + '</div>';
+    wg.innerHTML = '<div class="wxstrip">' + DAYS.map(d => { const w = WX[d.key]; return '<div class="wxd' + (d.date === tk ? ' today' : '') + '" data-goday="' + d.key + '"><div class="d">' + dayLabel(d.key) + '</div><div class="i">' + (w ? w.ico : '·') + '</div><div class="t">' + (w ? w.hi + '°' : '') + '</div><div class="n">' + esc(dayTitle(d)) + '</div></div>'; }).join('') + '</div>';
     wg.querySelectorAll('[data-goday]').forEach(b => { b.onclick = () => setDay(b.dataset.goday, null); });
   }
   const hm = $('#homemenu');
@@ -1405,7 +1676,7 @@ function addReply(text, places) {
 function addMsg(role, text, cls) { const d = document.createElement('div'); d.className = 'msg ' + (role === 'user' ? 'u' : 'a') + (cls ? ' ' + cls : ''); d.textContent = text; $('#msgs').appendChild(d); d.scrollIntoView({ block: 'end' }); return d; }
 function chatContext() {
   const tk = todayKey(); const dk = DAYS.find(d => d.date === tk) || DAYS[0];
-  const dayTxt = (k) => { const d = DAYBYKEY[k]; return dayLabel(k) + ' ' + d.title + ':\n' + agReflow(k, agIds(k)).map(r => '  ' + agHM(r.start) + ' ' + r.it.en + (r.it.place ? ' [' + r.it.place.hood + ']' : '')).join('\n') + (state.mike[k] && state.mike[k].on ? '\n  (Mike joins tonight)' : ''); };
+  const dayTxt = (k) => { return dayLabel(k) + ' ' + dayStory(k, 'en').title + ':\n' + agReflow(k, agIds(k)).map(r => '  ' + agHM(r.start) + ' ' + r.it.en + (r.it.place ? ' [' + r.it.place.hood + ']' : '')).join('\n'); };
   const next = DAYKEYS[DAYKEYS.indexOf(dk.key) + 1];
   const wish = PLACES.filter(p => voteScore('p:' + p.id) > 0).sort((a, b) => voteScore('p:' + b.id) - voteScore('p:' + a.id)).slice(0, 15).map(p => p.name + ' (' + p.hood + (bothWant('p:' + p.id) ? ', both want' : '') + ')').join('; ');
   return 'Phone belongs to: ' + (me ? whoName(me) : 'unknown') + '\nCURRENT PLAN\n' + dayTxt(dk.key) + (next ? '\n' + dayTxt(next) : '') + '\nWISHLIST (top votes): ' + (wish || 'none yet') + (WX[dk.key] ? '\nWEATHER ' + dk.key + ': ' + WX[dk.key].hi + '/' + WX[dk.key].lo + '°C' + (WX[dk.key].rain ? ' rain likely' : '') : '');
@@ -1443,14 +1714,14 @@ function initChat() {
 // ---------------------------------------------------------------- settings
 function renderSettings() {
   const names = (state.settings.names && state.settings.names.v) || {};
-  ['Y', 'T', 'M'].forEach(k => { const el = $('#name' + k); if (el && document.activeElement !== el) el.value = names[k] || ''; });
+  TR.forEach(tr => { const el = $('#name' + tr[0]); if (el && document.activeElement !== el) el.value = names[tr[0]] || ''; });
   const pp = $('#pacepick'); if (!pp) return;
   const cur = (state.settings.pace && state.settings.pace.v) || 'normal';
   pp.innerHTML = [['relaxed', t('paceRelaxedPick')], ['normal', t('paceNormalPick')], ['full', t('paceFullPick')]].map(x => '<button class="vchip" type="button" data-pace="' + x[0] + '" aria-pressed="' + String(cur === x[0]) + '">' + x[1] + '</button>').join('');
   pp.querySelectorAll('[data-pace]').forEach(b => { b.onclick = () => put('settings', 'pace', { v: b.dataset.pace }); });
 }
 function bindSettings() {
-  ['Y', 'T', 'M'].forEach(k => { const el = $('#name' + k); if (!el) return; let h = null; el.addEventListener('input', () => { clearTimeout(h); h = setTimeout(() => { const v = Object.assign({}, (state.settings.names && state.settings.names.v) || {}); v[k] = el.value.trim().slice(0, 30); put('settings', 'names', { v }); }, 600); }); });
+  TR.map(tr => tr[0]).forEach(k => { const el = $('#name' + k); if (!el) return; let h = null; el.addEventListener('input', () => { clearTimeout(h); h = setTimeout(() => { const v = Object.assign({}, (state.settings.names && state.settings.names.v) || {}); v[k] = el.value.trim().slice(0, 30); put('settings', 'names', { v }); }, 600); }); });
 }
 
 // ---------------------------------------------------------------- navigation
@@ -1571,9 +1842,30 @@ function tourFind(sel) {
   return (r.width > 0 && r.height > 0) ? el : null;
 }
 function tourStage(s) {
-  if (s.day && DAYBYKEY[s.day]) { if (currentTab !== 'days' || currentDay !== s.day) setDay(s.day, null); return; }
-  if (s.tab === 'days') { if (currentTab !== 'days') setDay(currentDay, null); return; }
-  if (s.tab && s.tab !== currentTab) setTab(s.tab);
+  if (s.day && DAYBYKEY[s.day]) { if (currentTab !== 'days' || currentDay !== s.day) setDay(s.day, null); }
+  else if (s.tab === 'days') { if (currentTab !== 'days') setDay(currentDay, null); }
+  else if (s.tab && s.tab !== currentTab) setTab(s.tab);
+  tourSheet(s);
+}
+// A step can open a sheet to point at something inside it (the concierge box in
+// Replan, the vote buttons on a place). The tour closes what it opened as soon
+// as it moves to a step that doesn't want it, and when it ends.
+let TOURSHEET = '';
+function tourSheet(s) {
+  const want = s && s.open ? s.open + '|' + currentDay + '|' + lang : '';   // a language switch reopens it translated
+  if (want === TOURSHEET) return;
+  if (TOURSHEET) { TOURSHEET = ''; try { closeSheet(); } catch (e) {} }
+  if (!want) return;
+  if (s.open === 'replan') openReplan(currentDay);
+  else if (s.open === 'place') {
+    // a place from the library, whatever the list shows (one of your own ideas
+    // has a different page; a search may have emptied the list)
+    const c = Array.prototype.slice.call(document.querySelectorAll('#exlist .card')).find(x => PL[x.dataset.card]);
+    const id = c ? c.dataset.card : (PLACES.find(p => p.lat != null) || {}).id; if (!id) return;
+    openPlace(id);
+  }
+  else return;
+  TOURSHEET = want;
 }
 function tourSeek(i, dir) {
   while (i >= 0 && i < TOUR.length) {
@@ -1599,8 +1891,10 @@ function tourBand() {
   const vh = window.innerHeight || 780;
   let dock = 100, top = 54;
   try {
+    const sh = document.getElementById('sheet'), up = sh && !sh.hidden;
     const tb = document.querySelector('.tabbar'); const r = tb && tb.getBoundingClientRect();
-    if (r && r.height > 0) dock = Math.max(70, Math.round(vh - r.top) + 10);
+    if (up) dock = 8;   // a sheet covers the dock, so its strip is ours
+    else if (r && r.height > 0) dock = Math.max(70, Math.round(vh - r.top) + 10);
     const lb = document.getElementById('langbtn'); const lr = lb && lb.getBoundingClientRect();
     if (lr && lr.height > 0) top = Math.max(12, Math.round(lr.bottom) + 10);
   } catch (e) {}
@@ -1609,6 +1903,14 @@ function tourBand() {
 // Scroll so that the element and the card both fit in the band. A target taller
 // than the room left over keeps its top slab lit rather than pushing the card off.
 function tourScroll(el, ch) {
+  const sh = el.closest('.sheet');
+  if (sh) {
+    // bring it to the top of what the sheet shows, leaving the rest for the card
+    const b = tourBand(), r = el.getBoundingClientRect(), top = Math.max(sh.getBoundingClientRect().top, b.top) + 12;
+    const delta = Math.round(r.top - top);
+    if (Math.abs(delta) >= 3) sh.scrollTop += delta;
+    return;
+  }
   if (tourPinned(el)) return;
   const b = tourBand(), r = el.getBoundingClientRect();
   const want = Math.min(r.height + 16, Math.max(90, b.usable - ch - 28));
@@ -1698,7 +2000,7 @@ function tourBuild() {
   const reposition = () => { const s = TOUR[TI]; tourPlace(s && s.sel ? tourFind(s.sel) : null); };
   window.addEventListener('resize', () => { if (!TOURON) return; clearTimeout(rz); rz = setTimeout(reposition, 120); });
   window.addEventListener('scroll', () => { if (!TOURON || sq) return; sq = true; requestAnimationFrame(() => { sq = false; if (TOURON) reposition(); }); }, { passive: true });
-  document.addEventListener('langchange', () => { if (TOURON && TI >= 0) tourPaint(TI); });
+  document.addEventListener('langchange', () => { if (TOURON && TI >= 0) { tourSheet(TOUR[TI]); tourPaint(TI); } });
 }
 function tourStart() {
   if (!TOUR.length) return;
@@ -1714,6 +2016,7 @@ function tourStart() {
 }
 function tourEnd(done) {
   TOURON = false; TI = -1;
+  tourSheet(null);
   const w = $('#tourwrap'); if (w) { w.hidden = true; w.classList.remove('nospot'); }
   document.body.classList.remove('tour-on');
   try { document.documentElement.style.scrollBehavior = ''; } catch (e) {}
@@ -1724,7 +2027,7 @@ function tourSeen() { try { return !!localStorage.getItem(TOURKEY); } catch (e) 
 // ---------------------------------------------------------------- render all + init
 function renderAll() {
   refreshCustomSeeds();
-  renderWho(); renderAgendaAll(); renderPlan(); renderHome(); renderBookings(); renderNotes(); renderSettings(); renderTicker(); renderCount(); renderGuide(); refreshChatChips();
+  renderWho(); paintDayHeads(); renderAgendaAll(); renderPlan(); renderHome(); renderBookings(); renderNotes(); renderSettings(); renderTicker(); renderCount(); renderGuide(); refreshChatChips();
   if (currentTab === 'explore') renderExplore();
   if (map) { renderMapControls(); drawMarkers(); }
 }
@@ -1755,6 +2058,6 @@ function init() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderTicker(); renderHome(); } });
 }
 // expose a little for tests
-window.NYC = { normPlaces, chatLibrary, addReply, agIds, agReflow, dayStats, rankDays, buildWeek, seedFor, state, setTab, setDay, openPlace, buildICS, tourStart, tourEnd, tourGo, TOURKEY, get tourStep() { return TI; }, get tourOn() { return TOURON; }, TOUR, get me() { return me; }, set me(v) { me = v; }, PL };
+window.NYC = { renderAll, normPlaces, chatLibrary, addReply, agIds, agReflow, agSave, agInsert, agWrite, dayStory, dayHubs, dayRain, dayStats, rankDays, buildWeek, seedFor, state, setTab, setDay, openPlace, buildICS, tourStart, tourEnd, tourGo, TOURKEY, get tourStep() { return TI; }, get tourOn() { return TOURON; }, TOUR, get me() { return me; }, set me(v) { me = v; }, PL };
 init();
 })();

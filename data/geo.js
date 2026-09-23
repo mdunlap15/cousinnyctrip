@@ -38,6 +38,58 @@
   ];
   const HUB = {}; HUBS.forEach(h => { HUB[h.key] = h; });
 
+  // Neighbourhood names for writing about a day ("Chelsea & the Village"). Finer
+  // than the hubs, which only need to be right about travel: a stop belongs to
+  // the area with the nearest point, and some areas need several points to
+  // cover their shape. [key, English, Russian, German, [[lat, lng], …]]
+  const AREAS = [
+    ['parkslope', 'Park Slope', 'Парк-Слоуп', 'Park Slope', [[40.6680, -73.9810], [40.6760, -73.9780]]],
+    ['prospectpark', 'Prospect Park', 'Проспект-парк', 'Prospect Park', [[40.6620, -73.9690], [40.6540, -73.9700]]],
+    ['prospect', 'Prospect Heights', 'Проспект-Хайтс', 'Prospect Heights', [[40.6775, -73.9665], [40.6800, -73.9740]]],
+    ['greenwood', 'Green-Wood', 'Грин-Вуд', 'Green-Wood', [[40.6540, -73.9920]]],
+    ['sunsetpark', 'Sunset Park', 'Сансет-Парк', 'Sunset Park', [[40.6555, -74.0070], [40.6460, -74.0100]]],
+    ['carroll', 'Carroll Gardens', 'Кэрролл-Гарденс', 'Carroll Gardens', [[40.6800, -73.9960], [40.6870, -73.9930]]],
+    ['redhook', 'Red Hook', 'Ред-Хук', 'Red Hook', [[40.6770, -74.0120]]],
+    ['bkheights', 'Brooklyn Heights', 'Бруклин-Хайтс', 'Brooklyn Heights', [[40.6960, -73.9950], [40.6920, -73.9990]]],
+    ['dumbo', 'DUMBO', 'Дамбо', 'DUMBO', [[40.7030, -73.9890], [40.7040, -73.9950]]],
+    ['fortgreene', 'Fort Greene', 'Форт-Грин', 'Fort Greene', [[40.6890, -73.9750], [40.6905, -73.9840]]],
+    ['wburg', 'Williamsburg', 'Уильямсбург', 'Williamsburg', [[40.7155, -73.9600], [40.7100, -73.9570], [40.7200, -73.9560]]],
+    ['greenpoint', 'Greenpoint', 'Гринпойнт', 'Greenpoint', [[40.7300, -73.9540]]],
+    ['bushwick', 'Bushwick', 'Бушвик', 'Bushwick', [[40.7050, -73.9220]]],
+    ['coney', 'Coney Island', 'Кони-Айленд', 'Coney Island', [[40.5750, -73.9800], [40.5770, -73.9610]]],
+    ['harbor', 'the harbor', 'гавань', 'der Hafen', [[40.6892, -74.0445], [40.6995, -74.0396], [40.6895, -74.0168]]],
+    ['fidi', 'Lower Manhattan', 'Нижний Манхэттен', 'Lower Manhattan', [[40.7075, -74.0110], [40.7115, -74.0135], [40.7060, -74.0030], [40.7128, -74.0060], [40.7035, -74.0165]]],
+    ['tribeca', 'Tribeca', 'Трайбека', 'Tribeca', [[40.7185, -74.0090]]],
+    ['chinatown', 'Chinatown', 'Чайнатаун', 'Chinatown', [[40.7155, -73.9975]]],
+    ['soho', 'SoHo', 'Сохо', 'SoHo', [[40.7240, -74.0010], [40.7225, -73.9970], [40.7200, -73.9975], [40.7270, -73.9935]]],
+    ['les', 'the Lower East Side', 'Нижний Ист-Сайд', 'Lower East Side', [[40.7185, -73.9880], [40.7160, -73.9850]]],
+    ['evillage', 'the East Village', 'Ист-Виллидж', 'East Village', [[40.7265, -73.9830], [40.7290, -73.9890]]],
+    ['wvillage', 'the Village', 'Гринвич-Виллидж', 'Greenwich Village', [[40.7340, -74.0030], [40.7310, -73.9985], [40.7360, -74.0060]]],
+    ['chelsea', 'Chelsea', 'Челси', 'Chelsea', [[40.7440, -74.0040], [40.7410, -74.0080], [40.7470, -74.0010]]],
+    ['hudsonyards', 'Hudson Yards', 'Хадсон-Ярдс', 'Hudson Yards', [[40.7535, -74.0015]]],
+    ['flatiron', 'Flatiron', 'Флэтайрон', 'Flatiron', [[40.7410, -73.9895], [40.7359, -73.9906], [40.7450, -73.9880]]],
+    ['midtown', 'Midtown', 'Мидтаун', 'Midtown', [[40.7580, -73.9855], [40.7527, -73.9772], [40.7587, -73.9787], [40.7536, -73.9832], [40.7625, -73.9740], [40.7610, -73.9680], [40.7505, -73.9934], [40.7665, -73.9815]]],
+    ['centralpark', 'Central Park', 'Центральный парк', 'Central Park', [[40.7655, -73.9745], [40.7712, -73.9742], [40.7690, -73.9755], [40.7760, -73.9690], [40.7850, -73.9650]]],
+    ['ues', 'the Upper East Side', 'Верхний Ист-Сайд', 'Upper East Side', [[40.7736, -73.9590], [40.7790, -73.9612], [40.7700, -73.9640], [40.7830, -73.9560]]],
+    ['uws', 'the Upper West Side', 'Верхний Вест-Сайд', 'Upper West Side', [[40.7810, -73.9760], [40.7730, -73.9830], [40.7870, -73.9730]]],
+    ['harlem', 'Harlem', 'Гарлем', 'Harlem', [[40.8090, -73.9480], [40.8100, -73.9580]]],
+    ['uptown', 'Upper Manhattan', 'Верхний Манхэттен', 'Upper Manhattan', [[40.8600, -73.9330], [40.8420, -73.9400]]],
+    ['roosevelt', 'Roosevelt Island', 'остров Рузвельт', 'Roosevelt Island', [[40.7620, -73.9500]]],
+    ['lic', 'Long Island City', 'Лонг-Айленд-Сити', 'Long Island City', [[40.7450, -73.9500], [40.7470, -73.9570]]],
+    ['astoria', 'Astoria', 'Астория', 'Astoria', [[40.7640, -73.9230], [40.7560, -73.9260]]],
+    ['flushing', 'Flushing', 'Флашинг', 'Flushing', [[40.7580, -73.8300], [40.7500, -73.8450]]],
+    ['bronx', 'the Bronx', 'Бронкс', 'die Bronx', [[40.8296, -73.9262], [40.8506, -73.8770], [40.8623, -73.8800]]],
+    ['staten', 'Staten Island', 'Статен-Айленд', 'Staten Island', [[40.6437, -74.0736]]],
+    ['jfk', 'JFK', 'JFK', 'JFK', [[40.6431, -73.7896]]],
+  ].map(a => ({ key: a[0], en: a[1], ru: a[2], de: a[3], pts: a[4] }));
+  // The area a point is in, or null when it is nowhere near any of them.
+  function areaOf(lat, lng) {
+    if (lat == null || lng == null) return null;
+    let best = null, bd = Infinity;
+    AREAS.forEach(a => a.pts.forEach(p => { const d = haversine(lat, lng, p[0], p[1]); if (d < bd) { bd = d; best = a; } }));
+    return bd <= 3 ? best : null;
+  }
+
   // Hub-to-hub subway minutes (door-to-door, symmetric). Missing pairs fall
   // back to the formula below. Keys are 'a|b' with a < b alphabetically.
   const PAIRS = {
@@ -159,5 +211,5 @@
     return { lat, lng, name: name.slice(0, 120), needsResolve: lat == null && short };
   }
 
-  root.GEO = { HOME, HUBS, HUB, PAIRS, haversine, nearestHub, hubToHub, travelMin, travelMode, fromHome, walkMin, mapsDir, mapsSearch, parseMapsLink, isShortMapHost };
+  root.GEO = { HOME, HUBS, HUB, PAIRS, AREAS, areaOf, haversine, nearestHub, hubToHub, travelMin, travelMode, fromHome, walkMin, mapsDir, mapsSearch, parseMapsLink, isShortMapHost };
 })(typeof window !== 'undefined' ? window : globalThis);

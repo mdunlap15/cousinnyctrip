@@ -4,7 +4,7 @@
 create table if not exists mtlqc_items (
   id uuid primary key default gen_random_uuid(),
   trip_id text not null,
-  kind text not null,          -- 'vote' | 'agenda' | 'custom' | 'mike' | 'note' | 'check' | 'resv' | 'settings' | 'daynote'
+  kind text not null,          -- 'vote' | 'agenda' | 'custom' | 'note' | 'check' | 'resv' | 'settings' | 'daynote'
   k text not null,             -- item key (place id, day key, timestamp…)
   v jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now(),

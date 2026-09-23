@@ -1,7 +1,9 @@
 // ============================================================================
 // TOUR — the first-run walkthrough. Each step spotlights a real element and
 // explains it. `sel` is the element to highlight (the first match wins);
-// `tab` is the tab to switch to first; `day` opens a day page.
+// `tab` is the tab to switch to first; `day` opens a day page; `open` opens a
+// sheet ('replan' for the day, 'place' for the first place in Explore) that is
+// closed again when the tour moves on.
 // A step whose element is missing is skipped rather than shown pointing at
 // nothing, so the tour survives layout changes.
 // ============================================================================
@@ -63,13 +65,22 @@ window.TOUR = {
       bodyRu: 'Зелёный — комфортно, жёлтый — насыщенный день, красный — перебор. Считаются реальные минуты, а не количество точек, и вечер за ужином или в зале считается за половину. Если загорелся красный — уберите что-нибудь.',
       bodyDe: 'Grün heißt angenehm, Gelb ein voller Tag, Rot zu viel. Gezählt werden echte Minuten, nicht Stopps — und ein Abend beim Essen oder im Theater zählt nur halb. Wird es rot, streicht etwas.' },
 
-    { key: 'mike', tab: 'days', day: 'd1', sel: '.panel.is-active .mikebtn', icon: '🎷',
-      title: 'Evenings with Mike',
-      titleRu: 'Вечера с Майком',
-      titleDe: 'Abende mit Mike',
-      body: 'Mark the evenings he is joining. The app then leans towards places that suit a table of three when it suggests things for that day.',
-      bodyRu: 'Отметьте вечера, когда он с вами. После этого приложение будет предлагать на этот день места, где удобно втроём.',
-      bodyDe: 'Markiert die Abende, an denen er dabei ist. Die App schlägt für diesen Tag dann eher Orte vor, an denen ein Tisch für drei funktioniert.' },
+    { key: 'replan', tab: 'days', day: 'd1', sel: '.panel.is-active [data-replan]', icon: '🌧',
+      title: 'When the day goes wrong',
+      titleRu: 'Когда день пошёл не так',
+      titleDe: 'Wenn der Tag schiefgeht',
+      body: 'Rain, a late start, or simply too tired? Tap ✨ Replan. Its quick fixes shift the whole day an hour later, drop the stop you care least about, or swap the outdoor things for indoor ones. If it rains, the day page offers the indoor swaps by itself.',
+      bodyRu: 'Дождь, поздний подъём или просто нет сил? Нажмите «✨ Перепланировать». Быстрые варианты сдвинут весь день на час позже, уберут то, что нужно меньше всего, или заменят уличное на то, что под крышей. Если пойдёт дождь, страница дня предложит замены сама.',
+      bodyDe: 'Regen, ein später Start oder einfach zu müde? Tippt auf „✨ Neu planen“. Die schnellen Varianten verschieben den ganzen Tag um eine Stunde, streichen den Stopp, der euch am wenigsten wichtig ist, oder tauschen Draußen gegen Drinnen. Bei Regen bietet die Tagesseite die Alternativen von selbst an.' },
+
+    // `open` opens a sheet for the step (and closes it when the tour moves on)
+    { key: 'replanask', tab: 'days', day: 'd1', open: 'replan', sel: '#rp-askgrp', icon: '✨',
+      title: 'Or let the concierge redo the day',
+      titleRu: 'Или попросите консьержа переделать день',
+      titleDe: 'Oder lasst den Concierge den Tag umbauen',
+      body: 'At the bottom of Replan, tell the concierge what you want in your own words — “add a rooftop bar before dinner”, “swap the museum for shopping”, “we’re tired: one sight and home by nine”. It drafts a new running order from the places in here: new stops marked ＋, dropped ones struck through. Nothing changes until you tap ✓ Apply this draft.',
+      bodyRu: 'Внизу окна «Перепланировать» напишите консьержу своими словами, чего хочется: «добавь бар на крыше перед ужином», «замени музей на шопинг», «мы устали: одно место и домой к девяти». Он составит новое расписание из мест этого приложения: новые пункты отмечены ＋, убранные — зачёркнуты. Ничего не изменится, пока вы не нажмёте «✓ Применить».',
+      bodyDe: 'Unten in „Neu planen“ sagt ihr dem Concierge in euren eigenen Worten, was ihr wollt — „noch eine Dachbar vor dem Abendessen“, „statt Museum lieber Shopping“, „wir sind müde: eine Sehenswürdigkeit und um neun zu Hause“. Er entwirft aus den Orten hier einen neuen Tagesablauf: neue Stopps mit ＋, gestrichene durchgestrichen. Nichts ändert sich, bis ihr auf „✓ Entwurf übernehmen“ tippt.' },
 
     { key: 'explore', tab: 'explore', sel: '#exlist .card', icon: '🔍',
       title: 'Everything else worth doing',
@@ -78,6 +89,22 @@ window.TOUR = {
       body: 'Over three hundred places: sights, museums, restaurants, bars, cafés and shops. Tap any card for the opening hours, the price, what to order, and links straight to the website, the menu, tickets or a table.',
       bodyRu: 'Больше трёхсот мест: достопримечательности, музеи, рестораны, бары, кафе и магазины. Нажмите на любую карточку — там часы работы, цены, что заказать и ссылки прямо на сайт, меню, билеты или бронь.',
       bodyDe: 'Über dreihundert Orte: Sehenswürdigkeiten, Museen, Restaurants, Bars, Cafés und Läden. Tippt eine Karte an für Öffnungszeiten, Preis, was man bestellt — und Links direkt zur Website, zur Karte, zu Tickets oder zum Tisch.' },
+
+    { key: 'exfind', tab: 'explore', sel: '#exfind', icon: '🧭',
+      title: 'Narrow it down',
+      titleRu: 'Сузьте выбор',
+      titleDe: 'Eingrenzen',
+      body: 'Search by name, dish or neighbourhood. The chips pick a category — museums, bars, cafés, shopping — and Filters adds the rest: free, near home, good on a rainy day, first-timer classics. Sort by your votes, or by how close things are to home.',
+      bodyRu: 'Ищите по названию, блюду или району. Кнопки выбирают категорию — музеи, бары, кафе, шопинг, — а «Фильтры» добавляют остальное: бесплатно, рядом с домом, на дождливый день, классика для первого раза. Сортируйте по вашим голосам или по тому, насколько близко к дому.',
+      bodyDe: 'Sucht nach Namen, Gericht oder Viertel. Die Chips wählen eine Kategorie — Museen, Bars, Cafés, Shopping —, und „Filter“ ergänzt den Rest: kostenlos, nah bei uns, gut bei Regen, Klassiker für Erstbesucher. Sortiert nach euren Stimmen oder danach, wie nah etwas an der Wohnung liegt.' },
+
+    { key: 'explace', tab: 'explore', open: 'place', sel: '#sheet .shdecide', icon: '❤️',
+      title: 'Vote, then put it on a day',
+      titleRu: 'Голосуйте — и в нужный день',
+      titleDe: 'Abstimmen, dann auf einen Tag legen',
+      body: 'Every place has its own page: hours, prices, what to order, links. Rate it here — ❤️ yes, 🤔 maybe, ✕ no. The other phone sees it at once, and what you both love rises to the top. 📅 Add to a day suggests the day it fits best: the right neighbourhood, open that weekday, not already full.',
+      bodyRu: 'У каждого места своя страница: часы работы, цены, что заказать, ссылки. Оцените его здесь — ❤️ «да», 🤔 «может быть», ✕ «нет». Другой телефон увидит это сразу, а то, что нравится вам обеим, поднимется наверх. «📅 Добавить в день» подскажет, какой день подходит лучше всего: нужный район, открыто в этот день недели, день ещё не перегружен.',
+      bodyDe: 'Jeder Ort hat seine eigene Seite: Öffnungszeiten, Preise, was man bestellt, Links. Bewertet ihn hier — ❤️ ja, 🤔 vielleicht, ✕ nein. Das andere Handy sieht es sofort, und was ihr beide mögt, steigt nach oben. „📅 Zu einem Tag hinzufügen“ schlägt den Tag vor, der am besten passt: das richtige Viertel, an dem Wochentag geöffnet, noch nicht voll.' },
 
     { key: 'swipe', tab: 'explore', sel: '#swipebtn', icon: '🃏',
       title: 'The fast way to choose',
@@ -94,14 +121,6 @@ window.TOUR = {
       body: 'Everything you both said yes to gathers here. This button slots those into the days that actually fit them — right neighbourhood, open that weekday, without overfilling anything — and shows you the result before saving.',
       bodyRu: 'Всё, чему вы обе сказали «да», собирается здесь. Эта кнопка расставит их по дням, которые действительно подходят: нужный район, открыто в этот день недели, без перегруза — и покажет результат до сохранения.',
       bodyDe: 'Alles, wozu ihr beide Ja gesagt habt, sammelt sich hier. Diese Taste verteilt es auf die Tage, die wirklich passen — richtiges Viertel, an dem Wochentag geöffnet, ohne etwas zu überfüllen — und zeigt euch das Ergebnis vor dem Speichern.' },
-
-    { key: 'replan', tab: 'days', day: 'd1', sel: '.panel.is-active [data-replan]', icon: '🌧',
-      title: 'When the day goes wrong',
-      titleRu: 'Когда день пошёл не так',
-      titleDe: 'Wenn der Tag schiefgeht',
-      body: 'Rain, a late start, or simply too tired: this shifts the whole day an hour later, drops the stop you care least about, or swaps the outdoor things for indoor ones. If it rains, the day page offers the indoor swaps by itself.',
-      bodyRu: 'Дождь, поздний подъём или просто нет сил: здесь можно сдвинуть весь день на час позже, убрать то, что нужно меньше всего, или заменить уличное на то, что под крышей. Если пойдёт дождь, страница дня предложит замены сама.',
-      bodyDe: 'Regen, ein später Start oder einfach zu müde: Hier verschiebt ihr den ganzen Tag um eine Stunde, streicht den Stopp, der euch am wenigsten wichtig ist, oder tauscht Draußen gegen Drinnen. Bei Regen bietet die Tagesseite die Alternativen von selbst an.' },
 
     { key: 'chat', tab: 'chat', sel: '#chatbox', icon: '💬',
       title: 'Ask the concierge anything',

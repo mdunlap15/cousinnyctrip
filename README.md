@@ -1,7 +1,7 @@
 # Tatyana in New York — Sep 26 – Oct 4, 2026
 
 A single-page, installable trip app for Tatyana's first week in New York, hosted by
-Yulia and Mike in Park Slope. Live at **https://mdunlap15.github.io/cousinnyctrip/**
+Yulia in Park Slope. Live at **https://mdunlap15.github.io/cousinnyctrip/**
 (GitHub Pages). Open it in Safari on the iPhone → Share → **Add to Home Screen**; it
 gets its own icon and works offline.
 
@@ -10,7 +10,9 @@ gets its own icon and works offline.
 - **Today** — what's happening now, the next stop, the week's weather at a glance
 - **Days** — a running order per day you can drag, retime, extend and move between
   days; travel time between stops is computed from real subway/walk estimates and
-  the day tells you how heavy it is and when you'd get home
+  the day tells you how heavy it is and when you'd get home. Each day's title and
+  summary are the written ones while it is as planned; once its stops change, both
+  are rewritten from what is actually on it (and its rain swaps follow too)
 - **Explore** — the places library (sights, museums, restaurants, bars, cafés,
   shopping) with links to sites, tickets, menus, reservations and Instagram, plus a
   **swipe mode** for rating places quickly
@@ -18,12 +20,12 @@ gets its own icon and works offline.
   **Build my week** slots the winners into the days that actually fit them
 - **Map** — every pin, filterable by category or by day, with "near me" and a
   "get me home" route back to 7th Avenue
-- **Chat** — a concierge that knows the live plan, the library and the subway (EN/RU)
+- **Chat** — a concierge that knows the live plan, the library and the subway (EN/RU/DE)
 - **Bookings** — flights, a "book this now" checklist derived from the plan, your own
   reservations, and a calendar export of the live plan
 - **Guide** — airport, subway from 7th Avenue, money, tipping, phones, weather, safety
-- **Fully bilingual** — the РУС/ENG button switches the whole app; the choice sticks
-- **Shows itself around** — a fourteen-step walkthrough runs on the first visit and
+- **English, Russian and German** — the language button switches the whole app; the choice sticks
+- **Shows itself around** — a seventeen-step walkthrough runs on the first visit and
   can be replayed from More → Settings; edit the copy in `data/tour.js`
 
 ## Repo layout

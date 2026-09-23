@@ -40,7 +40,7 @@ await page.goto('http://127.0.0.1:8096/', { waitUntil: 'domcontentloaded' });
 await page.waitForSelector('#tourwrap:not([hidden])', { timeout: 6000 }).catch(() => bad(`${label}: the tour did not open by itself on a first visit`));
 if (failures === before) ok('the tour opens by itself, no tap needed');
 
-const steps = await page.evaluate(() => (window.TOUR.steps || []).map(s => ({ key: s.key, sel: s.sel, tab: s.tab, day: s.day })));
+const steps = await page.evaluate(() => (window.TOUR.steps || []).map(s => ({ key: s.key, sel: s.sel, tab: s.tab, day: s.day, open: s.open })));
 const vh = page.viewportSize().height, vw = page.viewportSize().width;
 
 console.log(`${label} — ${steps.length} steps on ${vw}x${vh}, in ${await page.evaluate(() => document.body.dataset.lang)}:`);
@@ -54,7 +54,8 @@ for (let n = 0; n < steps.length + 3; n++) {
     const el = st.sel ? document.querySelector(st.sel) : null;
     const box = (n) => { const r = n.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height, b: r.bottom, r: r.right }; };
     return {
-      i, key: st.key, sel: st.sel || '', tab: document.body.dataset.tab,
+      i, key: st.key, sel: st.sel || '', tab: document.body.dataset.tab, open: st.open || '',
+      sheetUp: !document.getElementById('sheet').hidden, inSheet: !!(el && el.closest('#sheet')),
       title: document.getElementById('tourtitle').textContent.trim(),
       body: document.getElementById('tourbody').textContent.trim(),
       spotHidden: spot.hidden, spot: spot.hidden ? null : box(spot), card: box(card),
@@ -86,6 +87,9 @@ for (let n = 0; n < steps.length + 3; n++) {
       if (overlap) bad(`${where}: the card covers the thing it is pointing at`);
     }
   } else if (!s.spotHidden) bad(`${where}: a spotlight is shown but the step points at nothing`);
+  // a step that opens a sheet has it up, pointing inside it; every other step has none
+  if (s.open && (!s.sheetUp || !s.inSheet)) bad(`${where}: the ${s.open} sheet is not open around ${s.sel}`);
+  if (!s.open && s.sheetUp) bad(`${where}: a sheet the tour opened earlier is still up`);
   if (s.card.y < 0 || s.card.b > vh + 1) bad(`${where}: the card is off screen (top ${Math.round(s.card.y)}, bottom ${Math.round(s.card.b)}, viewport ${vh})`);
   if (s.i === steps.length - 1 && s.next.length < 2) bad(`${where}: the last step has no closing button`);
   await page.click('#tournext');
@@ -96,6 +100,8 @@ if (missed.length) bad(`${label}: these steps never appeared: ${missed.join(', '
 else if (failures === before) ok(`all ${steps.length} steps spotlight a real element, card on screen and clear of it`);
 if (await page.evaluate(() => window.NYC.tourOn)) bad(`${label}: the tour was still open after the last step`);
 else ok('the last step closes the tour');
+const sheetSteps = steps.filter(s => s.open).map(s => s.key);
+if (sheetSteps.length < 2) bad(`${label}: expected the Replan and place steps to open sheets, found ${sheetSteps.join(', ') || 'none'}`);
 if (label !== 'iPhone 13') { await ctx.close(); continue; }
 
 // ---------- 2) it does not come back ----------
@@ -112,9 +118,13 @@ await page.click('#tourreplay');
 await page.waitForTimeout(500);
 if (await page.evaluate(() => window.NYC.tourOn)) ok('More → "Start the tour" replays it');
 else bad('the replay button in More did not start the tour');
+await page.evaluate(() => { const i = window.NYC.TOUR.findIndex(s => s.key === 'replanask'); window.NYC.tourGo(i, 1); });
+await page.waitForTimeout(250);
 await page.click('#tourskip');
 await page.waitForTimeout(200);
 if (await page.evaluate(() => window.NYC.tourOn)) bad('Skip did not close the tour');
+else if (await page.evaluate(() => !document.getElementById('sheet').hidden)) bad('skipping the tour on the Replan step left the Replan sheet open');
+else ok('skipping while the tour has a sheet open closes the sheet too');
 
 // ---------- 4) it survives a language switch mid-tour ----------
 await page.click('.tbtn[data-tabbtn="more"]');

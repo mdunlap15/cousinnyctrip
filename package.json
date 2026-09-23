@@ -1,7 +1,7 @@
 {
   "name": "cousinnyctrip",
   "private": true,
-  "description": "Tatyana in New York \u2014 Sep 26 \u2013 Oct 4 2026 trip PWA for Yulia, Tatyana & Mike. Static app; this package.json exists for the smoke tests and data build scripts.",
+  "description": "Tatyana in New York \u2014 Sep 26 \u2013 Oct 4 2026 trip PWA for Yulia & Tatyana. Static app; this package.json exists for the smoke tests and data build scripts.",
   "scripts": {
     "test": "node test/smoke.mjs",
     "test:strict": "node test/smoke.mjs --strict",

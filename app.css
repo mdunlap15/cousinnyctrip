@@ -83,7 +83,6 @@ body[data-tab="days"] .daystrip{display:flex}
 .chip[aria-selected="true"] .dn{color:var(--paper)}
 .chip[aria-selected="true"] .cwx{color:rgba(246,241,231,.7)}
 .chip.today::after{content:"";position:absolute;top:5px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--f)}
-.chip.mike::before{content:"🎷";position:absolute;top:2px;left:5px;font-size:9px}
 
 /* ---------- DOCK ---------- */
 .tabbar{position:fixed;z-index:40;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;display:flex;justify-content:space-around;align-items:stretch;background:rgba(17,19,24,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line-dark);border-radius:22px;padding:8px 1px;box-shadow:0 10px 34px rgba(17,19,24,.35);user-select:none;-webkit-user-select:none}
@@ -146,7 +145,6 @@ body[data-tab="home"] main{padding-top:18px}
 .wxd .t{font-family:"Space Mono",monospace;font-size:10.5px}
 .wxd .n{font-size:10.5px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px}
 .wxd.today{border-color:var(--taxi);background:#fff}
-.wxd.mike .n::before{content:"🎷 "}
 .menu{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .mitem{display:flex;flex-direction:column;gap:4px;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--paper-2);cursor:pointer;text-align:left;font:inherit}
 .mitem b{font-family:"Bricolage Grotesque",sans-serif;font-size:17px}
@@ -166,8 +164,6 @@ body[data-tab="days"] #upnext.on{display:block}
 .dayhead .lede{margin:10px 0 0;max-width:64ch;color:var(--soft);font-size:15px}
 .wx{font-family:"Space Mono",monospace;font-size:12px;color:var(--soft);white-space:nowrap}
 .daytools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 10px}
-.mikebtn{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.04em;padding:8px 13px;border-radius:100px;border:1px solid var(--line);background:var(--paper-2);cursor:pointer}
-.mikebtn[aria-pressed="true"]{background:var(--taxi);border-color:var(--taxi);color:var(--ink);font-weight:700}
 .pace{font-family:"Space Mono",monospace;font-size:10.5px;letter-spacing:.04em;padding:8px 12px;border-radius:100px;border:1px solid var(--line);background:var(--paper-2)}
 .pace.p0{color:var(--g-dark);border-color:rgba(108,190,69,.55)}
 .pace.p1{color:var(--g-dark);border-color:rgba(108,190,69,.55)}
@@ -300,6 +296,7 @@ body[data-deck="1"] #exfilters{display:none}
 .exform{display:grid;grid-template-columns:1fr 72px auto;gap:8px;margin-bottom:10px}
 .exform.two{grid-template-columns:1fr auto}
 .exform.three{grid-template-columns:1fr 1fr 1fr}
+.exform.pair{grid-template-columns:1fr 1fr}
 .exform.resv{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
 .exform.resv button{grid-column:2}
 .exform.links{grid-template-columns:1fr;margin-top:-2px}
@@ -480,6 +477,8 @@ footer .mono{font-size:12px}
 body.tour-on.show-install .install{display:none}
 @media(max-height:620px){.tourcard{padding:11px 14px 10px}.tourcard h4{font-size:16px;margin-bottom:4px}.tourcard p{font-size:13px;line-height:1.45}.tourcard .tico{font-size:19px}.tourcard .tnav{margin-top:9px}}
 @media(prefers-reduced-motion:reduce){.tourspot{transition:none}}
+/* a sheet the tour opens appears at once, so the spotlight measures it where it lands */
+body.tour-on .sheet{animation:none}
 
 /* ---------- places the concierge recommends ---------- */
 .msgtext{white-space:pre-wrap}

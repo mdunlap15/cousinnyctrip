@@ -480,6 +480,270 @@ if (booted) {
   window.fetch = realFetch2;
   click(document.querySelector('.tbtn[data-tabbtn="home"]'));
 
+  // ---- edits saved before the days were reshuffled follow their day ----
+  // The real case: the Liberty day used to be Monday. An edit made to it then
+  // (a stop removed, one added, lunch pinned) was saved as Monday's list, and
+  // after the plan moved Liberty to Tuesday that list made Monday hold both
+  // days' stops and left Tuesday empty.
+  console.log('saved edits across a reshuffle:');
+  const settle = () => new Promise(r => setTimeout(r, 20));
+  const oldMon = ['x:r-to-whitehall', 'p:statue-of-liberty', 'p:wall-street-charging-bull', 'p:tin-building', 'p:911-memorial', 'x:coffee-fidi', 'p:brooklyn-bridge', 'p:dumbo-washington-street', 'p:cecconis-dumbo'];
+  const staleRow = () => ({ ids: oldMon.filter(x => x !== 'p:wall-street-charging-bull').concat(['c:kold']), t: { 'p:tin-building': '13:15' }, d: {}, seen: oldMon.slice() });
+  NYC.state.custom.kold = { name: 'Fraunces Tavern', d: 60, t: '12:30', cat: 'eat', lat: 40.7034, lng: -74.0113 };
+  NYC.state.agenda = { d2: staleRow() };
+  const planOf = (d) => T.SEED[d].map(x => x[0]);
+  const mon = NYC.agIds('d2'), tue = NYC.agIds('d3');
+  const tin = NYC.agReflow('d3', tue).find(r => r.it.id === 'p:tin-building');
+  if (mon.join() !== planOf('d2').join()) fail('an edit saved before the reshuffle still decides Monday: ' + mon.join(', '));
+  else if (!tue.includes('p:statue-of-liberty') || tue.includes('p:wall-street-charging-bull') || !tue.includes('c:kold')) fail('the old edit did not follow the Liberty day to Tuesday: ' + tue.join(', '));
+  else if (!tin || tin.start !== 13 * 60 + 15) fail('the lunch pinned in the old edit lost its time on Tuesday');
+  else ok('an edit saved before the reshuffle follows its day: Monday is as planned, Tuesday keeps the removal, the added stop and the pinned lunch');
+  NYC.renderAll(); await settle();
+  const paceOf = (d) => (document.querySelector('[data-pace="' + d + '"]') || {}).className || '';
+  if (/\bp3\b/.test(paceOf('d2'))) fail('Monday still reads as crammed');
+  else if (!document.querySelector('.agwrap[data-agday="d3"] [data-agreset]')) fail('Tuesday carries edits but offers no "reset to the plan"');
+  else ok('neither day is crammed, and Tuesday offers to undo the edits it carries');
+  // editing Monday afterwards must not throw away what belongs to Tuesday
+  NYC.agSave('d2', NYC.agIds('d2').filter(x => x !== 'p:little-island'));
+  const tue2 = NYC.agIds('d3');
+  if (NYC.agIds('d2').includes('p:little-island')) fail('removing a stop from Monday did not stick');
+  else if (!tue2.includes('c:kold') || tue2.includes('p:wall-street-charging-bull')) fail('saving Monday lost the edits that belong to Tuesday: ' + tue2.join(', '));
+  else ok('editing Monday afterwards keeps the edits that belong to Tuesday');
+  // pinning a time on Monday saves Monday as it now stands, not the old list
+  NYC.state.agenda = { d2: staleRow() };
+  NYC.renderAll(); await settle();
+  const tb = document.querySelector('.agwrap[data-agday="d2"] .agrow[data-id="p:the-high-line"] .ag-time');
+  click(tb);
+  const tin2 = document.querySelector('.agwrap[data-agday="d2"] .ag-tin');
+  if (!tin2) fail('tapping a time on Monday gave no time picker');
+  else {
+    tin2.value = '14:50'; tin2.dispatchEvent(new window.Event('change', { bubbles: true })); await settle();
+    const mon3 = NYC.agIds('d2'), tue3 = NYC.agIds('d3');
+    if (mon3.join() !== planOf('d2').join()) fail('pinning a time on Monday put the old Liberty stops back on it: ' + mon3.join(', '));
+    else if (!tue3.includes('c:kold') || tue3.includes('p:wall-street-charging-bull')) fail('pinning a time on Monday lost Tuesday\'s edits: ' + tue3.join(', '));
+    else if (NYC.agReflow('d2', mon3).find(r => r.it.id === 'p:the-high-line').start !== 14 * 60 + 50) fail('the pinned time on Monday did not stick');
+    else ok('pinning a time on Monday keeps Monday as planned and Tuesday\'s edits where they belong');
+  }
+  // a smaller plan change: one stop moved to another day after a day was edited
+  // (as if Balthazar used to be on the Met day). The edit stays; the stop
+  // follows the plan — and pinning a time there must not write it back.
+  const oldThu = planOf('d5').concat(['p:balthazar']);
+  NYC.state.agenda = { d5: { ids: oldThu.slice(), t: { 'p:cafe-sabarsky': '13:40' }, d: {}, seen: oldThu.slice() } };
+  const sab = NYC.agReflow('d5', NYC.agIds('d5')).find(r => r.it.id === 'p:cafe-sabarsky');
+  if (NYC.agIds('d5').includes('p:balthazar') || !NYC.agIds('d6').includes('p:balthazar')) fail('a stop the plan has since moved stayed on the day it used to be on');
+  else if (!sab || sab.start !== 13 * 60 + 40) fail('the edit saved on that day was lost when the plan moved one of its stops');
+  else ok('when the plan moves one stop after a day was edited, the stop follows the plan and the edit stays');
+  NYC.renderAll(); await settle();
+  click(document.querySelector('.agwrap[data-agday="d5"] .agrow[data-id="p:the-met"] .ag-time'));
+  const tin5 = document.querySelector('.agwrap[data-agday="d5"] .ag-tin');
+  if (tin5) { tin5.value = '10:30'; tin5.dispatchEvent(new window.Event('change', { bubbles: true })); await settle(); }
+  if (!tin5) fail('tapping a time on Thursday gave no time picker');
+  else if (NYC.agIds('d5').includes('p:balthazar') || !NYC.agIds('d6').includes('p:balthazar')) fail('pinning a time wrote a stop the plan had moved back onto the old day');
+  else ok('pinning a time afterwards does not write the moved stop back');
+  // resetting Tuesday brings back the plan, and the old edits cannot return
+  NYC.state.agenda = { d2: staleRow() };
+  NYC.renderAll(); await settle();
+  click(document.querySelector('.agwrap[data-agday="d3"] [data-agreset]')); await settle();
+  if (NYC.agIds('d3').join() !== planOf('d3').join()) fail('reset did not bring Tuesday back to the plan: ' + NYC.agIds('d3').join(', '));
+  else if (NYC.agIds('d2').join() !== planOf('d2').join()) fail('resetting Tuesday changed Monday');
+  else {
+    NYC.agSave('d2', NYC.agIds('d2'));   // the next save of Monday must not carry the old Tuesday edits along
+    if (NYC.agIds('d3').join() !== planOf('d3').join() || (NYC.state.agenda.d2.carry || {}).d3) fail('after a reset, saving Monday brought the old Tuesday edits back');
+    else ok('"reset to the plan" on Tuesday brings back the plan, and the old edits never return');
+  }
+
+  // The real reshuffle was a rotation: the old Brooklyn day is now Wednesday,
+  // the old Liberty day Tuesday, the old Midtown day Sunday. With edits saved
+  // on several old days, no save or reset may lose another day's edits, and a
+  // save writes only the day that was edited (the other phone may have newer
+  // rows for the others).
+  const oldSun = ['p:grand-central-terminal', 'p:st-patricks-cathedral', 'p:rockefeller-center', 'p:lodi', 'p:bergdorf-goodman', 'p:goodmans-bar-bergdorf', 'p:top-of-the-rock', 'x:pre-show-bite', 'x:broadway-show', 'x:times-square-night'];
+  const oldWed = ['p:miriam', 'p:prospect-park', 'x:rest-home', 'p:brooklyn-heights-promenade', 'p:brooklyn-bridge-park', 'x:sunset-pier1', 'p:colonie'];
+  const rotation = () => ({
+    d1: { ids: oldWed.filter(x => x !== 'p:brooklyn-bridge-park'), t: { 'p:miriam': '11:00' }, d: {}, seen: oldWed.slice() },
+    d2: staleRow(),
+    d3: { ids: oldSun.filter(x => x !== 'p:top-of-the-rock'), t: { 'p:lodi': '13:00' }, d: {}, seen: oldSun.slice() },
+  });
+  const pinAt = (d, id) => { const r = NYC.agReflow(d, NYC.agIds(d)).find(x => x.it.id === id); return r ? r.start : null; };
+  const edits = () => ({
+    wed: !NYC.agIds('d4').includes('p:brooklyn-bridge-park') && pinAt('d4', 'p:miriam') === 660,
+    tue: !NYC.agIds('d3').includes('p:wall-street-charging-bull') && NYC.agIds('d3').includes('c:kold') && pinAt('d3', 'p:tin-building') === 795,
+    sun: !NYC.agIds('d1').includes('p:top-of-the-rock') && pinAt('d1', 'p:lodi') === 780,
+  });
+  NYC.state.agenda = rotation();
+  const e0 = edits();
+  if (!(e0.wed && e0.tue && e0.sun)) fail('edits saved on three old days do not all show on their new days: ' + JSON.stringify(e0));
+  else {
+    const before = Object.assign({}, NYC.state.agenda);
+    NYC.agSave('d2', NYC.agIds('d2').filter(x => x !== 'p:little-island'));
+    const touched = Object.keys(NYC.state.agenda).filter(k => NYC.state.agenda[k] !== before[k]);
+    const e1 = edits();
+    if (touched.join() !== 'd2') fail('saving Monday wrote other days too: ' + touched.join(', '));
+    else if (!(e1.wed && e1.tue && e1.sun) || NYC.agIds('d2').includes('p:little-island')) fail('saving Monday lost edits that belong to other days: ' + JSON.stringify(e1));
+    else ok('with old edits on three days, saving Monday writes only Monday and keeps every other day\'s edits');
+    NYC.state.agenda = rotation();
+    NYC.renderAll(); await settle();
+    const before2 = Object.assign({}, NYC.state.agenda);
+    click(document.querySelector('.agwrap[data-agday="d3"] [data-agreset]')); await settle();
+    const touched2 = Object.keys(NYC.state.agenda).filter(k => NYC.state.agenda[k] !== before2[k]);
+    const e2 = edits();
+    if (touched2.join() !== 'd3') fail('resetting Tuesday wrote other days too: ' + touched2.join(', '));
+    else if (!(e2.wed && e2.sun) || NYC.agIds('d3').join() !== planOf('d3').join()) fail('resetting Tuesday lost another day\'s edits or did not reset: ' + JSON.stringify(e2));
+    else ok('and resetting Tuesday resets only Tuesday, writing nothing else');
+  }
+  // the newest edits for a day win, wherever they are stored
+  NYC.state.agenda = { d2: Object.assign(staleRow(), { at: Date.now() }), d3: { ids: planOf('d3').filter(x => x !== 'p:911-memorial'), t: {}, d: {}, seen: planOf('d3'), at: 1000 } };
+  const tueNew = NYC.agIds('d3');
+  if (tueNew.includes('p:911-memorial') && tueNew.includes('c:kold') && !tueNew.includes('p:wall-street-charging-bull')) ok('newer edits for a day beat older ones, wherever they are stored');
+  else fail('older edits beat newer ones for Tuesday: ' + tueNew.join(', '));
+
+  // ---- a day's title and summary follow what is actually on it ----
+  console.log('day titles and summaries:');
+  NYC.state.agenda = {};
+  const LGS = ['en', 'ru', 'de'], SUF = { en: '', ru: 'Ru', de: 'De' };
+  const badPlanned = T.DAYS.filter(d => LGS.some(lg => { const s = NYC.dayStory(d.key, lg); return s.mode !== 'planned' || s.title !== d['title' + SUF[lg]] || s.lede !== d['lede' + SUF[lg]]; }));
+  if (badPlanned.length) fail('days as planned do not show their written text: ' + badPlanned.map(d => d.key).join(', '));
+  else ok('as planned, every day shows its written title and summary in all three languages');
+  // a small edit keeps the title but rewrites the summary around what is left
+  NYC.agSave('d3', NYC.agIds('d3').filter(x => x !== 'p:wall-street-charging-bull'));
+  const small = NYC.dayStory('d3', 'en');
+  if (small.mode !== 'close' || small.title !== T.DAYS[3].title) fail('removing one small stop replaced the title: ' + small.title);
+  else if (/Wall Street/.test(small.lede) || !/Statue of Liberty/.test(small.lede) || !/dinner at Cecconi/.test(small.lede) || !/^Morning: .*Afternoon: .*Evening: /.test(small.lede)) fail('the summary does not describe the day as it now is: ' + small.lede);
+  else ok('one stop removed: the title stays, the summary is rewritten without it — "' + small.lede + '"');
+  NYC.state.agenda = {};
+  // move the day's headline to another day through the ⋯ menu, as a person would
+  NYC.renderAll(); await settle();
+  const libRow = document.querySelector('.agwrap[data-agday="d3"] .agrow[data-id="p:statue-of-liberty"]');
+  click(libRow.querySelector('.ag-mv'));
+  const toWed = [...libRow.querySelectorAll('.agmenu button')].find(b => b.textContent === 'Wed 30');
+  if (!toWed) fail('the ⋯ menu offers no move to Wednesday');
+  else {
+    click(toWed); await settle();
+    const tueEn = NYC.dayStory('d3', 'en'), wedEn = NYC.dayStory('d4', 'en');
+    const head = (d) => document.querySelector('#' + d + ' .dt').textContent, lede = (d) => document.querySelector('#' + d + ' .dlede').textContent;
+    if (tueEn.mode !== 'changed' || tueEn.title !== 'Lower Manhattan & DUMBO') fail('Tuesday without the Statue is still titled "' + tueEn.title + '"');
+    else if (/Statue|Liberty/.test(tueEn.lede) || !/^Afternoon: .*Wall Street.*Evening: .*dinner at Cecconi/.test(tueEn.lede)) fail('Tuesday\'s summary does not match its stops: ' + tueEn.lede);
+    else if (!/Statue of Liberty/.test(wedEn.title) || !/Statue of Liberty/.test(wedEn.lede) || wedEn.title === T.DAYS[4].title) fail('Wednesday does not mention the Statue it now holds: ' + wedEn.title + ' — ' + wedEn.lede);
+    else if (head('d3') !== tueEn.title || lede('d3') !== tueEn.lede || head('d4') !== wedEn.title) fail('the day pages still show the old headings: "' + head('d3') + '" / "' + head('d4') + '"');
+    else ok('the Statue moved to Wednesday: Tuesday is now "' + tueEn.title + '", Wednesday "' + wedEn.title + '", on the page too');
+    const ru = NYC.dayStory('d4', 'ru'), de = NYC.dayStory('d4', 'de');
+    if (!/Статуя Свободы/.test(ru.title) || !/^Утром — /.test(ru.lede) || !/Freiheitsstatue/.test(de.title) || !/^Vormittags: /.test(de.lede)) fail('the rewritten day is not in Russian and German: ' + ru.title + ' | ' + ru.lede + ' || ' + de.title + ' | ' + de.lede);
+    else ok('and in Russian ("' + ru.title + '") and German ("' + de.title + '")');
+    click(document.getElementById('langbtn')); await settle();
+    if (document.querySelector('#d4 .dt').textContent !== ru.title) fail('switching to Russian did not show the rewritten title on the page');
+    click(document.getElementById('langbtn')); click(document.getElementById('langbtn')); await settle();
+    // where the day is, and what to do if it rains, follow the stops too
+    const hubsWed = NYC.dayHubs('d4'), rainWed = NYC.dayRain('d4');
+    const onTrip = new Set(); T.DAYS.forEach(d => NYC.agIds(d.key).forEach(id => onTrip.add(id)));
+    if (!hubsWed.includes('fidi')) fail('Wednesday\'s neighbourhoods ignore the Statue it now holds: ' + hubsWed.join());
+    else if (!rainWed.length || rainWed.some(id => onTrip.has('p:' + id))) fail('Wednesday\'s rain plan is empty or offers a stop already on the trip: ' + rainWed.join());
+    else ok('the neighbourhoods and the rain plan follow the stops (' + hubsWed.join(', ') + '; rain: ' + rainWed.slice(0, 3).join(', ') + '…)');
+  }
+  // a stop the title names leaves, even though most of the day is still there
+  NYC.state.agenda = {};
+  NYC.agSave('d5', NYC.agIds('d5').filter(x => x !== 'p:central-park')); NYC.agInsert('d4', 'p:central-park');
+  const thu = NYC.dayStory('d5', 'en');
+  if (thu.mode !== 'changed' || thu.title === T.DAYS[5].title || !/Broadway/.test(thu.title)) fail('moving the Park off "' + T.DAYS[5].title + '" left the title as "' + thu.title + '"');
+  else ok('moving the Park off "' + T.DAYS[5].title + '" rewrites its title: "' + thu.title + '"');
+  // a rearranged day's rain plan never offers what is already on another day
+  NYC.state.agenda = {};
+  NYC.agSave('d4', NYC.agIds('d4').filter(x => ['p:brooklyn-heights-promenade', 'p:brooklyn-bridge-park', 'x:sunset-pier1', 'p:colonie'].indexOf(x) < 0));
+  const rainBk = NYC.dayRain('d4'), onTrip2 = new Set(); T.DAYS.forEach(d => NYC.agIds(d.key).forEach(id => onTrip2.add(id)));
+  if (!rainBk.length) fail('a rearranged day near home has no rain plan');
+  else if (rainBk.some(id => onTrip2.has('p:' + id))) fail('a rearranged day\'s rain plan offers a stop already on another day (tapping it would take it off that day): ' + rainBk.join(', '));
+  else ok('a rearranged day\'s rain plan offers only places not already on the trip (' + rainBk.slice(0, 3).join(', ') + '…)');
+  // what the review of this change found, each pinned by a test
+  const titleIn = (d) => LGS.map(lg => NYC.dayStory(d, lg).title);
+  NYC.state.agenda = {}; NYC.agSave('d4', []); NYC.agInsert('d4', 'p:coney-island'); NYC.agInsert('d4', 'p:brighton-beach');
+  const coney = titleIn('d4');
+  if (coney.some(tl => /(.+) (&|и) \1/.test(tl) || /Coney Island.*Coney Island|Кони-Айленд.*Кони-Айленд/.test(tl))) fail('a title says the same name twice: ' + coney.join(' / '));
+  else ok('a title never says the same name twice (' + coney[0] + ')');
+  NYC.state.custom.kn1 = { name: 'Brunch with Anna & Co.', d: 90, t: '11:00' }; NYC.state.custom.kn2 = { name: 'Nail salon', d: 60, t: '15:00' };
+  NYC.state.agenda = {}; NYC.agSave('d4', ['c:kn1', 'c:kn2']);
+  const own = NYC.dayStory('d4', 'en');
+  if (own.title === 'A quiet day at home' || !/Brunch with Anna/.test(own.title)) fail('a day of your own ideas without map links is titled "' + own.title + '"');
+  else if (/\.\./.test(own.lede)) fail('a name ending in a full stop gets a second one: ' + own.lede);
+  else ok('a day of your own unmapped ideas is titled by them ("' + own.title + '"), with no doubled full stop');
+  delete NYC.state.custom.kn1; delete NYC.state.custom.kn2;
+  NYC.state.agenda = {}; NYC.agSave('d5', NYC.agIds('d5').filter(x => x !== 'x:pre-show-bite'));
+  if (!/lunch at Café Sabarsky/.test(NYC.dayStory('d5', 'en').lede)) fail('a 70-minute lunch at Café Sabarsky is not called lunch: ' + NYC.dayStory('d5', 'en').lede);
+  else ok('a long midday stop at a café is lunch, not dessert');
+  NYC.state.agenda = {}; NYC.agSave('d8', NYC.agIds('d8').filter(x => x !== 'p:green-wood-cemetery'));
+  const dep = titleIn('d8');
+  if (!/& flight home$/.test(dep[0]) || !/ и вылет домой$/.test(dep[1]) || !/Heimflug$/.test(dep[2])) fail('an ordinary noun is capitalised mid-title: ' + dep.join(' / '));
+  else ok('"' + dep[0] + '" / "' + dep[1] + '": ordinary nouns stay lower-case mid-title');
+  NYC.state.agenda = {};
+  if (NYC.dayRain('d4').includes('brooklyn-museum')) fail('Wednesday\'s written rain plan offers the Brooklyn Museum, which is Saturday\'s (tapping it would take it off Saturday)');
+  else ok('a written rain plan leaves out what is already on another day');
+  NYC.agSave('d5', NYC.agIds('d5').filter(x => x !== 'p:central-park'));
+  if (NYC.dayRain('d5').includes('neue-galerie')) fail('the rain plan offers the Neue Galerie, whose galleries are closed for the whole trip');
+  else ok('the Neue Galerie, closed for the whole trip, is never offered');
+  NYC.state.agenda = {};
+  const AO = (id) => { const p = NYC.PL[id]; const a = window.GEO.areaOf(p.lat, p.lng); return a && a.key; };
+  if (AO('central-park') !== 'centralpark' || AO('mad-museum') !== 'midtown' || AO('bergdorf-goodman') !== 'midtown') fail('neighbourhoods around Central Park South are wrong: ' + ['central-park', 'mad-museum', 'bergdorf-goodman'].map(AO).join(', '));
+  else ok('Central Park is Central Park, Columbus Circle and Bergdorf are Midtown');
+
+  // an emptied day says so, and nothing that depends on its area breaks
+  NYC.state.agenda = {};
+  NYC.agSave('d3', []);
+  const free = LGS.map(lg => NYC.dayStory('d3', lg).title).join(' / ');
+  let fits = null; try { fits = NYC.rankDays(NYC.PL['the-oculus']); } catch (e) { fail('ranking days threw with an empty day: ' + e.message); }
+  if (free !== 'Free day / Свободный день / Freier Tag') fail('an empty day is titled ' + free);
+  else if (NYC.dayHubs('d3').length || NYC.dayRain('d3').length) fail('an empty day still claims a neighbourhood or a rain plan');
+  else if (!fits || fits.some(f => !Number.isFinite(f.score))) fail('ranking days gave nonsense with an empty day');
+  else ok('an emptied day reads "' + free + '" and has no neighbourhood of its own');
+  NYC.state.agenda = {};
+  delete NYC.state.custom.kold;
+  NYC.renderAll(); await settle();
+
+  // ---- what a planted row in the shared table can and cannot do ----
+  console.log('planted rows:');
+  NYC.state.custom.long = { name: ' '.repeat(40000) + 'x', d: 60, t: '14:00' };
+  NYC.state.custom.cproto2 = { name: 'Proto', d: 'abc', t: { h: 1 }, cat: '__proto__' };
+  NYC.state.agenda = { d5: { ids: planOf('d5').concat([7, null, {}, 'x:constructor', 'c:constructor', 'p:toString', 'c:long', 'c:cproto2']), t: { 'p:the-met': { x: 1 }, 'p:cafe-sabarsky': '99:99:99' }, d: { 'p:the-met': 'abc', 'p:central-park': 1e9 }, seen: planOf('d5'), at: 1e15 } };
+  let planted = null; const t0 = Date.now();
+  try { NYC.renderAll(); await settle(); const rows = NYC.agReflow('d5', NYC.agIds('d5')); planted = rows.every(r => Number.isFinite(r.start) && Number.isFinite(r.end) && r.end - r.start <= 720); LGS.forEach(lg => NYC.dayStory('d5', lg)); }
+  catch (e) { fail('a planted row crashed the app: ' + e.message); }
+  const took = Date.now() - t0;
+  if (planted === false) fail('a planted row made the day\'s timings nonsense');
+  else if (planted && took > 1500) fail('a planted 40,000-character name froze rendering for ' + took + ' ms');
+  else if (planted) ok('junk ids, prototype names, bad times and durations and a 40,000-character name neither crash nor stall the app (' + took + ' ms)');
+  NYC.state.custom.who1 = { name: 'An idea', d: 60, who: '<img id="pwn" src="x">' }; NYC.state.settings.names = { v: { Y: '<b id="pwn2">Y</b>' } };
+  NYC.renderAll(); await settle();
+  if (document.getElementById('pwn') || document.getElementById('pwn2')) fail('a synced name was rendered as HTML');
+  else ok('synced names are shown as text, never as HTML');
+  ['long', 'cproto2', 'who1'].forEach(k => { delete NYC.state.custom[k]; }); delete NYC.state.settings.names;
+  NYC.state.agenda = {}; NYC.renderAll(); await settle();
+
+  // ---- the tour's sheets ----
+  console.log('tour sheets:');
+  NYC.state.custom.topidea = { name: 'Our favourite idea', d: 60 }; NYC.state.vote['c:topidea'] = { Y: 'yes', T: 'yes' };
+  NYC.renderAll(); await settle();
+  const stepIx = (k) => NYC.TOUR.findIndex(s => s.key === k);
+  NYC.tourStart(); NYC.tourGo(stepIx('explace'), 1); await settle();
+  const h3 = (document.querySelector('#sheet h3') || {}).textContent || '';
+  if (document.getElementById('sheet').hidden || /Our favourite idea/.test(h3) || document.getElementById('sh-cmap')) fail('the vote step opened your own idea rather than a place from the library: ' + h3);
+  else ok('the vote step opens a place from the library even when one of your ideas tops the list ("' + h3 + '")');
+  NYC.tourGo(stepIx('replanask'), 1); await settle();
+  click(document.getElementById('langbtn')); await settle();
+  const sheetRu = (document.querySelector('#sheet h3') || {}).textContent || '';
+  if (!/Перепланировать/.test(sheetRu) || !/Консьерж|консьерж/.test(document.getElementById('tourbody').textContent)) fail('switching to Russian on the Replan step left the sheet in English: ' + sheetRu);
+  else ok('switching language on a tour step with a sheet translates the sheet too');
+  click(document.getElementById('langbtn')); click(document.getElementById('langbtn')); await settle();
+  NYC.tourEnd(true);
+  if (!document.getElementById('sheet').hidden || document.body.style.overflow === 'hidden') fail('ending the tour left its sheet open or the page locked');
+  else ok('ending the tour closes its sheet and unlocks the page');
+  delete NYC.state.custom.topidea; delete NYC.state.vote['c:topidea'];
+  // search reads every language the app speaks
+  const search = document.getElementById('exsearch');
+  click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'explore'));
+  const found = {};
+  for (const q of ['пицца', 'Dachbar', 'pizza']) { search.value = q; search.dispatchEvent(new window.Event('input', { bubbles: true })); found[q] = document.querySelectorAll('#exlist .card').length; }
+  search.value = ''; search.dispatchEvent(new window.Event('input', { bubbles: true }));
+  if (!found['пицца'] || !found['Dachbar']) fail('searching in Russian or German finds nothing: ' + JSON.stringify(found));
+  else ok('search works in Russian and German too (' + JSON.stringify(found) + ')');
+  click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home'));
+
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }
@@ -497,6 +761,16 @@ if (booted) {
   Object.entries(T.SEED).forEach(([d, arr]) => arr.forEach(([ref]) => { if (ref.startsWith('p:') && !ids.has(ref.slice(2))) missing.push(d + ':' + ref); if (ref.startsWith('x:') && !T.STOPS[ref.slice(2)]) fail('seed ' + d + ' references unknown stop ' + ref); }));
   if (missing.length) (STRICT ? fail : (m) => console.warn('  ! ' + m))('seed refs missing from the library: ' + missing.join(', '));
   else ok('every seeded place exists in the library');
+  Object.keys(T.STOP_STORY || {}).forEach(k => { if (!T.STOPS[k]) fail('STOP_STORY describes an unknown stop ' + k); });
+  T.DAYS.forEach(d => (d.titled || []).forEach(ref => { if (!T.SEED[d.key].some(x => x[0] === ref)) fail(d.key + ' title names ' + ref + ', which is not on that day'); }));
+  const G2 = window.GEO; const noArea = [];
+  Object.entries(T.SEED).forEach(([d, arr]) => arr.forEach(([ref]) => { if (!ref.startsWith('p:')) return; const p = PLACES.find(x => x.id === ref.slice(2)); if (p && !G2.areaOf(p.lat, p.lng)) noArea.push(ref); }));
+  if (noArea.length) fail('seeded places with no neighbourhood name: ' + noArea.join(', ')); else ok('every seeded place has a neighbourhood name, and every titled stop is on its day');
+  if ((T.TRAVELERS || []).length !== 2 || (T.TRAVELERS || []).some(t => /mike/i.test(t.join(' ')))) fail('the travellers are not just Yulia and Tatyana: ' + JSON.stringify(T.TRAVELERS));
+  const mikeLeft = ['index.html', 'app.js', 'app.css', 'data/plan.js', 'data/places.js', 'data/guide.js', 'data/tour.js', 'concierge/index.js', 'manifest.webmanifest'].filter(f => /\bmikes?\b|🎷/i.test(read(f)) || /(^|[^а-яё])майк(?!елсон)/i.test(read(f)));   // (Sarah Michelson, «Майкелсон», is not him)
+  if (mikeLeft.length) fail('Mike is still mentioned in: ' + mikeLeft.join(', '));
+  else if (document.querySelector('[data-mike], .mikebtn, #nameM')) fail('the page still has a "Mike joins" control');
+  else ok('the app is for Yulia and Tatyana only: no Mike in the data, the concierge brief or the page');
   const rainMissing = []; Object.values(T.RAIN || {}).forEach(a => a.forEach(id => { if (!ids.has(id)) rainMissing.push(id); }));
   if (rainMissing.length) console.warn('  ! rain swaps missing from the library: ' + [...new Set(rainMissing)].join(', '));
   (T.BOOK || []).forEach(b => { if (!b.id.startsWith('x:') && !ids.has(b.id)) console.warn('  ! BOOK references missing place ' + b.id); });

@@ -744,6 +744,203 @@ if (booted) {
   else ok('search works in Russian and German too (' + JSON.stringify(found) + ')');
   click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home'));
 
+  // ---- search all of New York: places the library does not have ----
+  console.log('search all of New York:');
+  {
+    const realFetchL = window.fetch; const asked = [];
+    let nextLook = null;
+    const NAMI = { name: 'Nami Nori', cat: 'eat', addr: '236 North 12th Street, Brooklyn', hood: 'Williamsburg', lat: 40.71971, lng: -73.95672, approx: false, web: 'https://www.naminori.nyc/', hours: 'Mo-Su 17:00-22:00', src: 'osm' };
+    window.fetch = (url, opts) => {
+      if (!String(url).endsWith('/places')) return realFetchL(url, opts);
+      const body = JSON.parse(opts.body); asked.push(body);
+      const reply = nextLook ? nextLook(body) : { status: 200, j: { places: [], source: 'openstreetmap' } };
+      return Promise.resolve({ ok: reply.status === 200, status: reply.status, json: async () => reply.j });
+    };
+    const typeIn = (el, v) => { el.value = v; el.dispatchEvent(new window.Event('input', { bubbles: true })); };
+    const lookBtn = (host) => [...host.querySelectorAll('[data-lkgo]')];
+    // on a day: Add a stop → type the name → search → one tap
+    nextLook = (b) => b.web ? { status: 200, j: { places: [{ name: 'Nami Nori (web)', cat: 'eat', addr: '33 Carmine St, New York', hood: 'West Village', lat: 40.7302, lng: -74.0029, approx: true, web: '', hours: '', src: 'web' }], source: 'web' } }
+      : { status: 200, j: { places: [NAMI, { name: '<img id="pwn3" src=x>', cat: '__proto__', addr: 'x', hood: '', lat: 48.8, lng: 2.3, approx: false, web: 'javascript:alert(1)', hours: '', src: 'evil' }], source: 'openstreetmap' } };
+    NYC.state.agenda = {};
+    NYC.setDay('d2', null); await settle();
+    click(document.querySelector('#d2 [data-addstop]')); await settle();
+    typeIn(document.getElementById('pk-q'), 'Nami Nori');
+    const b1 = lookBtn(document.getElementById('pk-look'))[0];
+    if (!b1 || !/Search all of New York for “Nami Nori”/.test(b1.textContent)) fail('Add a stop offers no search of all New York for a name the library lacks');
+    else {
+      click(b1); await settle();
+      const rows = [...document.querySelectorAll('#pk-look .lkrow')];
+      const links = [...document.querySelectorAll('#sheet a[href]')].map(a => a.getAttribute('href'));
+      if (rows.length !== 2 || !/Nami Nori/.test(rows[0].textContent) || !/Williamsburg/.test(rows[0].textContent)) fail('the search results do not show: ' + (document.getElementById('pk-look').textContent || '').slice(0, 200));
+      else if (document.getElementById('pwn3') || links.some(h => /^javascript:/i.test(h))) fail('a planted search result became markup or a script link');
+      else if (asked[0].web || asked[0].q !== 'Nami Nori') fail('the first search was not a plain map search for the typed name: ' + JSON.stringify(asked[0]));
+      else {
+        click(rows[0]); await settle();
+        const k = Object.keys(NYC.state.custom).find(x => NYC.state.custom[x] && NYC.state.custom[x].name === 'Nami Nori');
+        const c = k && NYC.state.custom[k];
+        const onDay = k && NYC.agIds('d2').includes('c:' + k);
+        const row = k && NYC.agReflow('d2', NYC.agIds('d2')).find(r => r.it.id === 'c:' + k);
+        if (!c || !onDay) fail('one tap did not put Nami Nori on Monday');
+        else if (c.lat !== 40.71971 || c.approx || c.web !== 'https://www.naminori.nyc/' || c.cat !== 'eat' || c.hood !== 'Williamsburg' || !/236 North 12th/.test(c.addr || '') || !/17:00/.test(c.hours || '')) fail('Nami Nori did not keep its exact spot, website, address and hours: ' + JSON.stringify(c));
+        else if (!row || row.start < 17 * 60) fail('a restaurant found by name did not go in at dinner time: ' + (row && row.start));
+        else if (!/dinner at Nami Nori/.test(NYC.dayStory('d2', 'en').lede)) fail('Monday\'s summary does not mention the dinner: ' + NYC.dayStory('d2', 'en').lede);
+        else ok('Add a stop → "Nami Nori" → Search all of New York → one tap: on Monday at dinner, pinned exactly, with its website, address and hours');
+        const rowEl = document.querySelector('.agwrap[data-agday="d2"] .agrow[data-id="c:' + k + '"]');
+        if (!rowEl || !/🍽/.test(rowEl.textContent)) fail('the found restaurant does not show as a restaurant in the running order');
+        NYC.openPlace('c:' + k);
+        const sh = document.getElementById('sheet').textContent;
+        if (!/236 North 12th Street/.test(sh) || !/Mo-Su 17:00-22:00/.test(sh) || !document.querySelector('#sheet a[href="https://www.naminori.nyc/"]')) fail('its page does not show the address, hours and website');
+        else ok('its page shows the address, the hours and a link to its website, and the running order shows it as a restaurant');
+        click(document.querySelector('#sheet .closebtn'));
+        // web fallback
+        click(document.querySelector('#d2 [data-addstop]')); await settle();
+        typeIn(document.getElementById('pk-q'), 'Nami Nori');
+        click(lookBtn(document.getElementById('pk-look'))[0]); await settle();
+        const webBtn = lookBtn(document.getElementById('pk-look')).find(b => /Search the web/.test(b.textContent));
+        if (!webBtn) fail('after a map search there is no way to search the web instead');
+        else {
+          click(webBtn); await settle();
+          const last = asked[asked.length - 1];
+          if (!last.web || !last.near) fail('the web search was not asked for, or without the day\'s area: ' + JSON.stringify(last));
+          else if (!/Nami Nori \(web\)/.test(document.getElementById('pk-look').textContent) || !/the web/.test(document.getElementById('pk-look').textContent)) fail('the web results do not show');
+          else ok('"Not the one? Search the web" asks the web, with the day\'s area as a hint (' + last.near + ')');
+        }
+        click(document.querySelector('#sheet .closebtn'));
+      }
+    }
+    // in Explore: search → not here → found → add as an idea
+    nextLook = () => ({ status: 200, j: { places: [Object.assign({}, NAMI, { name: 'Nami Nori Montclair', lat: 42.65, lng: -73.75 }), { name: 'Balthazar', cat: 'eat', addr: '80 Spring St', hood: 'SoHo', lat: 40.7227, lng: -73.9981, src: 'osm' }], source: 'openstreetmap' } });
+    NYC.me = 'Y';
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'explore'));
+    typeIn(document.getElementById('exsearch'), 'nami nori montclair');
+    const eb = lookBtn(document.getElementById('exlook'))[0];
+    if (!eb || !/Not in the list\?/.test(document.getElementById('exlook').textContent)) fail('Explore offers no search of all New York when the library has nothing');
+    else {
+      click(eb); await settle();
+      const rowsE = [...document.querySelectorAll('#exlook .lkrow')];
+      if (rowsE.length !== 2 || !/already in the app/.test(rowsE[1].textContent)) fail('a result that is already in the library is not marked as such: ' + document.getElementById('exlook').textContent.slice(0, 200));
+      else {
+        click(rowsE[1]); await settle();
+        if (!/Balthazar/.test((document.querySelector('#sheet h3') || {}).textContent || '') || document.getElementById('sg-idea')) fail('tapping a library place found by the search did not open its own page');
+        else ok('a place the library already has opens its own page rather than a copy');
+        click(document.querySelector('#sheet .closebtn'));
+        click(rowsE[0]); await settle();
+        const hasIdea = document.getElementById('sg-idea'), shT = document.getElementById('sheet').textContent;
+        if (!hasIdea || !/Found on OpenStreetMap/.test(shT) || !/236 North 12th/.test(shT) || document.getElementById('sg-web').value !== 'https://www.naminori.nyc/') fail('a found place does not open ready to add, with where it was found, its address and website');
+        else {
+          click(hasIdea); await settle();
+          const kE = Object.keys(NYC.state.custom).find(x => (NYC.state.custom[x] || {}).name === 'Nami Nori Montclair');
+          const cE = kE && NYC.state.custom[kE];
+          // a point well outside the city (this one is Albany) must not be used
+          if (!cE || cE.lat != null || !(NYC.state.vote['c:' + kE] && NYC.state.vote['c:' + kE].Y === 'yes')) fail('adding a found place as an idea did not work as expected: ' + JSON.stringify(cE));
+          else ok('Explore → "Not in the list?" → a found place opens ready to add as an idea (and a point outside the city is not used)');
+        }
+      }
+    }
+    typeIn(document.getElementById('exsearch'), '');
+    // failures read as sentences, in the traveller's language
+    nextLook = (b) => b.web ? { status: 429, j: { code: 'busy' } } : { status: 502, j: { code: 'unreachable' } };
+    typeIn(document.getElementById('exsearch'), 'zzqqx');
+    click(lookBtn(document.getElementById('exlook'))[0]); await settle();
+    const errT = document.getElementById('exlook').textContent;
+    if (!/did not work/.test(errT)) fail('a failed search does not say so: ' + errT);
+    else ok('a failed search says so and offers to try again');
+    Object.defineProperty(window.navigator, 'onLine', { value: false, configurable: true });
+    typeIn(document.getElementById('exsearch'), 'zzqqy');
+    click(lookBtn(document.getElementById('exlook'))[0]); await settle();
+    const offT = document.getElementById('exlook').textContent;
+    Object.defineProperty(window.navigator, 'onLine', { value: true, configurable: true });
+    if (!/No connection/.test(offT)) fail('offline, the search does not say it needs a connection: ' + offT);
+    else ok('offline, it says the search needs a connection');
+    const url0 = window.TRIP_CONFIG.CONCIERGE_URL; window.TRIP_CONFIG.CONCIERGE_URL = '';
+    typeIn(document.getElementById('exsearch'), 'zzqqz');
+    if (lookBtn(document.getElementById('exlook')).length) fail('with no concierge set up, a search button that cannot work is offered');
+    else ok('with no concierge set up, no search button is offered');
+    window.TRIP_CONFIG.CONCIERGE_URL = url0;
+    typeIn(document.getElementById('exsearch'), '');
+    // what the review of the search found, each pinned by a test
+    const pickOnDay = async (day, q, results) => {
+      nextLook = () => ({ status: 200, j: { places: results, source: 'openstreetmap' } });
+      NYC.setDay(day, null); await settle();
+      click(document.querySelector('#' + day + ' [data-addstop]')); await settle();
+      typeIn(document.getElementById('pk-q'), q);
+      click(lookBtn(document.getElementById('pk-look'))[0]); await settle();
+      const row = document.querySelector('#pk-look .lkrow'); if (row) click(row); await settle();
+      if (!document.getElementById('sheet').hidden) click(document.querySelector('#sheet .closebtn'));
+    };
+    // an idea typed in by hand, then found by the search: the same idea, now with its spot and address
+    Object.keys(NYC.state.custom).forEach(k => { if (/Nami Nori/.test((NYC.state.custom[k] || {}).name || '')) delete NYC.state.custom[k]; });
+    NYC.state.agenda = {};
+    NYC.state.custom.handmade = { name: 'Nami Nori', d: 60, t: '14:00' };
+    await pickOnDay('d7', 'Nami Nori', [NAMI]);
+    const hm = NYC.state.custom.handmade, namis = Object.values(NYC.state.custom).filter(c => c && c.name === 'Nami Nori' && !c.deleted);
+    if (namis.length !== 1 || hm.lat !== 40.71971 || hm.approx || !/236 North 12th/.test(hm.addr || '') || !NYC.agIds('d7').includes('c:handmade')) fail('finding a place you had already typed in did not fill in its spot and address: ' + JSON.stringify(hm));
+    else ok('finding a place you already had as an idea fills in its exact spot, address and hours rather than making a copy');
+    // another branch of a chain is another place
+    NYC.state.custom.shackdumbo = { name: 'Shake Shack', d: 45, t: '13:00', lat: 40.7027, lng: -73.9937, hood: 'DUMBO' };
+    NYC.agSave('d4', NYC.agIds('d4').concat(['c:shackdumbo']));
+    await pickOnDay('d1', 'Shake Shack', [{ name: 'Shake Shack', cat: 'eat', addr: '691 8th Ave', hood: 'Midtown', lat: 40.7587, lng: -73.9891, src: 'osm' }]);
+    const shacks = Object.keys(NYC.state.custom).filter(k => /^Shake Shack/.test((NYC.state.custom[k] || {}).name || ''));
+    const midtown = shacks.find(k => k !== 'shackdumbo');
+    if (shacks.length !== 2 || !NYC.agIds('d4').includes('c:shackdumbo') || !midtown || NYC.state.custom[midtown].name !== 'Shake Shack (Midtown)' || !NYC.agIds('d1').includes('c:' + midtown)) fail('a second branch of a chain replaced the first: ' + JSON.stringify(shacks.map(k => [k, NYC.state.custom[k].name])));
+    else ok('another branch of a chain is its own stop ("Shake Shack (Midtown)"); the DUMBO one stays on its day');
+    // the library under a fuller name
+    const met = document.createElement('div');
+    nextLook = () => ({ status: 200, j: { places: [{ name: 'The Metropolitan Museum of Art', cat: 'museum', addr: '1000 5th Ave', hood: 'Upper East Side', lat: 40.7794, lng: -73.9632, src: 'osm' }, { name: 'Statue of Liberty', cat: 'see', addr: 'Liberty Island', hood: '', lat: 40.6892, lng: -74.0445, src: 'osm' }, { name: 'The Statue of Liberty', cat: 'see', addr: '', hood: '', lat: null, lng: null, src: 'web' }], source: 'openstreetmap' } });
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'explore'));
+    typeIn(document.getElementById('exsearch'), 'zz met');
+    click(lookBtn(document.getElementById('exlook'))[0]); await settle();
+    const libRows = [...document.querySelectorAll('#exlook .lkrow')].map(r => /already in the app/.test(r.textContent));
+    if (libRows.join() !== 'true,true,true') fail('the Met or the Statue of Liberty, found by search (one with no location at all), was not recognised as already in the app: ' + libRows.join());
+    else ok('the Met and the Statue of Liberty, found under their plain names (even with no location), are recognised as already in the app');
+    // "used up" only for the day's ceiling; anything else offers to try again
+    nextLook = () => ({ status: 429, j: { code: 'wait' } });
+    typeIn(document.getElementById('exsearch'), 'zz wait');
+    click(lookBtn(document.getElementById('exlook'))[0]); await settle();
+    const tw = document.getElementById('exlook').textContent, retry = lookBtn(document.getElementById('exlook')).length;
+    nextLook = (b) => ({ status: 429, j: { code: 'limit' } });
+    typeIn(document.getElementById('exsearch'), 'zz limit');
+    click(lookBtn(document.getElementById('exlook'))[0]); await settle();
+    const tl = document.getElementById('exlook').textContent;
+    if (!/did not work/.test(tw) || !retry || !/used up for today/.test(tl)) fail('a busy moment and the day\'s ceiling are not told apart: "' + tw + '" / "' + tl + '"');
+    else ok('a busy moment offers to try again; only the day\'s ceiling says "used up for today"');
+    // German reads naturally
+    nextLook = (b) => ({ status: 200, j: { places: [Object.assign({}, NAMI, { name: 'Irgendwo', src: 'web' })], source: 'web' } });
+    click(document.getElementById('langbtn')); click(document.getElementById('langbtn')); await settle();   // → Deutsch
+    typeIn(document.getElementById('exsearch'), 'zz irgendwo');
+    click(lookBtn(document.getElementById('exlook'))[0]); await settle();
+    const webBtn2 = lookBtn(document.getElementById('exlook')).find(b => /Web/.test(b.textContent));
+    if (webBtn2) { click(webBtn2); await settle(); }
+    const deLine = document.getElementById('exlook').textContent;
+    click(document.getElementById('langbtn')); await settle();   // → English
+    if (!/Im Web gefunden/.test(deLine) || /bei im Web/.test(deLine)) fail('the German source line is not natural: ' + deLine.slice(0, 120));
+    else ok('the German result line reads "Im Web gefunden"');
+    // swipe mode: results arriving late are not drawn under the cards
+    let release = null;
+    nextLook = () => ({ status: 200, j: { places: [NAMI], source: 'openstreetmap' } });
+    const realFetchD = window.fetch;
+    window.fetch = (url, opts) => String(url).endsWith('/places') ? new Promise(r => { release = () => r({ ok: true, status: 200, json: async () => ({ places: [NAMI], source: 'openstreetmap' }) }); }) : realFetchD(url, opts);
+    typeIn(document.getElementById('exsearch'), 'zz deck');
+    click(lookBtn(document.getElementById('exlook'))[0]);
+    click(document.getElementById('swipebtn')); await settle();
+    if (release) release(); await settle();
+    const underDeck = document.querySelectorAll('#exlook .lkrow').length;
+    click(document.getElementById('swipebtn')); await settle();
+    window.fetch = realFetchD;
+    if (underDeck) fail('search results that arrived in swipe mode were drawn under the cards');
+    else ok('results that arrive while swiping are not drawn under the cards');
+    typeIn(document.getElementById('exsearch'), '');
+    // a synced duration never becomes markup in the Plan tab (an older hole)
+    NYC.state.custom.dhack = { name: 'Idea', d: '<img id="pwn5" src=x>' };
+    NYC.renderAll(); await settle();
+    if (document.getElementById('pwn5')) fail('a synced duration was rendered as HTML in the Plan tab'); else ok('a synced duration is shown as a number, never as HTML');
+    delete NYC.state.custom.dhack; delete NYC.state.custom.handmade; delete NYC.state.custom.shackdumbo; if (midtown) delete NYC.state.custom[midtown];
+    window.fetch = realFetchL;
+    Object.keys(NYC.state.custom).forEach(k => { if (/Nami Nori/.test((NYC.state.custom[k] || {}).name || '')) delete NYC.state.custom[k]; });
+    NYC.state.agenda = {}; NYC.renderAll(); await settle();
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home'));
+  }
+
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }
@@ -771,6 +968,9 @@ if (booted) {
   if (mikeLeft.length) fail('Mike is still mentioned in: ' + mikeLeft.join(', '));
   else if (document.querySelector('[data-mike], .mikebtn, #nameM')) fail('the page still has a "Mike joins" control');
   else ok('the app is for Yulia and Tatyana only: no Mike in the data, the concierge brief or the page');
+  const appSrc = read('app.js');
+  if (/cartocdn\.com\/[^'"]*\{z\}/.test(appSrc) || !/tile\.openstreetmap\.org\/\{z\}\/\{x\}\/\{y\}\.png/.test(appSrc) || !/OpenStreetMap<\/a> contributors/.test(appSrc)) fail('the map does not use keyless OpenStreetMap tiles with their credit line');
+  else ok('the map uses OpenStreetMap\'s keyless tiles, credited, with a keyless fallback');
   const rainMissing = []; Object.values(T.RAIN || {}).forEach(a => a.forEach(id => { if (!ids.has(id)) rainMissing.push(id); }));
   if (rainMissing.length) console.warn('  ! rain swaps missing from the library: ' + [...new Set(rainMissing)].join(', '));
   (T.BOOK || []).forEach(b => { if (!b.id.startsWith('x:') && !ids.has(b.id)) console.warn('  ! BOOK references missing place ' + b.id); });

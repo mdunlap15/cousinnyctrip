@@ -91,6 +91,19 @@ const S = {
   editLinks: ['Links & location', 'Ссылки и место', 'Links & Ort'],
   pinnedName: ['📍 Pinned place', '📍 Место на карте', '📍 Markierter Ort'],
   fromConcierge: ['Suggested by the concierge', 'Совет консьержа', 'Tipp vom Concierge'],
+  lookupAll: ['🔎 Search all of New York for “{q}”', '🔎 Искать «{q}» по всему Нью-Йорку', '🔎 In ganz New York nach „{q}“ suchen'],
+  lookupNotHere: ['Not in the list?', 'Нет в списке?', 'Nicht in der Liste?'],
+  lookupBusy: ['Searching New York…', 'Ищу по Нью-Йорку…', 'Suche in New York…'],
+  lookupWebBusy: ['Searching the web — this takes about twenty seconds…', 'Ищу в интернете — это секунд двадцать…', 'Suche im Web — das dauert etwa zwanzig Sekunden…'],
+  lookupNone: ['Nothing by that name on the map.', 'На карте ничего с таким названием.', 'Auf der Karte nichts unter diesem Namen.'],
+  lookupWebNone: ['The web search found nothing by that name in New York either.', 'Поиск в интернете тоже ничего не нашёл в Нью-Йорке.', 'Auch im Web nichts unter diesem Namen in New York.'],
+  lookupWeb: ['🌐 Not the one? Search the web', '🌐 Не то? Искать в интернете', '🌐 Nicht dabei? Im Web suchen'],
+  lookupWebOnly: ['🌐 Search the web for it', '🌐 Поискать в интернете', '🌐 Im Web danach suchen'],
+  lookupErr: ['The search did not work — try again in a moment.', 'Поиск не сработал — попробуйте через минуту.', 'Die Suche hat nicht geklappt — gleich noch einmal versuchen.'],
+  lookupLimit: ['The web search is used up for today — the map search still works.', 'Поиск в интернете на сегодня исчерпан — поиск по карте работает.', 'Die Websuche ist für heute aufgebraucht — die Kartensuche geht weiter.'],
+  lookupOffline: ['No connection — the search needs the internet.', 'Нет связи — для поиска нужен интернет.', 'Keine Verbindung — die Suche braucht Internet.'],
+  inTheApp: ['already in the app', 'уже в приложении', 'schon in der App'],
+  foundOsm: ['Found on OpenStreetMap', 'Найдено на OpenStreetMap', 'Gefunden bei OpenStreetMap'], foundGoogle: ['Found on Google', 'Найдено в Google', 'Gefunden bei Google'], foundWeb: ['Found on the web', 'Найдено в интернете', 'Im Web gefunden'],
   onGoogleMaps: ['Google Maps', 'Google Карты', 'Google Maps'],
   searchWeb: ['Search the web', 'Найти в интернете', 'Im Web suchen'],
   approxLoc: ['📍 Approximate location, from the concierge. Travel times are estimates; paste a map link to pin it exactly.', '📍 Место приблизительное, со слов консьержа. Время в пути — оценка; вставьте ссылку на карту, чтобы уточнить.', '📍 Ungefährer Ort, laut Concierge. Fahrzeiten sind Schätzungen; mit einem Kartenlink wird er genau.'],
@@ -270,7 +283,7 @@ function seedFor(ref) {
     // synced from the shared table: a bounded name, a real time and a sane length
     const la = coord(c.lat), ln = coord(c.lng), nm = String(c.name == null ? '' : c.name).slice(0, 120), dn = Number(c.d);
     const tm = (typeof c.t === 'string' && /^\d{1,2}:\d{2}$/.test(c.t)) ? c.t : '12:00';
-    AGSEED[ref] = { id: ref, t: tm, d: (dn >= 5 && dn <= 720) ? dn : 60, lock: false, en: nm, ru: nm, de: nm, p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea', approx: !!c.approx && la != null };
+    AGSEED[ref] = { id: ref, t: tm, d: (dn >= 5 && dn <= 720) ? dn : 60, lock: false, en: nm, ru: nm, de: nm, kind: (typeof c.cat === 'string' && CAT[c.cat]) ? c.cat : 'idea', p: (la != null && ln != null) ? [la, ln] : null, q: null, custom: true, cat: 'idea', approx: !!c.approx && la != null };
     return AGSEED[ref];
   }
   return null;
@@ -457,7 +470,7 @@ function dayStats(day, rows) {
   // spent, but it is not what makes a day exhausting. Daytime legwork counts full.
   const restful = (r) => {
     if (r.start < 17 * 60) return false;
-    const c = r.it.place && r.it.place.cat;
+    const c = (r.it.place && r.it.place.cat) || (r.it.custom && r.it.kind !== 'idea' && r.it.kind);
     if (c) return c === 'eat' || c === 'drink' || c === 'cafe' || c === 'show';
     return r.d >= 40; // an evening block with no category is a meal or a show
   };
@@ -704,6 +717,7 @@ function rowTitleHtml(it) {
 function rowSub(it, day) {
   if (it.custom && !it.p) return '<small class="nolocation">' + esc(t('noLocation')) + '</small>';
   if (it.custom && it.approx) return '<small class="nolocation">' + esc(t('approxShort')) + '</small>';
+  if (it.custom) { const c = hasOwn(state.custom, it.id.slice(2)) ? state.custom[it.id.slice(2)] : null; return c && typeof c.hood === 'string' && c.hood ? '<small>' + esc(c.hood.slice(0, 60)) + '</small>' : ''; }
   const p = it.place; if (!p) return '';
   const bits = [placeSub(p), p.hood].filter(Boolean);
   const dow = dowOf(day);
@@ -733,7 +747,7 @@ function renderAgenda(day) {
         if (lbl) conn = '<div class="aggap' + (g >= 45 ? ' long' : '') + (fillable ? ' fill' : '') + '"' + (fillable ? ' data-gap="' + i + '" role="button" tabindex="0"' : '') + '>' + lbl + '</div>';
       }
       const cat = r.it.place ? r.it.place.cat : (r.it.x ? 'x' : 'idea');
-      const ico = r.it.place ? (CAT[r.it.place.cat] || CAT.idea).ico : (r.it.custom ? '💡' : '');
+      const ico = r.it.place ? (CAT[r.it.place.cat] || CAT.idea).ico : (r.it.custom ? (CAT[r.it.kind] || CAT.idea).ico : '');
       return conn + '<div class="agrow stop-' + cat + '" data-id="' + esc(r.it.id) + '" data-start="' + agPad(r.start) + '">' + grip +
         '<button type="button" class="ag-time' + (r.warn ? ' warn' : '') + (r.edited ? ' edited' : '') + '" title="' + t('tapTime') + '">' + (r.warn ? '⚠' : '') + tm + '</button>' +
         '<span class="ag-t"><span class="ag-ico">' + ico + '</span> ' + rowTitleHtml(r.it) + rowSub(r.it, day) + '</span>' +
@@ -943,7 +957,8 @@ function openPlace(id) {
     custom = (state.custom || {})[id.slice(2)]; if (!custom) return; ref = id;
     p = { id: id.slice(2), name: custom.name, cat: CAT[custom.cat] ? custom.cat : 'idea', hood: custom.hood || '', dur: custom.d || 60, why: custom.note || '', tips: [], tags: [], custom: true,
       lat: (coord(custom.lat) != null && coord(custom.lng) != null) ? coord(custom.lat) : null, lng: (coord(custom.lat) != null && coord(custom.lng) != null) ? coord(custom.lng) : null,
-      web: safeHref(custom.web), mapUrl: safeHref(custom.map) };
+      web: safeHref(custom.web), mapUrl: safeHref(custom.map),
+      addr: typeof custom.addr === 'string' ? custom.addr.slice(0, 160) : '', hours: typeof custom.hours === 'string' ? custom.hours.slice(0, 300) : '' };
     p.approx = !!custom.approx && p.lat != null;
     // a share link that never got expanded (offline at the time): try again now
     if (custom.map && (custom.lat == null || (custom.approx && custom.needsResolve))) resolveCustom(id.slice(2), true);
@@ -1072,11 +1087,15 @@ function makeCustom(name, mins, mapRaw, webRaw, extra) {
   delete c.mapName;
   if (extra) {
     const la = coord(extra.lat), ln = coord(extra.lng);
-    if (c.lat == null && la != null && ln != null) { c.lat = la; c.lng = ln; c.approx = true; }
+    // an exact point (a map search found it) is not marked approximate
+    if (c.lat == null && la != null && ln != null) { c.lat = la; c.lng = ln; c.approx = !extra.exact; }
     if (extra.hood) c.hood = String(extra.hood).slice(0, 60);
+    if (extra.addr) c.addr = String(extra.addr).slice(0, 160);
+    if (extra.hours) c.hours = String(extra.hours).slice(0, 300);
     if (extra.note) c.note = String(extra.note).slice(0, 240);
     if (extra.cat && CAT[extra.cat]) c.cat = extra.cat;
     if (extra.from) c.from = String(extra.from).slice(0, 20);
+    if (typeof extra.t === 'string' && /^\d{1,2}:\d{2}$/.test(extra.t)) c.t = extra.t;
   }
   state.custom[k] = c; put('custom', k, c); refreshCustomSeeds();
   if (c.needsResolve) resolveCustom(k);
@@ -1089,20 +1108,132 @@ function findCustomByName(name) {
   const n = normName(name); if (!n) return null;
   return Object.keys(state.custom || {}).find(k => { const c = state.custom[k]; return c && !c.deleted && normName(c.name) === n; }) || null;
 }
+// ---------------------------------------------------------------- search all of New York
+// Anywhere in the city, not just the library: the concierge's server looks the
+// name up on the map (OpenStreetMap, or Google when it has a key) and, on a
+// tap, on the web. What comes back is checked again here — names capped, a
+// location only if it is in New York, a website only if it is a real link.
+const DEFMIN = { eat: 90, drink: 60, cafe: 30, museum: 120, see: 45, show: 150, shop: 60, park: 60, walk: 60, daytrip: 240, idea: 60 };
+// when in the day it goes, until someone drags it: a restaurant looked up by
+// name is most often dinner, a bar the drink before it
+const DEFTIME = { eat: '19:00', drink: '17:30', cafe: '15:30', show: '20:00', museum: '11:00', see: '11:00' };
+function normFound(raw) {
+  if (!Array.isArray(raw)) return [];
+  const s = (v, n) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim().slice(0, n) : '');
+  return raw.slice(0, 8).map(x => {
+    if (!x || typeof x !== 'object') return null;
+    const name = s(x.name, 120); if (!name) return null;
+    const la = coord(x.lat), ln = coord(x.lng), here = inNycBox(la, ln);
+    const cat = (typeof x.cat === 'string' && CAT[x.cat]) ? x.cat : 'idea';
+    return { lib: libByName(name, here ? la : null, here ? ln : null), name, cat, hood: s(x.hood, 60), addr: s(x.addr, 160), hours: s(x.hours, 300),
+      web: safeHref(typeof x.web === 'string' ? x.web : '') || '', lat: here ? la : null, lng: here ? ln : null, exact: here && !x.approx,
+      src: ['osm', 'google', 'web'].indexOf(x.src) >= 0 ? x.src : '', minutes: DEFMIN[cat] || 60, why: '' };
+  }).filter(Boolean);
+}
+async function lookupPlaces(q, web, near) {
+  if (!navigator.onLine) { const e = new Error('offline'); e.code = 'offline'; throw e; }
+  // a map search answers in a second or two, the web in under a minute; past that, give up
+  const ac = typeof AbortController === 'function' ? new AbortController() : null;
+  const timer = ac ? setTimeout(() => ac.abort(), web ? 90000 : 20000) : null;
+  try {
+    const r = await fetch(CFG.CONCIERGE_URL.replace(/\/$/, '') + '/places', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Trip-Key': CFG.TRIP_KEY || '' }, body: JSON.stringify({ q, web: !!web, near: near || '' }), signal: ac ? ac.signal : undefined });
+    let j = null; try { j = await r.json(); } catch (e) {}
+    if (!r.ok) { const e = new Error('lookup ' + r.status); e.code = (j && typeof j.code === 'string') ? j.code : 'error'; throw e; }
+    return normFound(j && j.places);
+  } finally { if (timer) clearTimeout(timer); }
+}
+const foundLine = (s) => t(s === 'google' ? 'foundGoogle' : s === 'web' ? 'foundWeb' : 'foundOsm');
+// The idea you already have for this place, if any: the same name, and no
+// location yet or one within a few hundred metres. Another branch of a chain,
+// across town, is another place.
+function sameCustom(f) {
+  const names = [normName(f.name)].concat(f.hood ? [normName(f.name + ' ' + f.hood)] : []).filter(Boolean);
+  if (!names.length) return null;
+  // one already pinned right there beats one with no location yet
+  let near = null, loose = null;
+  Object.keys(state.custom || {}).forEach(k => {
+    const c = state.custom[k];
+    if (!c || typeof c !== 'object' || c.deleted || names.indexOf(normName(c.name)) < 0) return;
+    const la = coord(c.lat), ln = coord(c.lng);
+    if (la == null || ln == null || f.lat == null) { if (!loose) loose = k; }
+    else if (G.haversine(la, ln, f.lat, f.lng) <= 0.3 && !near) near = k;
+  });
+  return near || loose;
+}
+// A found place as an idea of your own. If you already have it, what the search
+// found fills in what the idea lacks (an exact spot, the address, the hours);
+// if you have another place by that name, this one is told apart by neighbourhood.
+function customFromFound(f) {
+  const k = sameCustom(f);
+  if (k) {
+    const c = state.custom[k], up = Object.assign({}, c);
+    if ((coord(c.lat) == null || c.approx) && f.lat != null && (f.exact || coord(c.lat) == null)) { up.lat = f.lat; up.lng = f.lng; up.approx = !f.exact; delete up.needsResolve; }
+    ['addr', 'hours', 'hood'].forEach(x => { if (!c[x] && f[x]) up[x] = f[x]; });
+    if (!safeHref(c.web) && safeHref(f.web)) up.web = safeHref(f.web);
+    if (!(typeof c.cat === 'string' && CAT[c.cat] && c.cat !== 'idea') && f.cat !== 'idea') up.cat = f.cat;
+    if (JSON.stringify(up) !== JSON.stringify(c)) { state.custom[k] = up; put('custom', k, up); refreshCustomSeeds(); }
+    return k;
+  }
+  const name = findCustomByName(f.name) && f.hood ? f.name + ' (' + f.hood + ')' : f.name;
+  return makeCustom(name, f.minutes, '', f.web, { lat: f.lat, lng: f.lng, exact: f.exact, hood: f.hood, addr: f.addr, hours: f.hours, cat: f.cat, note: f.why, from: 'lookup', t: DEFTIME[f.cat] });
+}
+// The search button and its results, drawn into `host` from `st` (so a
+// re-render of the page around it keeps what was found). onPick gets a place.
+function drawLookup(host, st, onPick, opts) {
+  if (!host) return;
+  opts = opts || {};
+  const near = opts.near || '', lead = opts.lead || '';
+  if (!CFG.CONCIERGE_URL || !st.q || st.q.length < 2 || (opts.live && !opts.live())) { host.innerHTML = ''; return; }
+  const row = (f, i) => {
+    const done = f.lib ? scheduledDays('p:' + f.lib.id).length > 0 : !!sameCustom(f);
+    const bits = [catLabel(f.cat), f.hood || f.addr, f.lib ? t('inTheApp') : ''].filter(Boolean).join(' · ');
+    return '<div class="pkrow lkrow" data-lk="' + i + '"><div class="pn">' + esc(f.name) + '<small>' + esc(bits) + (f.addr && f.hood ? '<br>' + esc(f.addr) : '') + '</small></div><button type="button" class="pk-b">' + (done ? '✓' : '＋') + '</button></div>';
+  };
+  let html = '';
+  if (!st.list && !st.busy && !st.err) html = '<button class="act lkgo" type="button" data-lkgo="map">' + esc(t('lookupAll').replace('{q}', st.q)) + '</button>';
+  if (st.busy) html = '<p class="gsub lkmsg">' + esc(t(st.busy === 'web' ? 'lookupWebBusy' : 'lookupBusy')) + '</p>';
+  if (st.err) html = '<p class="gsub lkmsg">' + esc(t(st.err === 'offline' ? 'lookupOffline' : st.err === 'limit' ? 'lookupLimit' : 'lookupErr')) + '</p>' + (st.err === 'limit' ? '' : '<button class="act lkgo" type="button" data-lkgo="' + (st.src === 'web' ? 'web' : 'map') + '">' + esc(st.src === 'web' ? t('lookupWebOnly') : t('lookupAll').replace('{q}', st.q)) + '</button>');
+  if (st.list && !st.busy) {
+    html = (st.list.length ? '<p class="gsub lkmsg">' + esc(foundLine(st.src)) + '</p>' + st.list.map(row).join('') : '<p class="gsub lkmsg">' + esc(t(st.src === 'web' ? 'lookupWebNone' : 'lookupNone')) + '</p>') +
+      (st.src === 'web' ? '' : '<button class="act lkgo" type="button" data-lkgo="web">' + esc(t(st.list.length ? 'lookupWeb' : 'lookupWebOnly')) + '</button>');
+  }
+  host.innerHTML = '<div class="lookup">' + (lead ? '<p class="lklead">' + esc(lead) + '</p>' : '') + html + '</div>';
+  host.querySelectorAll('[data-lkgo]').forEach(b => { b.onclick = async (e) => {
+    e.stopPropagation();
+    const web = b.dataset.lkgo === 'web', q = st.q;
+    st.busy = web ? 'web' : 'map'; st.err = ''; drawLookup(host, st, onPick, opts);
+    try { const list = await lookupPlaces(q, web, near); if (st.q !== q) return; st.list = list; st.src = web ? 'web' : (list[0] && list[0].src) || 'osm'; }
+    catch (err) { if (st.q !== q) return; st.err = err.code || 'error'; st.src = web ? 'web' : 'map'; }
+    st.busy = ''; drawLookup(host, st, onPick, opts);
+  }; });
+  host.querySelectorAll('[data-lk]').forEach(r => { r.onclick = (e) => { e.stopPropagation(); const f = st.list && st.list[Number(r.dataset.lk)]; if (f) onPick(f); }; });
+}
+// Explore keeps its own search across re-renders (a synced vote redraws the list).
+const LOOK = { q: '', list: null, src: '', busy: '', err: '' };
+function lookFor(st, q) { if (st.q !== q) { st.q = q; st.list = null; st.src = ''; st.busy = ''; st.err = ''; } }
 function openAddStop(day) {
   const hubs = dayHubs(day);
   const near = (p) => { if (p.lat == null || !hubs.length) return 99; const h = G.nearestHub(p.lat, p.lng).hub.key; return Math.min.apply(null, hubs.map(x => G.hubToHub(x, h))); };
   const inDay = new Set(agIds(day));
   let cat = 'all', q = '';
+  const look = { q: '', list: null, src: '', busy: '', err: '' };
+  const area = hubs.length && G.HUB[hubs[0]] ? G.HUB[hubs[0]].name : '';
+  const pickFound = (f) => {
+    const ref = f.lib ? 'p:' + f.lib.id : (() => { const k = customFromFound(f); return k ? 'c:' + k : null; })();
+    if (!ref) return;
+    agInsert(day, ref); closeSheet(); toast(t('applied'));
+  };
   const render = () => {
     const list = PLACES.filter(p => !inDay.has('p:' + p.id) && (cat === 'all' || p.cat === cat || (cat === 'park' && p.cat === 'walk')) && (!q || (p.name + ' ' + (p.nameRu || '') + ' ' + p.hood + ' ' + (p.sub || '')).toLowerCase().indexOf(q) >= 0))
       .map(p => ({ p, n: near(p), s: voteScore('p:' + p.id) })).sort((a, b) => (a.n - b.n) || (b.s - a.s)).slice(0, 40);
     $('#pk-list').innerHTML = list.map(x => '<div class="pkrow" data-add="' + esc(x.p.id) + '"><div class="pn">' + (CAT[x.p.cat] || CAT.idea).ico + ' ' + esc(placeName(x.p)) + '<small>' + esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + (x.n < 99 ? ' · ~' + x.n + ' ' + t('minutes') : '') + ' ' + voteBadges('p:' + x.p.id) + '</small></div><button type="button" class="pk-b">＋</button></div>').join('') || '<p class="gsub">' + t('noMatch') + '</p>';
     $$('#pk-list [data-add]').forEach(r => { r.onclick = () => { agInsert(day, 'p:' + r.dataset.add); closeSheet(); toast(t('applied')); }; });
+    lookFor(look, ($('#pk-q') || {}).value ? $('#pk-q').value.trim() : '');
+    drawLookup($('#pk-look'), look, pickFound, { near: area, lead: t('lookupNotHere') });
   };
   const html = '<h3>' + t('pickStop') + ' · ' + dayLabel(day) + '</h3><input class="pksearch" id="pk-q" type="search" placeholder="' + t('searchPh') + '" />' +
     '<div class="vchips small" id="pk-cats"><button class="vchip" type="button" data-c="all" aria-pressed="true">' + L('All', 'Все', 'Alle') + '</button>' + ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park'].map(c => '<button class="vchip" type="button" data-c="' + c + '">' + catLabel(c) + '</button>').join('') + '</div>' +
-    '<div id="pk-list"></div><div class="grp"><h3 style="font-size:16px">' + t('custom') + '</h3><div class="exform"><input id="pk-cname" type="text" placeholder="' + t('customName') + '" /><input id="pk-cmin" type="number" inputmode="numeric" value="60" /><button type="button" id="pk-cadd">' + t('add') + '</button></div>' +
+    '<div id="pk-list"></div><div id="pk-look"></div><div class="grp"><h3 style="font-size:16px">' + t('custom') + '</h3><div class="exform"><input id="pk-cname" type="text" placeholder="' + t('customName') + '" /><input id="pk-cmin" type="number" inputmode="numeric" value="60" /><button type="button" id="pk-cadd">' + t('add') + '</button></div>' +
     '<div class="exform links"><input id="pk-cmap" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" /><input id="pk-cweb" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" /></div><p class="gsub">' + esc(t('mapLinkHow')) + '</p></div>';
   openSheet(html, () => {
     render();
@@ -1223,7 +1354,13 @@ function exFiltered() {
     if (q) { const hay = [p.name, p.nameRu, p.nameDe, p.hood, p.sub, p.subRu, p.subDe, p.why, p.whyRu, p.whyDe, (p.tags || []).join(' ')].join(' ').toLowerCase(); if (hay.indexOf(q) < 0) return false; }
     return true;
   });
-  if (EX.cat === 'all' || EX.cat === 'idea') Object.entries(state.custom || {}).forEach(([k, c]) => { if (c && !c.deleted && (!q || c.name.toLowerCase().indexOf(q) >= 0) && !EX.tags.size) list.push({ id: 'c:' + k, name: c.name, cat: 'idea', hood: '', sub: t('idea'), why: '', tags: [], custom: true, dur: c.d }); });
+  Object.entries(state.custom || {}).forEach(([k, c]) => {
+    if (!c || typeof c !== 'object' || c.deleted || typeof c.name !== 'string' || EX.tags.size) return;
+    const kind = (typeof c.cat === 'string' && CAT[c.cat]) ? c.cat : 'idea';
+    if (!(EX.cat === 'all' || EX.cat === 'idea' || EX.cat === kind)) return;
+    if (q && (c.name + ' ' + (typeof c.hood === 'string' ? c.hood : '')).toLowerCase().indexOf(q) < 0) return;
+    list.push({ id: 'c:' + k, name: c.name.slice(0, 120), cat: kind, hood: typeof c.hood === 'string' ? c.hood.slice(0, 60) : '', sub: t('idea'), why: '', tags: [], custom: true, dur: c.d });
+  });
   const rank = (p) => { const ref = p.custom ? p.id : 'p:' + p.id; return voteScore(ref) * 10 + ((p.tags || []).indexOf('first-timer') >= 0 ? 5 : 0) + ((p.tags || []).indexOf('iconic') >= 0 ? 4 : 0) + (p.conf === 'low' ? -3 : 0); };
   if (EX.sort === 'rank') list.sort((a, b) => rank(b) - rank(a) || a.name.localeCompare(b.name));
   else if (EX.sort === 'near') list.sort((a, b) => (fromHomeMin(a) == null ? 999 : fromHomeMin(a)) - (fromHomeMin(b) == null ? 999 : fromHomeMin(b)));
@@ -1253,10 +1390,17 @@ function renderExplore() {
   $('#excount').textContent = list.length + ' ' + t('places');
   const sel = $('#exsort'); sel.value = EX.sort; Array.from(sel.options).forEach(o => { o.textContent = t({ rank: 'sortRank', near: 'sortNear', az: 'sortAz', hood: 'sortHood' }[o.value]); });
   $('#exsearch').placeholder = t('searchPh');
-  if (EX.deck) { host.hidden = true; return; }
+  const lk = $('#exlook');
+  if (EX.deck) { host.hidden = true; if (lk) lk.innerHTML = ''; return; }
   host.hidden = false;
   host.innerHTML = list.length ? list.slice(0, 160).map(cardHtml).join('') : '<p class="gsub">' + t('noMatch') + '</p>';
   host.querySelectorAll('[data-card]').forEach(c => { c.onclick = () => openPlace(c.dataset.card); });
+  lookFor(LOOK, EX.q);
+  drawLookup(lk, LOOK, (f) => {
+    if (f.lib) { openPlace(f.lib.id); return; }
+    const k = sameCustom(f);
+    if (k) openPlace('c:' + customFromFound(f)); else openSuggested(f);
+  }, { lead: t('lookupNotHere'), live: () => !EX.deck });
 }
 // swipe deck
 const DECK = { queue: [], i: 0 };
@@ -1309,7 +1453,7 @@ function renderPlan() {
   $('#bothwant').innerHTML = both.length ? both.map(r => item(r, '')).join('') : '<p class="gsub">' + t('nothingYet') + '</p>';
   $('#onewants').innerHTML = one.length ? one.map(r => item(r, 'one')).join('') : '<p class="gsub">' + t('nothingYet') + '</p>';
   const props = Object.entries(state.custom || {}).filter(([k, c]) => c && !c.deleted).sort((a, b) => Number(b[0]) - Number(a[0]));
-  $('#proposals').innerHTML = props.map(([k, c]) => { const ref = 'c:' + k; const v = votesFor(ref); return '<div class="voterow"><div class="vn"><a href="#" data-open="' + esc(ref) + '">' + esc(c.name) + '</a><small>' + (c.who ? esc(whoName(c.who)) + ' · ' : '') + (c.d || 60) + ' ' + t('minutes') + ' · ' + voteBadges(ref) + '</small></div><div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-v="' + o[0] + '" data-ref="' + esc(ref) + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>'; }).join('');
+  $('#proposals').innerHTML = props.map(([k, c]) => { const ref = 'c:' + k; const v = votesFor(ref); return '<div class="voterow"><div class="vn"><a href="#" data-open="' + esc(ref) + '">' + esc(c.name) + '</a><small>' + (c.who ? esc(whoName(c.who)) + ' · ' : '') + (Number(c.d) >= 5 && Number(c.d) <= 720 ? Number(c.d) : 60) + ' ' + t('minutes') + ' · ' + voteBadges(ref) + '</small></div><div class="vbtns">' + [['yes', '❤️'], ['maybe', '🤔'], ['no', '✕']].map(o => '<button type="button" data-v="' + o[0] + '" data-ref="' + esc(ref) + '" aria-pressed="' + String(!!me && v[me] === o[0]) + '">' + o[1] + '</button>').join('') + '</div></div>'; }).join('');
   const schedRefs = Array.from(sched).filter(x => !x.startsWith('x:'));
   $('#scheduled').innerHTML = schedRefs.length ? DAYKEYS.map(d => { const ids = agIds(d).filter(x => !x.startsWith('x:')); if (!ids.length) return ''; return '<div class="glg" style="margin-top:10px">' + dayLabel(d) + ' · ' + esc(dayTitle(DAYBYKEY[d])) + '</div>' + ids.map(ref => '<div class="voterow"><div class="vn"><a href="#" data-open="' + esc(seedFor(ref).place ? seedFor(ref).place.id : ref) + '">' + esc(nameOf(ref)) + '</a><small>' + voteBadges(ref) + '</small></div><div class="vwho">' + agHM(agReflow(d, agIds(d)).find(r => r.it.id === ref).start) + '</div></div>').join(''); }).join('') : '<p class="gsub">' + t('nothingYet') + '</p>';
   $$('#plan [data-open]').forEach(b => { b.onclick = (e) => { e.preventDefault(); openPlace(b.dataset.open); }; });
@@ -1469,7 +1613,20 @@ let map = null, markers = [], route = null, activeCats = new Set(Object.keys(CAT
 function buildMap() {
   if (map || !window.L || !$('#lmap')) return;
   map = window.L.map('lmap', { zoomControl: true }).setView([40.715, -73.975], 12);
-  window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 19 }).addTo(map);
+  // OpenStreetMap's own tiles: free and keyless for an app this size, on the
+  // condition of the credit line (and no bulk downloading, which this never
+  // does). CARTO's, used before, began stamping "API KEY REQUIRED" on every
+  // tile. If these stop loading, the Humanitarian OpenStreetMap style — also
+  // keyless — takes over.
+  const TILES = [
+    ['https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' }],
+    ['https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', { maxZoom: 19, subdomains: 'abc', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, style by the Humanitarian OpenStreetMap Team' }],
+  ];
+  let tiles = window.L.tileLayer(TILES[0][0], TILES[0][1]).addTo(map), tileErrs = 0;
+  tiles.on('tileerror', () => {
+    if (++tileErrs !== 6) return;   // a few failures happen on any flaky connection; a run of them means the server is refusing
+    map.removeLayer(tiles); tiles = window.L.tileLayer(TILES[1][0], TILES[1][1]).addTo(map);
+  });
   window.L.marker(HOMEPT, { icon: window.L.divIcon({ className: '', html: '<div class="pin home"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) }).addTo(map).bindPopup('<b>🏠 ' + esc(fld(G.HOME, 'name') || G.HOME.name) + '</b>');
   drawMarkers();
   setTimeout(() => map.invalidateSize(), 200);
@@ -1527,9 +1684,17 @@ function chatLibrary() {
 // mistaken for another.
 let PLBYNAME = null;
 function libByName(name, la, ln) {
-  if (!PLBYNAME) { PLBYNAME = Object.create(null); PLACES.forEach(p => { const k = normName(p.name); if (k && !PLBYNAME[k]) PLBYNAME[k] = p; }); }
-  const hit = PLBYNAME[normName(name)] || null;
-  if (hit && la != null && ln != null && G.haversine(la, ln, hit.lat, hit.lng) > 1.5) return null;
+  // "The Metropolitan Museum of Art (The Met Fifth Avenue)" is also found as
+  // "The Metropolitan Museum of Art"
+  if (!PLBYNAME) { PLBYNAME = Object.create(null); PLACES.forEach(p => { [p.name, shortName(p.name)].forEach(nm => { const k = normName(nm); if (k && !PLBYNAME[k]) PLBYNAME[k] = p; }); }); }
+  const n = normName(name); if (!n) return null;
+  let hit = PLBYNAME[n] || PLBYNAME[normName(shortName(name))] || null;
+  if (hit && la != null && ln != null && G.haversine(la, ln, hit.lat, hit.lng) > 1.5) hit = null;
+  // or the same place under a fuller or shorter name, right where the library has it
+  if (!hit && la != null && ln != null && n.length >= 4) {
+    const words = ' ' + n + ' ';
+    hit = PLACES.find(p => { if (p.lat == null || G.haversine(la, ln, p.lat, p.lng) > 0.15) return false; const a = normName(shortName(p.name)); return a.length >= 4 && (words.indexOf(' ' + a + ' ') >= 0 || (' ' + a + ' ').indexOf(words) >= 0); }) || null;
+  }
   return hit;
 }
 // What came back from the proxy is re-checked here: ids must be ours, names are
@@ -1576,27 +1741,38 @@ function openChatPlace(pl) {
 // A place the concierge suggested that is not in the library: what it said about
 // it, honest links to look it up, and the idea form already filled in.
 function openSuggested(pl) {
-  const q = pl.name + (pl.hood ? ', ' + pl.hood : '') + ', New York';
+  const q = pl.name + (pl.addr ? ', ' + pl.addr : (pl.hood ? ', ' + pl.hood : '')) + ', New York';
+  const kv = [[t('address'), pl.addr], [t('hours'), pl.hours]].filter(x => x[1]);
   const hm = pl.lat != null ? G.fromHome(pl.lat, pl.lng) : null;
-  const html = '<div class="cat" style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--f)">' + catLabel(pl.cat) + ' · ' + esc(t('fromConcierge')) + '</div>' +
+  const html = '<div class="cat" style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--f)">' + catLabel(pl.cat) + ' · ' + esc(pl.src ? foundLine(pl.src) : t('fromConcierge')) + '</div>' +
     '<h3>' + esc(pl.name) + '</h3>' +
     '<div class="meta">' + [esc(pl.hood), hm != null ? '~' + hm + ' ' + t('minutes') + ' ' + t('fromHome') : ''].filter(Boolean).join(' · ') + '</div>' +
     (pl.why ? '<p class="why">' + esc(pl.why) + '</p>' : '') +
-    '<div class="linkrow"><a class="site" href="' + esc(G.mapsSearch(q)) + '" target="_blank" rel="noopener">' + esc(t('onGoogleMaps')) + '</a><a href="' + esc('https://www.google.com/search?q=' + encodeURIComponent(q)) + '" target="_blank" rel="noopener">' + esc(t('searchWeb')) + '</a></div>' +
+    (kv.length ? '<div class="kv">' + kv.map(x => '<div class="k">' + esc(x[0]) + '</div><div>' + esc(x[1]) + '</div>').join('') + '</div>' : '') +
+    '<div class="linkrow">' + (safeHref(pl.web) ? '<a class="site" href="' + esc(safeHref(pl.web)) + '" target="_blank" rel="noopener">' + esc(t('website')) + '</a>' : '') + '<a' + (safeHref(pl.web) ? '' : ' class="site"') + ' href="' + esc(G.mapsSearch(q)) + '" target="_blank" rel="noopener">' + esc(t('onGoogleMaps')) + '</a><a href="' + esc('https://www.google.com/search?q=' + encodeURIComponent(q)) + '" target="_blank" rel="noopener">' + esc(t('searchWeb')) + '</a></div>' +
     // the two things you came here to do, before anything optional
     '<div class="sheetacts"><button class="act go" type="button" id="sg-idea">' + esc(t('addAsIdea')) + '</button><button class="act" type="button" id="sg-day">' + esc(t('addToDay')) + '</button></div>' +
-    '<p class="gsub custloc">' + esc(pl.lat != null ? t('approxLoc') : t('unpinned')) + '</p>' +
+    '<p class="gsub custloc">' + esc(pl.lat != null ? (pl.exact ? t('pinned') : t('approxLoc')) : t('unpinned')) + '</p>' +
     '<details class="custedit"><summary>' + esc(t('adjustFirst')) + '</summary>' +
     '<div class="exform nm"><input id="sg-name" type="text" value="' + esc(pl.name) + '" aria-label="' + esc(t('customName')) + '" /><input id="sg-min" type="number" inputmode="numeric" value="' + pl.minutes + '" aria-label="' + esc(t('minutes')) + '" /></div>' +
-    '<div class="exform links"><input id="sg-map" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" /><input id="sg-web" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" /></div>' +
+    '<div class="exform links"><input id="sg-map" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('mapLinkPh')) + '" aria-label="' + esc(t('mapLink')) + '" /><input id="sg-web" type="url" inputmode="url" autocomplete="off" placeholder="' + esc(t('webLink')) + '" aria-label="' + esc(t('webLink')) + '" value="' + esc(safeHref(pl.web) || '') + '" /></div>' +
     '<p class="gsub">' + esc(t('mapLinkHow')) + '</p></details>';
   openSheet(html, () => {
     // Returns { k, dup }: dup means an idea by that name already existed and
     // nothing new was made.
     const create = () => {
       const typed = $('#sg-name').value;
+      if (pl.src && !$('#sg-map').value.trim() && (!typed.trim() || normName(typed) === normName(pl.name))) {
+        // found by the search and not changed by hand: the same rules as one tap
+        const had = sameCustom(pl);
+        const k = customFromFound(Object.assign({}, pl, { minutes: Number($('#sg-min').value) || pl.minutes, web: $('#sg-web').value.trim() || pl.web }));
+        if (!k) return null;
+        pl.k = k;
+        if (me && !(votesFor('c:' + k)[me] === 'yes')) setVote('c:' + k, 'yes');
+        return { k, dup: !!had };
+      }
       const dup = findCustomByName(typed || pl.name);
-      const k = dup || makeCustom(typed, $('#sg-min').value, $('#sg-map').value, $('#sg-web').value, { lat: pl.lat, lng: pl.lng, hood: pl.hood, note: pl.why, cat: pl.cat, from: 'concierge' });
+      const k = dup || makeCustom(typed, $('#sg-min').value, $('#sg-map').value, $('#sg-web').value, { lat: pl.lat, lng: pl.lng, exact: !!pl.exact, hood: pl.hood, addr: pl.addr, hours: pl.hours, note: pl.why, cat: pl.cat, from: pl.src ? 'lookup' : 'concierge', t: DEFTIME[pl.cat] });
       if (!k) return null;
       pl.k = k;
       if (me && !(votesFor('c:' + k)[me] === 'yes')) setVote('c:' + k, 'yes');

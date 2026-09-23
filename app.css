@@ -425,6 +425,12 @@ body[data-deck="1"] #exfilters{display:none}
 .pkrow .pk-b{flex:0 0 auto;border:1px solid rgba(108,190,69,.5);color:var(--g-dark);background:var(--paper);border-radius:100px;padding:6px 13px;font-family:"Space Mono",monospace;font-size:10.5px;cursor:pointer;white-space:nowrap}
 .pkrow .pk-b.rec{background:var(--g-dark);color:#fff;border-color:var(--g-dark)}
 .pkrow .pk-b:disabled{opacity:.4}
+/* search all of New York */
+.lookup{margin:12px 0 4px;padding-top:10px;border-top:1px dashed var(--line)}
+.lookup .lklead{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:0 0 8px}
+.lookup .lkgo{display:block;width:100%;text-align:left;margin:6px 0;white-space:normal;line-height:1.35}
+.lookup .lkmsg{margin:6px 0}
+#exlook .lookup{margin:14px 2px 0}
 .pksearch{width:100%;padding:11px 14px;border-radius:100px;border:1px solid var(--line);background:var(--paper-2);font:inherit;font-size:15px;margin:6px 0 8px}
 .preview{border:1px solid var(--line);border-radius:14px;background:var(--paper-2);padding:10px 12px;margin:10px 0}
 .preview .pd{font-family:"Space Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin:8px 0 2px}

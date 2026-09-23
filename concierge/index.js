@@ -1,9 +1,12 @@
 // NYC 2026 Trip Concierge — tiny proxy so the Anthropic key never touches the client.
-// Env: ANTHROPIC_API_KEY (required), MODEL (optional), TRIP_KEY (optional shared secret), PORT
+// Env: ANTHROPIC_API_KEY (required), MODEL (optional), TRIP_KEY (optional shared secret), PORT,
+//      GOOGLE_PLACES_KEY (optional: "search all of New York" uses Google Places instead of OpenStreetMap),
+//      GOOGLE_PER_DAY (default 150), PLACES_PER_DAY (default 400): daily ceilings on map searches
 import http from 'node:http';
 import Anthropic from '@anthropic-ai/sdk';
 import { resolveMapsLink } from './resolve.js';
 import { CHAT_SCHEMA, LINKING_RULES, libraryBlock, parseChatReply } from './chatformat.js';
+import { searchOsm, searchGoogle, searchWeb, geocodeOsm, makeCache } from './places.js';
 
 const PORT = process.env.PORT || 3000;
 const MODEL = process.env.MODEL || 'claude-opus-5';
@@ -14,6 +17,42 @@ const TRIP_KEY = process.env.TRIP_KEY || 'nyc-2026';
 // nothing here.
 const WORKSPACE_ID = (process.env.ANTHROPIC_WORKSPACE_ID || '').trim();
 const client = new Anthropic(WORKSPACE_ID ? { defaultHeaders: { 'anthropic-workspace-id': WORKSPACE_ID } } : {});
+
+// "Search all of New York". Google Places when a key is set, OpenStreetMap
+// otherwise (free, no key); the web on request. The two URLs are overridable
+// only so the tests can stand in for the real services.
+const GOOGLE_PLACES_KEY = (process.env.GOOGLE_PLACES_KEY || '').trim();
+const OSM_URL = process.env.OSM_URL || 'https://nominatim.openstreetmap.org';
+const GOOGLE_PLACES_URL = process.env.GOOGLE_PLACES_URL || 'https://places.googleapis.com';
+const placeCache = makeCache({ ttlMs: 86400e3 }), webCache = makeCache({ ttlMs: 6 * 3600e3, max: 100 });
+// Map searches are free to the travellers but not to everyone: a Google call is
+// billed, and OpenStreetMap blocks heavy users. Both get a daily ceiling of
+// their own (counted on cache misses only); past Google's, OpenStreetMap answers.
+const PLACES_PER_DAY = Number(process.env.PLACES_PER_DAY || 400);
+const GOOGLE_PER_DAY = Number(process.env.GOOGLE_PER_DAY || 150);
+let placeHits = [], googleHits = [];
+function underCap(list, cap) {
+  const now = Date.now(), fresh = prune(list, 86400e3, now);
+  if (cap > 0 && fresh.length >= cap) return [fresh, false];
+  fresh.push(now); return [fresh, true];
+}
+async function findPlaces(q) {
+  const key = q.toLowerCase(), hit = placeCache.get(key); if (hit) return hit;
+  let okDay; [placeHits, okDay] = underCap(placeHits, PLACES_PER_DAY);
+  if (!okDay) { const e = new Error('map search daily ceiling'); e.busy = true; throw e; }
+  let places = null, source = 'openstreetmap';
+  let okGoogle = false;
+  if (GOOGLE_PLACES_KEY) [googleHits, okGoogle] = underCap(googleHits, GOOGLE_PER_DAY);
+  if (okGoogle) {
+    // a misconfigured key must not take the search down with it
+    try { places = await searchGoogle(q, { key: GOOGLE_PLACES_KEY, base: GOOGLE_PLACES_URL }); source = 'google'; }
+    catch (e) { console.warn('[places] google failed, using openstreetmap: ' + e.message); }
+  }
+  if (!places) places = await searchOsm(q, { base: OSM_URL });
+  const out = { places: places.slice(0, 8), source };
+  placeCache.set(key, out);
+  return out;
+}
 
 // ---------------------------------------------------------------- guards
 // The trip key is not a secret: it ships in the app's public config, so anyone
@@ -166,7 +205,13 @@ function apiError(res, e, req) {
   return send(res, 500, { error: 'Something went wrong on the concierge.', code: 'error' }, {}, req);
 }
 
-const server = http.createServer(async (req, res) => {
+const server = http.createServer((req, res) => {
+  handle(req, res).catch((e) => {
+    console.error('[handler] ' + (e && e.stack ? e.stack.split('\n').slice(0, 3).join(' | ') : e));
+    try { if (!res.headersSent) send(res, 500, { error: 'Something went wrong on the concierge.', code: 'error' }, {}, req); else res.end(); } catch (err) {}
+  });
+});
+async function handle(req, res) {
   if (req.method === 'OPTIONS') {
     // Refuse the preflight outright for a disallowed origin, so the browser
     // never even sends the real request.
@@ -183,9 +228,11 @@ const server = http.createServer(async (req, res) => {
       model: MODEL,
       key: process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — /chat and /plan will fail',
       workspace: WORKSPACE_ID || 'not pinned (fine for a workspace-scoped key)',
+      placeSearch: GOOGLE_PLACES_KEY ? 'google places (key set), then the web on request' : 'openstreetmap (no key needed), then the web on request',
       port: String(PORT),
       origins: ORIGIN_OPEN ? 'any' : ALLOW_ORIGINS,
-      limits: { perAddress: RATE_PER_IP + ' / ' + RATE_WINDOW_S + 's', perDay: RATE_PER_DAY, usedToday: dayHits.length },
+      limits: { perAddress: RATE_PER_IP + ' / ' + RATE_WINDOW_S + 's', perDay: RATE_PER_DAY, usedToday: dayHits.length,
+        mapSearchesPerDay: PLACES_PER_DAY, mapSearchesToday: prune(placeHits, 86400e3, Date.now()).length, googlePerDay: GOOGLE_PLACES_KEY ? GOOGLE_PER_DAY : 0, googleToday: prune(googleHits, 86400e3, Date.now()).length },
     }, {}, req);
   }
   if (req.method !== 'POST') return send(res, 404, { error: 'not found' }, {}, req);
@@ -193,7 +240,7 @@ const server = http.createServer(async (req, res) => {
   if (!originOk(req)) return send(res, 403, { error: 'origin not allowed' }, {}, req);
   // Burst limit first: it costs nothing and applies whether or not the key is right.
   const ipWait = ipLimited(req);
-  if (ipWait) return send(res, 429, { error: 'too many requests — try again shortly' }, { 'Retry-After': String(ipWait) }, req);
+  if (ipWait) return send(res, 429, { error: 'too many requests — try again shortly', code: 'wait' }, { 'Retry-After': String(ipWait) }, req);
   if ((req.headers['x-trip-key'] || '') !== TRIP_KEY) return send(res, 401, { error: 'bad trip key' }, {}, req);
 
   // Expanding a map share link never touches the model, so it is served before
@@ -206,6 +253,32 @@ const server = http.createServer(async (req, res) => {
       if (out.error) console.warn('[resolve] ' + out.error + ' — ' + String(url).slice(0, 120));
       return send(res, out.url ? 200 : 422, out, {}, req);
     } catch (e) { return send(res, 400, { error: 'bad request' }, {}, req); }
+  }
+
+  // Finding a place by name. The map search costs nothing and is served before
+  // the daily ceiling; searching the web is a model call and counts against it.
+  if (req.url === '/places') {
+    let body;
+    try { body = JSON.parse((await readBody(req, 4000)) || '{}'); } catch (e) { return send(res, 400, { error: 'bad request', places: [] }, {}, req); }
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return send(res, 400, { error: 'bad request', places: [] }, {}, req);
+    const q = typeof body.q === 'string' ? body.q.replace(/\s+/g, ' ').trim().slice(0, 100) : '';
+    if (q.length < 2) return send(res, 400, { error: 'type at least two letters', places: [] }, {}, req);
+    if (!body.web) {
+      try { return send(res, 200, await findPlaces(q), {}, req); }
+      catch (e) { console.warn('[places] ' + e.message); return send(res, e.busy ? 429 : 502, { error: 'The map search is not answering — try again in a moment.', code: e.busy ? 'wait' : 'unreachable', places: [] }, {}, req); }
+    }
+    const near = typeof body.near === 'string' ? body.near : '';
+    const wkey = q.toLowerCase() + '|' + near.toLowerCase(), hit = webCache.get(wkey);
+    if (hit) return send(res, 200, hit, {}, req);
+    const wait = dayLimited();
+    if (wait) return send(res, 429, { error: 'daily limit reached — the concierge is back tomorrow', code: 'limit', places: [] }, { 'Retry-After': String(wait) }, req);
+    try {
+      // each follow-up call to the model (a paused search) counts as well
+      const r = await searchWeb(q, { ask, model: MODEL, near, geocode: (a) => geocodeOsm(a, { base: OSM_URL }), more: () => !dayLimited() });
+      const out = { places: r.places, source: 'web' };
+      if (r.answered) webCache.set(wkey, out);   // a failed search is not remembered as "nothing there"
+      return send(res, 200, out, {}, req);
+    } catch (e) { return apiError(res, e, req); }
   }
 
   // Daily ceiling last, so only real calls count against the day's allowance.
@@ -264,7 +337,7 @@ const server = http.createServer(async (req, res) => {
     } catch (e) { return apiError(res, e, req); }
   }
   send(res, 404, { error: 'not found' }, {}, req);
-});
+}
 
 // Railway reaches a container over IPv6 on some stacks and IPv4 on others, and
 // a server bound to only one of them is precisely the "Application failed to

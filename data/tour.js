@@ -94,9 +94,9 @@ window.TOUR = {
       title: 'Narrow it down',
       titleRu: 'Сузьте выбор',
       titleDe: 'Eingrenzen',
-      body: 'Search by name, dish or neighbourhood. The chips pick a category — museums, bars, cafés, shopping — and Filters adds the rest: free, near home, good on a rainy day, first-timer classics. Sort by your votes, or by how close things are to home.',
-      bodyRu: 'Ищите по названию, блюду или району. Кнопки выбирают категорию — музеи, бары, кафе, шопинг, — а «Фильтры» добавляют остальное: бесплатно, рядом с домом, на дождливый день, классика для первого раза. Сортируйте по вашим голосам или по тому, насколько близко к дому.',
-      bodyDe: 'Sucht nach Namen, Gericht oder Viertel. Die Chips wählen eine Kategorie — Museen, Bars, Cafés, Shopping —, und „Filter“ ergänzt den Rest: kostenlos, nah bei uns, gut bei Regen, Klassiker für Erstbesucher. Sortiert nach euren Stimmen oder danach, wie nah etwas an der Wohnung liegt.' },
+      body: 'Search by name, dish or neighbourhood; the chips pick a category, and Filters adds the rest — free, near home, good on a rainy day. Somewhere you want is not in here? Type its name and tap 🔎 Search all of New York.',
+      bodyRu: 'Ищите по названию, блюду или району; кнопки выбирают категорию, а «Фильтры» добавляют остальное — бесплатно, рядом с домом, на дождливый день. Нужного места нет? Наберите название и нажмите «🔎 Искать по всему Нью-Йорку».',
+      bodyDe: 'Sucht nach Namen, Gericht oder Viertel; die Chips wählen eine Kategorie, „Filter“ ergänzt den Rest — kostenlos, nah bei uns, gut bei Regen. Ein Ort fehlt? Namen eintippen und auf „🔎 In ganz New York suchen“ tippen.' },
 
     { key: 'explace', tab: 'explore', open: 'place', sel: '#sheet .shdecide', icon: '❤️',
       title: 'Vote, then put it on a day',

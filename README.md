@@ -15,7 +15,10 @@ gets its own icon and works offline.
   are rewritten from what is actually on it (and its rain swaps follow too)
 - **Explore** — the places library (sights, museums, restaurants, bars, cafés,
   shopping) with links to sites, tickets, menus, reservations and Instagram, plus a
-  **swipe mode** for rating places quickly
+  **swipe mode** for rating places quickly. Anything not in the library can be
+  found by name: **Search all of New York** (in Explore and in "Add a stop") looks
+  it up on the map, or on the web, and adds it with its exact spot, address,
+  website and hours
 - **Plan** — everyone's votes sync between phones; what you both want floats up, and
   **Build my week** slots the winners into the days that actually fit them
 - **Map** — every pin, filterable by category or by day, with "near me" and a
@@ -55,6 +58,7 @@ npm run test:proxy       # the concierge's origin check and rate limits (no API 
 npm run test:concierge   # the app in a browser talking to the real proxy across origins
 npm run test:custom      # adding your own stop with a map link, through the UI on a small phone
 npm run test:chat        # the concierge's recommended places: tappable, and one tap turns them into ideas
+npm run test:lookup      # search all of New York: on a small phone, in English and Russian
 npm run test:offline     # loads the app, kills the network, reloads
 npm run test:install     # manifest, iOS tags and the right install hint per phone
 npm run serve            # http://localhost:8080
@@ -72,6 +76,16 @@ Bump `CACHE` in `sw.js` whenever `trip.ics` or the icons change.
    `ANTHROPIC_API_KEY` and `TRIP_KEY=nyc-2026`, generate a domain, paste it into
    `config.js` → `CONCIERGE_URL`. Until then the Chat tab shows a setup card and the
    ✨ Replan button on each day falls back to the built-in swaps.
+   "Search all of New York" works with no further setup: it uses OpenStreetMap,
+   and the web on request (web searches count against `RATE_PER_DAY`). For the
+   most complete results (every restaurant, with hours and website), also set
+   `GOOGLE_PLACES_KEY`: a Google Cloud API key with the **Places API (New)**
+   enabled. Google requires a billing account on the project even within its free
+   monthly allowance (about 1,000 of these searches a month). The proxy makes at
+   most `GOOGLE_PER_DAY` (default 150) Google calls a day and uses OpenStreetMap
+   after that; for a hard stop on Google's side too, set a per-day quota on the
+   Places API in the Cloud console. Restrict the key by API, not by website: it is
+   used by the server, not the browser.
 
 ## A caveat worth repeating
 

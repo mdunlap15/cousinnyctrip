@@ -15,7 +15,8 @@
     "test:proxy": "node concierge/test.mjs",
     "test:concierge": "node scripts/concierge-test.mjs",
     "test:custom": "node scripts/custom-stop-test.mjs",
-    "test:chat": "node scripts/chat-places-test.mjs"
+    "test:chat": "node scripts/chat-places-test.mjs",
+    "test:lookup": "node scripts/lookup-test.mjs"
   },
   "devDependencies": {
     "jsdom": "^24.0.0",

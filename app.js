@@ -70,10 +70,15 @@ const S = {
   swipeHint: ['Swipe right = want, left = skip, up = maybe. Everyone\'s votes sync.', 'Вправо = хочу, влево = нет, вверх = может быть. Голоса синхронизируются.', 'Nach rechts = will ich, links = nein, hoch = vielleicht. Alle Stimmen werden synchronisiert.'],
   deckDone: ['You have rated everything in this view 🎉 — change the filter or head to Plan.', 'Вы оценили всё в этой подборке 🎉 — смените фильтр или загляните в План.', 'Du hast alles in dieser Auswahl bewertet 🎉 — Filter ändern oder weiter zum Plan.'],
   left: ['left to rate', 'осталось оценить', 'noch zu bewerten'], exitSwipe: ['✕ Exit swipe', '✕ Выйти', '✕ Swipe beenden'],
-  bothWant: ['both want', 'хотите обе', 'wollen beide'], oneWants: ['one wants', 'хочет одна', 'will eine'], scheduled: ['scheduled', 'в плане', 'im Plan'], ratedByMe: ['rated by me', 'оценено мной', 'von mir bewertet'],
+  bothWant: ['both want', 'хотите обе', 'wollen beide'], oneWants: ['one wants', 'хочет одна', 'will eine'],
+  bothWant3: ['{n}+ want', 'хотят {n}+', '{n}+ wollen'], oneWants3: ['one wants', 'хочет кто-то', 'will jemand'],
+  bothWantH: ['Both want ❤️❤️', 'Хотите обе ❤️❤️', 'Wollen beide ❤️❤️'], bothWantH3: ['Most of you want ❤️❤️', 'Хочет большинство ❤️❤️', 'Die meisten von euch wollen ❤️❤️'],
+  bothWantSub: ['Tap 📅 to put it in a day — the day picker recommends the best fit.', 'Нажмите 📅, чтобы поставить в день — выбор дня подскажет, куда лучше.', 'Tippt 📅, um es in einen Tag zu setzen — die Tagesauswahl schlägt den besten vor.'],
+  bothWantSub3: ['At least {n} of you said ❤️ and nobody said ✕. Tap 📅 to put it in a day — the day picker recommends the best fit.', 'Минимум {n} из вас сказали ❤️, и никто не сказал ✕. Нажмите 📅, чтобы поставить в день — выбор дня подскажет, куда лучше.', 'Mindestens {n} von euch haben ❤️ gesagt und niemand ✕. Tippt 📅, um es in einen Tag zu setzen — die Tagesauswahl schlägt den besten vor.'],
+  oneWantsH: ['One of you wants', 'Хочет одна из вас', 'Eine von euch will'], oneWantsH3: ['One of you wants', 'Хочет кто-то из вас', 'Jemand von euch will'], scheduled: ['scheduled', 'в плане', 'im Plan'], ratedByMe: ['rated by me', 'оценено мной', 'von mir bewertet'],
   nothingYet: ['Nothing here yet — rate a few places in Explore.', 'Пока пусто — оцените несколько мест в разделе «Места».', 'Noch nichts hier — bewertet ein paar Orte unter „Entdecken“.'],
-  buildTitle: ['Build my week', 'Собрать неделю', 'Meine Woche bauen'], buildIntro: ['Everything you both want (and nobody vetoed) that is not in the plan yet, slotted into the day that fits its neighborhood and pace. Nothing is saved until you tap Apply.', 'Всё, чего хотите обе (и никто не против), чего ещё нет в плане, — по дням, подходящим по району и темпу. Ничего не сохраняется, пока вы не нажмёте «Применить».', 'Alles, was ihr beide wollt (und niemand abgelehnt hat) und noch nicht im Plan steht — einsortiert in den Tag, der vom Viertel und vom Tempo her passt. Gespeichert wird erst, wenn du auf Übernehmen tippst.'],
-  apply: ['✓ Apply to the plan', '✓ Применить', '✓ In den Plan übernehmen'], cancel: ['Cancel', 'Отмена', 'Abbrechen'], nothingToAdd: ['Nothing to add — everything you both want is already in the plan.', 'Добавлять нечего — всё, чего хотите обе, уже в плане.', 'Nichts hinzuzufügen — alles, was ihr beide wollt, steht schon im Plan.'], noFit: ['no free day fits', 'нет подходящего дня', 'kein freier Tag passt'],
+  buildTitle: ['Build my week', 'Собрать неделю', 'Meine Woche bauen'], buildIntro: ['Everything you want (and nobody vetoed) that is not in the plan yet, top picks first, slotted into the day that fits its neighborhood and pace. Nothing is saved until you tap Apply.', 'Всё, чего вы хотите (и никто не против), чего ещё нет в плане, — сначала главное, по дням, подходящим по району и темпу. Ничего не сохраняется, пока вы не нажмёте «Применить».', 'Alles, was ihr wollt (und niemand abgelehnt hat) und noch nicht im Plan steht, das Beliebteste zuerst — einsortiert in den Tag, der vom Viertel und vom Tempo her passt. Gespeichert wird erst, wenn du auf Übernehmen tippst.'],
+  apply: ['✓ Apply to the plan', '✓ Применить', '✓ In den Plan übernehmen'], cancel: ['Cancel', 'Отмена', 'Abbrechen'], nothingToAdd: ['Nothing to add — everything you want is already in the plan.', 'Добавлять нечего — всё, чего вы хотите, уже в плане.', 'Nichts hinzuzufügen — alles, was ihr wollt, steht schon im Plan.'], noFit: ['no free day fits', 'нет подходящего дня', 'kein freier Tag passt'],
   applied: ['Added to the plan', 'Добавлено в план', 'Zum Plan hinzugefügt'],
   pickDay: ['Which day?', 'В какой день?', 'An welchem Tag?'], pickStop: ['Add a stop', 'Добавить пункт', 'Stopp hinzufügen'], custom: ['✎ Custom stop', '✎ Свой пункт', '✎ Eigener Stopp'], customName: ['What is it?', 'Что это?', 'Was ist es?'],
   mapLink: ['Map link — optional', 'Ссылка на карту — по желанию', 'Kartenlink — optional'],
@@ -243,8 +248,15 @@ const isVoter = (k) => VOTERS.indexOf(k) >= 0;
 if (me && !isVoter(me)) { me = null; try { localStorage.removeItem(LSK + '-who'); } catch (e) {} }
 function votesFor(ref) { const v = state.vote[ref]; return (v && typeof v === 'object') ? v : {}; }
 function voteScore(ref) { const v = votesFor(ref); return VOTERS.reduce((s, k) => s + (VOTEV[v[k]] || 0), 0); }
-function bothWant(ref) { const v = votesFor(ref); return VOTERS.length > 0 && VOTERS.every(k => v[k] === 'yes'); }
-function oneWants(ref) { const v = votesFor(ref); return VOTERS.some(k => v[k] === 'yes') && !bothWant(ref) && !VOTERS.some(k => v[k] === 'no'); }
+// A top pick: most of the voters said yes and nobody said no (with two voters,
+// that is both of them). One wants: a yes, not yet a top pick, and no "no".
+// A "no" from anyone keeps a place off both lists and out of Build my week.
+function yesCount(ref) { const v = votesFor(ref); return VOTERS.filter(k => v[k] === 'yes').length; }
+function vetoed(ref) { const v = votesFor(ref); return VOTERS.some(k => v[k] === 'no'); }
+function topPick(ref) { return VOTERS.length > 0 && yesCount(ref) * 2 > VOTERS.length && !vetoed(ref); }
+function oneWants(ref) { return yesCount(ref) > 0 && !topPick(ref) && !vetoed(ref); }
+// The words for those two lists depend on how many people vote.
+const tierWord = (k) => t(VOTERS.length > 2 ? k + '3' : k).replace('{n}', String(Math.floor(VOTERS.length / 2) + 1));
 function setVote(ref, val) {
   if (!me) { toast(t('pickWhoFirst')); return; }
   const v = Object.assign({}, votesFor(ref));
@@ -881,9 +893,9 @@ function eventDate(p) {
 }
 function buildWeek() {
   const seen = new Set(); DAYKEYS.forEach(d => agIds(d).forEach(id => seen.add(id)));
-  const cands = PLACES.filter(p => !seen.has('p:' + p.id) && (bothWant('p:' + p.id) || voteScore('p:' + p.id) >= 2))
-    .map(p => ({ p, s: voteScore('p:' + p.id) + (bothWant('p:' + p.id) ? 3 : 0) + ((p.tags || []).indexOf('first-timer') >= 0 ? 1 : 0) })).sort((a, b) => b.s - a.s);
-  Object.entries(state.custom || {}).forEach(([k, c]) => { if (!c || c.deleted) return; const ref = 'c:' + k; if (!seen.has(ref) && voteScore(ref) >= 2) cands.push({ p: { id: k, custom: true, name: c.name, dur: c.d || 60, best: 'afternoon', lat: c.lat, lng: c.lng, tags: [] }, s: voteScore(ref), ref }); });
+  const cands = PLACES.filter(p => !seen.has('p:' + p.id) && !vetoed('p:' + p.id) && (topPick('p:' + p.id) || voteScore('p:' + p.id) >= 2))
+    .map(p => ({ p, s: voteScore('p:' + p.id) + (topPick('p:' + p.id) ? 3 : 0) + ((p.tags || []).indexOf('first-timer') >= 0 ? 1 : 0) })).sort((a, b) => b.s - a.s);
+  Object.entries(state.custom || {}).forEach(([k, c]) => { if (!c || c.deleted) return; const ref = 'c:' + k; if (!seen.has(ref) && !vetoed(ref) && voteScore(ref) >= 2) cands.push({ p: { id: k, custom: true, name: c.name, dur: c.d || 60, best: 'afternoon', lat: c.lat, lng: c.lng, tags: [] }, s: voteScore(ref), ref }); });
   const plan = {}; const skipped = [];
   const virtual = {}; DAYKEYS.forEach(d => { virtual[d] = agIds(d).slice(); });
   cands.forEach(c => {
@@ -1270,17 +1282,17 @@ function fillGap(day, idx) {
   const cands = PLACES.filter(p => {
     if (p.lat == null || inDay.has('p:' + p.id)) return false;
     if (Array.isArray(p.closed) && p.closed.indexOf(dow) >= 0) return false;
-    if (voteScore('p:' + p.id) < 0) return false;
+    if (vetoed('p:' + p.id)) return false;
     const inA = from ? agTravel(from, [p.lat, p.lng]) : 0;
     const outB = to ? agTravel([p.lat, p.lng], to) : 0;
     const need = inA + Math.min(p.dur || 60, 90) + outB;
     return need <= slack + after.gap + 15;
   }).map(p => {
     const inA = from ? agTravel(from, [p.lat, p.lng]) : 0, outB = to ? agTravel([p.lat, p.lng], to) : 0;
-    return { p, detour: inA + outB - after.gap, stay: Math.min(p.dur || 60, Math.max(30, slack - (inA + outB - after.gap))), score: voteScore('p:' + p.id) * 8 + (bothWant('p:' + p.id) ? 20 : 0) - (inA + outB) };
+    return { p, detour: inA + outB - after.gap, stay: Math.min(p.dur || 60, Math.max(30, slack - (inA + outB - after.gap))), score: voteScore('p:' + p.id) * 8 + (topPick('p:' + p.id) ? 20 : 0) - (inA + outB) };
   }).sort((a, b) => b.score - a.score).slice(0, 8);
   const html = '<h3>' + t('fillGapTitle') + '</h3><p class="meta">' + agHM(before.end) + '–' + agHM(after.start) + ' · ' + slack + ' ' + t('minutes') + ' ' + t('free') + ' · ' + esc(stopLabel(before.it)) + ' → ' + esc(stopLabel(after.it)) + '</p>' +
-    (cands.length ? cands.map(x => '<div class="pkrow" data-fill="' + esc(x.p.id) + '" data-stay="' + x.stay + '"><div class="pn">' + (CAT[x.p.cat] || CAT.idea).ico + ' ' + esc(placeName(x.p)) + '<small>' + esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + ' · +' + Math.max(0, Math.round(x.detour)) + ' ' + t('minutes') + ' ' + t('detour') + ' ' + voteBadges('p:' + x.p.id) + '</small></div><button type="button" class="pk-b' + (bothWant('p:' + x.p.id) ? ' rec' : '') + '">＋ ' + x.stay + '′</button></div>').join('') : '<p class="gsub">' + t('fillGapNone') + '</p>') +
+    (cands.length ? cands.map(x => '<div class="pkrow" data-fill="' + esc(x.p.id) + '" data-stay="' + x.stay + '"><div class="pn">' + (CAT[x.p.cat] || CAT.idea).ico + ' ' + esc(placeName(x.p)) + '<small>' + esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + ' · +' + Math.max(0, Math.round(x.detour)) + ' ' + t('minutes') + ' ' + t('detour') + ' ' + voteBadges('p:' + x.p.id) + '</small></div><button type="button" class="pk-b' + (topPick('p:' + x.p.id) ? ' rec' : '') + '">＋ ' + x.stay + '′</button></div>').join('') : '<p class="gsub">' + t('fillGapNone') + '</p>') +
     '<div class="sheetacts"><button class="act" type="button" id="fg-browse">' + t('addStop') + '</button></div>';
   openSheet(html, () => {
     $$('#sheet [data-fill]').forEach(r => { r.onclick = () => { const id = r.dataset.fill; const stay = Number(r.dataset.stay); const inA = from ? agTravel(from, [PL[id].lat, PL[id].lng]) : 0; agInsert(day, 'p:' + id, { after: before.it.id, at: before.end + inA }); agSetDur(day, 'p:' + id, stay); closeSheet(); toast(t('applied')); }; });
@@ -1440,10 +1452,11 @@ function renderPlan() {
   if (pm) { pm.placeholder = t('mapLinkPh'); pm.setAttribute('aria-label', t('mapLink')); }
   if (pw) { pw.placeholder = t('webLink'); pw.setAttribute('aria-label', t('webLink')); }
   const refs = PLACES.map(p => 'p:' + p.id).concat(Object.keys(state.custom || {}).filter(k => state.custom[k] && !state.custom[k].deleted).map(k => 'c:' + k));
-  const both = refs.filter(bothWant), one = refs.filter(oneWants);
+  const both = refs.filter(topPick), one = refs.filter(oneWants);
   const sched = new Set(); DAYKEYS.forEach(d => agIds(d).forEach(id => sched.add(id)));
   const mine = me ? refs.filter(r => votesFor(r)[me]).length : 0;
-  $('#planstats').innerHTML = [[both.length, t('bothWant')], [one.length, t('oneWants')], [Array.from(sched).filter(x => !x.startsWith('x:')).length, t('scheduled')]].map(x => '<div class="pstat"><b>' + x[0] + '</b><span>' + x[1] + '</span></div>').join('');
+  $('#bothwanth').textContent = tierWord('bothWantH'); $('#bothwantsub').textContent = tierWord('bothWantSub'); $('#onewantsh').textContent = tierWord('oneWantsH');
+  $('#planstats').innerHTML = [[both.length, tierWord('bothWant')], [one.length, tierWord('oneWants')], [Array.from(sched).filter(x => !x.startsWith('x:')).length, t('scheduled')]].map(x => '<div class="pstat"><b>' + x[0] + '</b><span>' + x[1] + '</span></div>').join('');
   const nameOf = (ref) => { const it = seedFor(ref); return it ? stopLabel(it) : ref; };
   const item = (ref, cls) => {
     const days = scheduledDays(ref); const it = seedFor(ref); const p = it && it.place;
@@ -1464,7 +1477,7 @@ function renderPlan() {
 // ---------------------------------------------------------------- who
 function renderWho() {
   $$('.whoslot').forEach(sl => {
-    sl.innerHTML = '<p class="gsub" style="margin:0 0 6px">' + t('pickWho') + '</p><div class="who">' + TR.filter(tr => isVoter(tr[0])).map(tr => '<button type="button" data-who="' + tr[0] + '" aria-pressed="' + String(me === tr[0]) + '">' + (tr[3] || '') + ' ' + esc(whoName(tr[0])) + '</button>').join('') + '</div>';
+    sl.innerHTML = '<p class="gsub" style="margin:0 0 6px">' + t('pickWho') + '</p><div class="who">' + TR.filter(tr => isVoter(tr[0])).map(tr => '<button type="button" data-who="' + tr[0] + '" aria-pressed="' + String(me === tr[0]) + '"><span class="we">' + (tr[3] || '') + '</span> <span class="wn">' + esc(whoName(tr[0])) + '</span></button>').join('') + '</div>';
   });
   $$('.who button').forEach(b => { b.onclick = () => { me = b.dataset.who; try { localStorage.setItem(LSK + '-who', me); } catch (e) {} queueRender(); if (EX.deck) deckStart(); }; });
 }
@@ -1854,7 +1867,7 @@ function chatContext() {
   const tk = todayKey(); const dk = DAYS.find(d => d.date === tk) || DAYS[0];
   const dayTxt = (k) => { return dayLabel(k) + ' ' + dayStory(k, 'en').title + ':\n' + agReflow(k, agIds(k)).map(r => '  ' + agHM(r.start) + ' ' + r.it.en + (r.it.place ? ' [' + r.it.place.hood + ']' : '')).join('\n'); };
   const next = DAYKEYS[DAYKEYS.indexOf(dk.key) + 1];
-  const wish = PLACES.filter(p => voteScore('p:' + p.id) > 0).sort((a, b) => voteScore('p:' + b.id) - voteScore('p:' + a.id)).slice(0, 15).map(p => p.name + ' (' + p.hood + (bothWant('p:' + p.id) ? ', both want' : '') + ')').join('; ');
+  const wish = PLACES.filter(p => voteScore('p:' + p.id) > 0).sort((a, b) => voteScore('p:' + b.id) - voteScore('p:' + a.id)).slice(0, 15).map(p => p.name + ' (' + p.hood + (topPick('p:' + p.id) ? ', a top pick' : '') + ')').join('; ');
   return 'Phone belongs to: ' + (me ? whoName(me) : 'unknown') + '\nCURRENT PLAN\n' + dayTxt(dk.key) + (next ? '\n' + dayTxt(next) : '') + '\nWISHLIST (top votes): ' + (wish || 'none yet') + (WX[dk.key] ? '\nWEATHER ' + dk.key + ': ' + WX[dk.key].hi + '/' + WX[dk.key].lo + '°C' + (WX[dk.key].rain ? ' rain likely' : '') : '');
 }
 async function sendChat(text) {

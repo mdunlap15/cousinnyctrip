@@ -29,9 +29,10 @@ for (const lane of Object.keys(lanes).sort()) {
     for (const u of ['web', 'tickets', 'reserve', 'menu', 'ig']) { if (p[u] && !/^https?:\/\//.test(p[u])) { problems.push(`${lane}/${p.id}: ${u} not a URL (${p[u]}) — blanked`); p[u] = ''; } if (p[u] == null) p[u] = ''; }
     p.closed = Array.isArray(p.closed) ? p.closed.map(x => String(x).toLowerCase().slice(0, 3)).filter(x => ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].includes(x)) : [];
     p.tags = Array.isArray(p.tags) ? p.tags : []; p.tips = Array.isArray(p.tips) ? p.tips : [];
-    // The trip is for Yulia and Tatyana only. The research lanes were written
-    // when Mike joined some evenings: drop his flag and tag here. Their text
-    // still mentions him, and npm test fails until it is rewritten.
+    // The places are described for Yulia and Tatyana's outings (Mike plans and
+    // votes in the app, but the library is not written around him). The research
+    // lanes were written when he joined some evenings: drop that flag and tag
+    // here. Their text still mentions him, and npm test fails until it is rewritten.
     delete p.mike; p.tags = p.tags.filter(t => t !== 'mike-evening');
     if (p.tipsRu && !Array.isArray(p.tipsRu)) delete p.tipsRu;
     if (seen.has(p.id)) {

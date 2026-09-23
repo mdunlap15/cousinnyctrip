@@ -49,7 +49,7 @@
       <span class="fact tripcount" hidden></span>
       <span class="fact"><b>Sep 26 → Oct 4</b></span>
       <span class="fact"><b>Park Slope</b> · 490A 7th Ave</span>
-      <span class="fact"><b>Yulia</b> · Tatyana</span>
+      <span class="fact"><b>Yulia</b> · Tatyana · Mike</span>
     </div>
     <button class="sharebtn" id="sharebtn" type="button"><span class="L-en">Share this app ↗</span><span class="L-ru">Поделиться приложением ↗</span><span class="L-de">App teilen ↗</span></button>
   </div>
@@ -107,15 +107,15 @@
     <div class="phead">
       <div class="kicker"><span class="no">✦</span><span class="eyebrow"><span class="L-en">Synced between your phones</span><span class="L-ru">Синхронизировано между телефонами</span><span class="L-de">Zwischen euren Handys synchronisiert</span></span></div>
       <h2><span class="L-en">Build the week</span><span class="L-ru">Соберите неделю</span><span class="L-de">Die Woche bauen</span></h2>
-      <p class="lede"><span class="L-en">Rate places ❤️ 🤔 ✕ in Explore or Swipe mode — the two of you see each other's votes as they land. What you both want floats to the top here, and one tap slots it into the day that fits it best.</span><span class="L-ru">Оценивайте места ❤️ 🤔 ✕ в разделе «Места» или в свайпе — вы вдвоём сразу видите голоса друг друга. То, чего хотите обе, всплывает здесь наверх, и одним нажатием встаёт в самый подходящий день.</span><span class="L-de">Bewertet Orte mit ❤️ 🤔 ✕ unter „Entdecken“ oder im Swipe-Modus — ihr zwei seht die Stimmen der anderen sofort. Was ihr beide wollt, steht hier oben, und ein Tipp setzt es in den Tag, der am besten passt.</span></p>
+      <p class="lede"><span class="L-en">Rate places ❤️ 🤔 ✕ in Explore or Swipe mode — everyone sees everyone's votes as they land. What you agree on floats to the top here, and one tap slots it into the day that fits it best.</span><span class="L-ru">Оценивайте места ❤️ 🤔 ✕ в разделе «Места» или в свайпе — все сразу видят голоса друг друга. То, в чём вы сходитесь, всплывает здесь наверх, и одним нажатием встаёт в самый подходящий день.</span><span class="L-de">Bewertet Orte mit ❤️ 🤔 ✕ unter „Entdecken“ oder im Swipe-Modus — alle sehen die Stimmen der anderen sofort. Worin ihr euch einig seid, steht hier oben, und ein Tipp setzt es in den Tag, der am besten passt.</span></p>
     </div>
     <div class="whoslot"></div>
     <div id="plansetup" class="setupcard" hidden></div>
     <div class="grp"><div class="planstats" id="planstats"></div>
       <div class="acts wrap2"><button class="act site" id="buildweek" type="button"><span class="L-en">✨ Build my week from our votes</span><span class="L-ru">✨ Собрать неделю из наших голосов</span><span class="L-de">✨ Woche aus unseren Stimmen bauen</span></button><button class="act" id="gotoswipe" type="button"><span class="L-en">🃏 Rate more places</span><span class="L-ru">🃏 Оценить ещё</span><span class="L-de">🃏 Mehr Orte bewerten</span></button></div>
     </div>
-    <div class="grp"><h3><span class="L-en">Both want ❤️❤️</span><span class="L-ru">Хотите обе ❤️❤️</span><span class="L-de">Wollen beide ❤️❤️</span></h3><p class="gsub"><span class="L-en">Tap 📅 to put it in a day — the day picker recommends the best fit.</span><span class="L-ru">Нажмите 📅, чтобы поставить в день — выбор дня подскажет, куда лучше.</span><span class="L-de">Tippt 📅, um es in einen Tag zu setzen — die Tagesauswahl schlägt den besten vor.</span></p><div id="bothwant"></div></div>
-    <div class="grp"><h3><span class="L-en">One of you wants</span><span class="L-ru">Хочет одна из вас</span><span class="L-de">Eine von euch will</span></h3><div id="onewants"></div></div>
+    <div class="grp"><h3 id="bothwanth"></h3><p class="gsub" id="bothwantsub"></p><div id="bothwant"></div></div>
+    <div class="grp"><h3 id="onewantsh"></h3><div id="onewants"></div></div>
     <div class="grp"><h3><span class="L-en">Add your own idea</span><span class="L-ru">Добавьте свою идею</span><span class="L-de">Eigene Idee hinzufügen</span></h3>
       <div class="exform"><input id="propin" type="text" placeholder="e.g. Nails on Thursday? A Yankees game?" /><input id="propmin" type="number" inputmode="numeric" placeholder="min" value="90" /><button id="propadd" type="button"><span class="L-en">Add</span><span class="L-ru">Добавить</span><span class="L-de">Hinzufügen</span></button></div>
       <div class="exform links"><input id="propmap" type="url" inputmode="url" autocomplete="off" placeholder="Map link — optional" aria-label="Map link" /><input id="propweb" type="url" inputmode="url" autocomplete="off" placeholder="Website or menu — optional" aria-label="Website or menu" /></div>
@@ -218,11 +218,11 @@
       <button class="mitem" data-go="bookings"><b><span class="L-en">Bookings</span><span class="L-ru">Брони</span><span class="L-de">Buchungen</span></b><span><span class="L-en">Flights · tickets · tables · calendar</span><span class="L-ru">Рейсы · билеты · столики · календарь</span><span class="L-de">Flüge · Tickets · Tische · Kalender</span></span></button>
       <button class="mitem" data-go="guide"><b><span class="L-en">Guide</span><span class="L-ru">Гид</span><span class="L-de">Infos</span></b><span><span class="L-en">Airport · subway · money · safety</span><span class="L-ru">Аэропорт · метро · деньги · безопасность</span><span class="L-de">Flughafen · U-Bahn · Geld · Sicherheit</span></span></button>
       <button class="mitem" data-go="notes"><b><span class="L-en">Notes &amp; packing</span><span class="L-ru">Заметки и сборы</span><span class="L-de">Notizen &amp; Packliste</span></b><span><span class="L-en">Shared notes · checklist</span><span class="L-ru">Общие заметки · чек-лист</span><span class="L-de">Gemeinsame Notizen · Checkliste</span></span></button>
-      <button class="mitem" data-go="chat"><b><span class="L-en">Concierge</span><span class="L-ru">Консьерж</span><span class="L-de">Concierge</span></b><span><span class="L-en">Ask anything, EN/RU</span><span class="L-ru">Спросите что угодно</span><span class="L-de">Frag alles — DE/RU/EN</span></span></button>
+      <button class="mitem" data-go="chat"><b><span class="L-en">Concierge</span><span class="L-ru">Консьерж</span><span class="L-de">Concierge</span></b><span><span class="L-en">Ask anything, EN/RU/DE</span><span class="L-ru">Спросите что угодно</span><span class="L-de">Frag alles — DE/RU/EN</span></span></button>
     </div>
     <div class="grp"><h3><span class="L-en">Settings</span><span class="L-ru">Настройки</span><span class="L-de">Einstellungen</span></h3>
       <div class="whoslot"></div>
-      <div class="setrow"><label><span class="L-en">Show names as</span><span class="L-ru">Показывать имена как</span><span class="L-de">Namen anzeigen als</span></label><div class="exform pair"><input id="nameY" type="text" placeholder="Yulia" /><input id="nameT" type="text" placeholder="Tatyana" /></div></div>
+      <div class="setrow"><label><span class="L-en">Show names as</span><span class="L-ru">Показывать имена как</span><span class="L-de">Namen anzeigen als</span></label><div class="exform three"><input id="nameY" type="text" placeholder="Yulia" /><input id="nameT" type="text" placeholder="Tatyana" /><input id="nameM" type="text" placeholder="Mike" /></div></div>
       <div class="setrow"><label><span class="L-en">Pace we're aiming for</span><span class="L-ru">Какой темп хотим</span><span class="L-de">Gewünschtes Tempo</span></label><div class="vchips" id="pacepick"></div></div>
       <div class="setrow"><label><span class="L-en">Show me around again</span><span class="L-ru">Показать обзор заново</span><span class="L-de">Rundgang noch einmal</span></label><p class="gsub"><span class="L-en">A one-minute walkthrough of the app: what each tab does and how to move stops around.</span><span class="L-ru">Минутный обзор приложения: что делает каждая вкладка и как переставлять пункты.</span><span class="L-de">Ein einminütiger Rundgang: was jeder Tab macht und wie ihr Stopps verschiebt.</span></p><button id="tourreplay" type="button"><span class="L-en">▶ Start the tour</span><span class="L-ru">▶ Запустить обзор</span><span class="L-de">▶ Rundgang starten</span></button></div>
       <div class="setrow"><label><span class="L-en">Install on your phone</span><span class="L-ru">Установить на телефон</span><span class="L-de">Auf dem Handy installieren</span></label><p class="gsub"><span class="L-en">iPhone: open this page in Safari → Share (the square with the ↑) → <b>Add to Home Screen</b>. It gets its own icon and works offline.</span><span class="L-ru">iPhone: откройте эту страницу в Safari → «Поделиться» (квадрат со стрелкой ↑) → <b>«На экран “Домой”»</b>. У приложения будет своя иконка, и оно работает офлайн.</span><span class="L-de">iPhone: diese Seite in Safari öffnen → „Teilen“ (Quadrat mit ↑) → <b>„Zum Home-Bildschirm“</b>. Sie bekommt ein eigenes Symbol und funktioniert offline.</span></p><button id="a2hs" type="button"><span class="L-en">Install app</span><span class="L-ru">Установить</span><span class="L-de">App installieren</span></button></div>
@@ -240,7 +240,7 @@
 
 <footer>
   <div class="wrap">
-    <div class="sig">🗽 <span class="L-en">Yulia &amp; Tatyana</span><span class="L-ru">Юля и Таня</span><span class="L-de">Yulia &amp; Tatyana</span></div>
+    <div class="sig">🗽 <span class="L-en">Yulia, Tatyana &amp; Mike</span><span class="L-ru">Юля, Таня и Майк</span><span class="L-de">Yulia, Tatyana &amp; Mike</span></div>
     <div class="mono"><span class="L-en">New York · Sep 26 – Oct 4 2026 · Park Slope, Brooklyn</span><span class="L-ru">Нью-Йорк · 26 сен – 4 окт 2026 · Парк-Слоуп, Бруклин</span><span class="L-de">New York · 26. Sep – 4. Okt 2026 · Park Slope, Brooklyn</span></div>
   </div>
 </footer>

@@ -23,9 +23,13 @@ window.TRIP = {
   QUICKQS_DE: ['Was machen wir jetzt gerade?', 'Es regnet — plan den Tag um', 'Such uns ein Abendessen in der Nähe', 'Hilf mir, morgen zu planen'],
 
   // [key, name, russian name, emoji, german name]. Keys are stored in the shared votes/plan.
-  TRAVELERS: [['Y', 'Yulia', 'Юля', '🌸', 'Yulia'], ['T', 'Tatyana', 'Таня', '🌻', 'Tatyana']],
-  // Who votes on places: both of them.
-  VOTERS: ['Y', 'T'],
+  // Everyone listed here can pick their phone, rate places and edit the plan.
+  // The trip is Yulia and Tatyana's (bookings are for two); Mike, Yulia's
+  // husband, helps build it from his own phone.
+  TRAVELERS: [['Y', 'Yulia', 'Юля', '🌸', 'Yulia'], ['T', 'Tatyana', 'Таня', '🌻', 'Tatyana'], ['M', 'Mike', 'Майк', '🎷', 'Mike']],
+  // Who votes on places: all three. A place is a top pick when most of them
+  // say yes and nobody says no.
+  VOTERS: ['Y', 'T', 'M'],
 
   FLIGHTS: [
     { key: 'out', who: 'Tatyana', date: '2026-09-26', legs: [

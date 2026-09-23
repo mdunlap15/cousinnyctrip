@@ -965,6 +965,123 @@ if (booted) {
     click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home'));
   }
 
+  // ---- three members: Yulia, Tatyana and Mike ----
+  console.log('three members:');
+  {
+    const realFetchM = window.fetch, savedVotes = NYC.state.vote, savedMe = NYC.me;
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home')); NYC.renderAll(); await settle();
+    const whoBtns = [...document.querySelectorAll('#home .whoslot .who button[data-who]')];
+    const whoSeen = whoBtns.map(b => b.dataset.who + ' ' + b.textContent.trim()).join(' | ');
+    if (whoSeen !== 'Y 🌸 Yulia | T 🌻 Tatyana | M 🎷 Mike') fail('"Whose phone is this?" does not offer Yulia, Tatyana and Mike: ' + whoSeen);
+    else if ([...document.querySelectorAll('#plan .whoslot .who button[data-who]')].map(b => b.dataset.who).join('') !== 'YTM') fail('the Plan tab\'s "Whose phone is this?" does not offer all three');
+    else ok('"Whose phone is this?" offers ' + whoSeen);
+    NYC.me = null; click(whoBtns[2]); await settle();
+    const stored = Object.keys(window.localStorage).filter(k => /-who$/.test(k)).map(k => window.localStorage.getItem(k))[0];
+    const pressed = [...document.querySelectorAll('#home .whoslot .who button[aria-pressed="true"]')].map(b => b.dataset.who).join('');
+    if (NYC.me !== 'M' || stored !== 'M' || pressed !== 'M') fail('tapping Mike did not make this Mike\'s phone: ' + JSON.stringify({ me: NYC.me, stored, pressed }));
+    else ok('tapping Mike makes this Mike\'s phone, and it is remembered');
+    // Mike votes like the others, from a place page
+    NYC.state.vote = {};
+    const unsched = PLACES.filter(p => !T.DAYS.some(d => NYC.agIds(d.key).indexOf('p:' + p.id) >= 0) && p.lat != null && !(p.closed || []).length).slice(0, 8);
+    const [pA, pB, pC, pD, pE, pF] = unsched;
+    NYC.openPlace(pC.id); await settle();
+    const mv = document.querySelector('#sheet [data-vote="yes"]'); if (mv) click(mv); await settle();
+    const voteLbl = (document.querySelector('#sheet .votebox .vl') || {}).textContent || '';
+    document.querySelector('#sheet .closebtn') && click(document.querySelector('#sheet .closebtn'));
+    if (!(NYC.state.vote['p:' + pC.id] && NYC.state.vote['p:' + pC.id].M === 'yes')) fail('Mike\'s vote from the place page was not stored: ' + JSON.stringify(NYC.state.vote['p:' + pC.id]));
+    else if (!/Mike/.test(voteLbl)) fail('the place page does not say whose vote it is: ' + voteLbl);
+    else ok('Mike votes from a place page, and the page says it is his vote');
+    // majority, no veto: the Plan tab's two lists
+    Object.assign(NYC.state.vote, {
+      ['p:' + pA.id]: { Y: 'yes', T: 'yes' },                // two of three: a top pick without Mike
+      ['p:' + pB.id]: { Y: 'yes', M: 'yes' },                // two of three with Mike
+      ['p:' + pD.id]: { Y: 'yes', T: 'yes', M: 'no' },       // a veto
+      ['p:' + pE.id]: { Y: 'yes', T: 'maybe' },              // one yes
+      ['p:' + pF.id]: { T: 'yes', M: 'yes', Y: 'maybe' },    // two yes and a maybe
+    });
+    NYC.renderAll(); await settle();
+    const inList = (sel) => [pA, pB, pC, pD, pE, pF].map((p, i) => document.querySelector(sel + ' [data-pick="p:' + p.id + '"]') ? 'ABCDEF'[i] : '').join('');
+    const top = inList('#bothwant'), one = inList('#onewants');
+    const statTxt = [...document.querySelectorAll('#planstats .pstat')].map(x => x.textContent).join(' | ');
+    const heads = [document.getElementById('bothwanth').textContent, document.getElementById('onewantsh').textContent, document.getElementById('bothwantsub').textContent];
+    if (top !== 'ABF' || one !== 'CE') fail('the Plan tab sorted the votes wrongly: top picks ' + top + ' (want ABF), one wants ' + one + ' (want CE)');
+    else if (!/^3\s*2\+ want/.test(statTxt) || !/^2\s*one wants/.test(statTxt.split(' | ')[1] || '')) fail('the Plan tab counts are not "3 · 2+ want" and "2 · one wants": ' + statTxt);
+    else if (heads[0] !== 'Most of you want ❤️❤️' || heads[1] !== 'One of you wants' || !/^At least 2 of you said ❤️ and nobody said ✕\./.test(heads[2])) fail('the Plan tab headings are not worded for three: ' + JSON.stringify(heads));
+    else ok('with three voting, two yeses and no ✕ make a top pick (with or without Mike), one yes is "one wants", and a ✕ from anyone keeps it off both');
+    const vb = (document.querySelector('#bothwant [data-pick="p:' + pB.id + '"]') || { closest: () => null }).closest('.glcard');
+    if (!vb || !/🎷❤️/.test(vb.textContent)) fail('Mike\'s vote badge is not on the card'); else ok('Mike\'s 🎷 badge shows on the cards he voted for');
+    const bw = NYC.buildWeek(); const considered = new Set([].concat(...Object.values(bw.plan).map(a => a.map(x => x.ref))).concat(bw.skipped.map(p => 'p:' + p.id)));
+    if (considered.has('p:' + pD.id)) fail('Build my week took a place Mike said no to');
+    else if (!['A', 'B', 'F'].every((k, i) => considered.has('p:' + [pA, pB, pF][i].id))) fail('Build my week left out a top pick');
+    else ok('Build my week takes every top pick, and nothing anyone said no to');
+    // the words, in Russian and German
+    if (document.body.dataset.lang !== 'en') fail('expected English before the language check, got ' + document.body.dataset.lang);
+    const planWords = () => [document.getElementById('bothwanth').textContent, document.getElementById('onewantsh').textContent, [...document.querySelectorAll('#planstats .pstat span')].map(x => x.textContent).join('/'), document.querySelector('#plan .lede').innerText || document.querySelector('#plan .lede').textContent];
+    click(document.getElementById('langbtn')); await settle();
+    const ru = planWords();
+    click(document.getElementById('langbtn')); await settle();
+    const de = planWords();
+    click(document.getElementById('langbtn')); await settle();
+    const enLede = document.querySelector('#plan .lede .L-en').textContent, ruLede = document.querySelector('#plan .lede .L-ru').textContent, deLede = document.querySelector('#plan .lede .L-de').textContent;
+    if (ru[0] !== 'Хочет большинство ❤️❤️' || ru[1] !== 'Хочет кто-то из вас' || !/хотят 2\+\/хочет кто-то/.test(ru[2])) fail('the Plan tab is not worded for three in Russian: ' + JSON.stringify(ru.slice(0, 3)));
+    else if (de[0] !== 'Die meisten von euch wollen ❤️❤️' || de[1] !== 'Jemand von euch will' || !/2\+ wollen\/will jemand/.test(de[2])) fail('the Plan tab is not worded for three in German: ' + JSON.stringify(de.slice(0, 3)));
+    else if (/two of you|you both|each other's/i.test(enLede) || /\bобе\b|вдвоём|одна из вас/i.test(ruLede) || /\bbeide\b|ihr zwei/i.test(deLede)) fail('the Plan tab still speaks to two people: ' + [enLede, ruLede, deLede].join(' / '));
+    else ok('in Russian and German too: «' + ru[0] + '», «' + ru[1] + '»; „' + de[0] + '“, „' + de[1] + '“');
+    // a gap in a day offers nearby places: a top pick first and marked, nothing anyone said no to
+    {
+      NYC.state.vote = {}; NYC.state.agenda = {}; NYC.renderAll(); await settle();
+      const gapEl = document.querySelector('.agwrap .aggap.fill[data-gap]');
+      if (!gapEl) fail('no day in the seeded plan has a gap to fill, so the gap offer went untested');
+      else {
+        const day = gapEl.closest('.agwrap').dataset.agday, gi = gapEl.dataset.gap;
+        const openGap = async () => { const el = document.querySelector('.agwrap[data-agday="' + day + '"] .aggap.fill[data-gap="' + gi + '"]'); if (el) click(el); await settle(); return [...document.querySelectorAll('#sheet [data-fill]')]; };
+        let rowsG = await openGap();
+        const title = (document.querySelector('#sheet h3') || {}).textContent || '';
+        if (document.getElementById('sheet').hidden || title !== 'Fill this gap' || !rowsG.length) fail('tapping a gap did not offer places: ' + JSON.stringify({ title, n: rowsG.length }));
+        else {
+          const last = rowsG[rowsG.length - 1].dataset.fill, second = (rowsG[1] || rowsG[0]).dataset.fill;
+          document.querySelector('#sheet .closebtn') && click(document.querySelector('#sheet .closebtn'));
+          NYC.state.vote['p:' + last] = { Y: 'yes', M: 'yes' };                 // a top pick
+          NYC.state.vote['p:' + second] = { Y: 'yes', T: 'yes', M: 'no' };      // vetoed
+          NYC.renderAll(); await settle();
+          rowsG = await openGap();
+          const ids = rowsG.map(r => r.dataset.fill), firstBtn = rowsG[0] && rowsG[0].querySelector('button');
+          if (last !== second && ids.indexOf(second) >= 0) fail('the gap offered a place Mike said no to');
+          else if (ids[0] !== last || !firstBtn || !firstBtn.classList.contains('rec') || !/🌸❤️/.test(rowsG[0].textContent) || !/🎷❤️/.test(rowsG[0].textContent)) fail('a top pick is not first and marked in the gap offer: ' + JSON.stringify(ids.slice(0, 3)));
+          else {
+            click(rowsG[0]); await settle();
+            if (NYC.agIds(day).indexOf('p:' + last) < 0) fail('tapping an offered place did not put it in the gap');
+            else ok('a gap in a day offers nearby places: a top pick first and marked, nothing anyone said no to, and a tap puts it in');
+          }
+        }
+        document.querySelector('#sheet .closebtn') && click(document.querySelector('#sheet .closebtn'));
+      }
+      NYC.state.vote = {}; NYC.state.agenda = {}; NYC.renderAll(); await settle();
+    }
+    // the names in Settings: Mike's can be changed like the others'
+    const nm = document.getElementById('nameM');
+    if (!nm || !document.getElementById('nameY') || !document.getElementById('nameT')) fail('Settings does not have a name field for each of the three');
+    else {
+      nm.value = 'Michael'; nm.dispatchEvent(new window.Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 700)); NYC.renderAll(); await settle();
+      const b = document.querySelector('#home .whoslot .who button[data-who="M"]');
+      if (!b || b.textContent.trim() !== '🎷 Michael' || !(NYC.state.settings.names && NYC.state.settings.names.v && NYC.state.settings.names.v.M === 'Michael')) fail('renaming Mike in Settings did not reach the name picker: ' + (b && b.textContent));
+      else ok('Settings has a name field for all three, and renaming Mike shows everywhere');
+      nm.value = ''; delete NYC.state.settings.names;
+    }
+    // the concierge is told whose phone is asking
+    let cb = null;
+    window.fetch = (url, opts) => { if (String(url).endsWith('/chat')) { cb = opts.body; return Promise.resolve({ ok: true, json: async () => ({ reply: 'Hi Mike.' }) }); } return realFetchM(url, opts); };
+    click(document.querySelector('.tbtn[data-tabbtn="chat"]'));
+    document.getElementById('chatinput').value = 'What should they do tomorrow?'; click(document.getElementById('chatsend'));
+    await new Promise(r => setTimeout(r, 60));
+    window.fetch = realFetchM;
+    if (!cb || !/Phone belongs to: Mike/.test(cb)) fail('the concierge is not told the phone is Mike\'s');
+    else ok('the concierge is told when it is Mike asking');
+    NYC.state.vote = savedVotes; NYC.me = savedMe; NYC.state.agenda = {}; NYC.renderAll(); await settle();
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home'));
+  }
+
   // build week runs
   try { const r = NYC.buildWeek(); ok('buildWeek ran (' + Object.keys(r.plan).length + ' days touched)'); } catch (e) { fail('buildWeek threw: ' + e.message); }
   try { const ics = NYC.buildICS(); if (!/BEGIN:VEVENT/.test(ics)) fail('ICS has no events'); else ok('ICS builds (' + (ics.match(/BEGIN:VEVENT/g) || []).length + ' events)'); } catch (e) { fail('buildICS threw: ' + e.message); }
@@ -987,11 +1104,24 @@ if (booted) {
   const G2 = window.GEO; const noArea = [];
   Object.entries(T.SEED).forEach(([d, arr]) => arr.forEach(([ref]) => { if (!ref.startsWith('p:')) return; const p = PLACES.find(x => x.id === ref.slice(2)); if (p && !G2.areaOf(p.lat, p.lng)) noArea.push(ref); }));
   if (noArea.length) fail('seeded places with no neighbourhood name: ' + noArea.join(', ')); else ok('every seeded place has a neighbourhood name, and every titled stop is on its day');
-  if ((T.TRAVELERS || []).length !== 2 || (T.TRAVELERS || []).some(t => /mike/i.test(t.join(' ')))) fail('the travellers are not just Yulia and Tatyana: ' + JSON.stringify(T.TRAVELERS));
-  const mikeLeft = ['index.html', 'app.js', 'app.css', 'data/plan.js', 'data/places.js', 'data/guide.js', 'data/tour.js', 'concierge/index.js', 'manifest.webmanifest'].filter(f => /\bmikes?\b|🎷/i.test(read(f)) || /(^|[^а-яё])майк(?!елсон)/i.test(read(f)));   // (Sarah Michelson, «Майкелсон», is not him)
-  if (mikeLeft.length) fail('Mike is still mentioned in: ' + mikeLeft.join(', '));
-  else if (document.querySelector('[data-mike], .mikebtn, #nameM')) fail('the page still has a "Mike joins" control');
-  else ok('the app is for Yulia and Tatyana only: no Mike in the data, the concierge brief or the page');
+  const TRV = (T.TRAVELERS || []).map(t => t[0] + ':' + t[1] + ':' + t[2] + ':' + t[4]).join(',');
+  if (TRV !== 'Y:Yulia:Юля:Yulia,T:Tatyana:Таня:Tatyana,M:Mike:Майк:Mike' || JSON.stringify(T.VOTERS) !== '["Y","T","M"]') fail('the members are not Yulia, Tatyana and Mike, all three voting: ' + TRV + ' ' + JSON.stringify(T.VOTERS));
+  else ok('Yulia, Tatyana and Mike are all members, and all three vote');
+  // Mike plans and votes, but the "joins tonight" toggle stays gone and the
+  // place library and guide are written for Yulia and Tatyana's outings.
+  const mikeIn = (f) => /\bmikes?\b|🎷/i.test(read(f)) || /(^|[^а-яё])майк(?!елсон)/i.test(read(f));   // (Sarah Michelson, «Майкелсон», is not him)
+  const mikeLib = ['data/places.js', 'data/guide.js'].filter(mikeIn);
+  const brief = read('concierge/index.js');
+  if (mikeLib.length) fail('the place library or the guide is written around Mike again: ' + mikeLib.join(', '));
+  else if (/mikeOn|mikeOff|mike-evening|state\.mike\b|data-mike/.test(read('app.js')) || document.querySelector('[data-mike], .mikebtn')) fail('the "Mike joins tonight" toggle is back');
+  else if ((T.BOOK || []).some(b => /for 3|for three|на троих|für 3|zu dritt/i.test([b.en, b.ru, b.de].join(' ')))) fail('a booking is for three');
+  else if (!/Yulia's husband Mike/.test(brief) || !/table for two/.test(brief) || !/Mike \(Yulia's husband[^)]*\) helps build their week/.test(brief)) fail('the concierge brief does not say who Mike is and that the outings are for two');
+  else if (!['index.html', 'manifest.webmanifest', 'README.md'].every(mikeIn)) fail('the page, the manifest or the README leaves Mike out');
+  else ok('Mike is on the page, in the manifest and in the concierge brief; the bookings, the library and the guide stay written for two');
+  const tourSrc = read('data/tour.js');
+  const twoOnly = tourSrc.match(/the two of you|you both|both (?:said|love|want)|the other phone\b|\bобе\b|обеим|вдвоём|одна (?:может|из вас)|другая|каждой|ihr beide|eine von euch|die andere\b|dem anderen Handy/gi);
+  if (twoOnly) fail('the tour still speaks to two people: ' + twoOnly.join(', '));
+  else ok('the tour speaks to three people in all three languages');
   const appSrc = read('app.js');
   if (/cartocdn\.com\/[^'"]*\{z\}/.test(appSrc) || !/tile\.openstreetmap\.org\/\{z\}\/\{x\}\/\{y\}\.png/.test(appSrc) || !/OpenStreetMap<\/a> contributors/.test(appSrc)) fail('the map does not use keyless OpenStreetMap tiles with their credit line');
   else ok('the map uses OpenStreetMap\'s keyless tiles, credited, with a keyless fallback');

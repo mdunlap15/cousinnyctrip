@@ -2021,7 +2021,25 @@ function tourStage(s) {
   if (s.day && DAYBYKEY[s.day]) { if (currentTab !== 'days' || currentDay !== s.day) setDay(s.day, null); }
   else if (s.tab === 'days') { if (currentTab !== 'days') setDay(currentDay, null); }
   else if (s.tab && s.tab !== currentTab) setTab(s.tab);
+  tourDemo(s);
   tourSheet(s);
+}
+// A step can also set the page up to show something: an example typed into the
+// Explore search, so its "search all of New York" button is there to point at.
+// Nothing is searched. What was in the search box, and anything already found,
+// comes back as soon as the tour moves on or ends.
+let TOURDEMO = null;
+function tourDemo(s) {
+  const want = s && s.demo === 'lookup' ? 'lookup' : '';
+  if (TOURDEMO && TOURDEMO.kind !== want) {
+    EX.q = TOURDEMO.q; const box = $('#exsearch'); if (box) box.value = TOURDEMO.box;
+    Object.assign(LOOK, TOURDEMO.look); TOURDEMO = null;
+    try { renderExplore(); } catch (e) {}
+  }
+  if (!want || TOURDEMO) return;
+  TOURDEMO = { kind: want, q: EX.q, box: ($('#exsearch') || {}).value || '', look: Object.assign({}, LOOK) };
+  EX.q = String(s.example || 'Nami Nori'); const box = $('#exsearch'); if (box) box.value = EX.q;
+  try { renderExplore(); } catch (e) {}
 }
 // A step can open a sheet to point at something inside it (the concierge box in
 // Replan, the vote buttons on a place). The tour closes what it opened as soon
@@ -2192,7 +2210,7 @@ function tourStart() {
 }
 function tourEnd(done) {
   TOURON = false; TI = -1;
-  tourSheet(null);
+  tourSheet(null); tourDemo(null);
   const w = $('#tourwrap'); if (w) { w.hidden = true; w.classList.remove('nospot'); }
   document.body.classList.remove('tour-on');
   try { document.documentElement.style.scrollBehavior = ''; } catch (e) {}

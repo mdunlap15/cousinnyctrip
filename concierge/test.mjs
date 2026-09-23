@@ -477,10 +477,14 @@ console.log('place lookup — through the proxy:');
   const pg = await boot(8068, { GOOGLE_PLACES_KEY: 'good' });
   const g1 = await find(8068, { q: 'nami nori' });
   if (g1.j.source !== 'google' || !(g1.j.places || []).length) bad('with a Google key set, Google was not used: ' + JSON.stringify(g1)); else ok('with a Google key set, Google Places answers');
+  const hg = await fetch('http://127.0.0.1:8068/health').then((r) => r.json());
+  if (!/^working/.test(hg.google || '')) bad('/health does not say Google is working: ' + JSON.stringify(hg.google)); else ok('/health says Google is working: ' + hg.google);
   pg.kill();
   const pb = await boot(8067, { GOOGLE_PLACES_KEY: 'bad' });
   const g2 = await find(8067, { q: 'nami nori' });
   if (g2.status !== 200 || g2.j.source !== 'openstreetmap' || !(g2.j.places || []).length) bad('a Google key that does not work took the search down: ' + JSON.stringify(g2)); else ok('a Google key that does not work falls back to OpenStreetMap instead of failing');
+  const hb = await fetch('http://127.0.0.1:8067/health').then((r) => r.json());
+  if (!/^NOT working — google places answered 403/.test(hb.google || '')) bad('/health does not say why Google is refusing: ' + JSON.stringify(hb.google)); else ok('/health says Google is refusing, and why: ' + hb.google.slice(0, 60) + '…');
   pb.kill();
   osm.close(); google.close(); api.close();
 }

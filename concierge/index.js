@@ -30,7 +30,7 @@ const placeCache = makeCache({ ttlMs: 86400e3 }), webCache = makeCache({ ttlMs: 
 // their own (counted on cache misses only); past Google's, OpenStreetMap answers.
 const PLACES_PER_DAY = Number(process.env.PLACES_PER_DAY || 400);
 const GOOGLE_PER_DAY = Number(process.env.GOOGLE_PER_DAY || 150);
-let placeHits = [], googleHits = [];
+let placeHits = [], googleHits = [], googleLast = 'no search yet since the last restart';
 function underCap(list, cap) {
   const now = Date.now(), fresh = prune(list, 86400e3, now);
   if (cap > 0 && fresh.length >= cap) return [fresh, false];
@@ -45,8 +45,8 @@ async function findPlaces(q) {
   if (GOOGLE_PLACES_KEY) [googleHits, okGoogle] = underCap(googleHits, GOOGLE_PER_DAY);
   if (okGoogle) {
     // a misconfigured key must not take the search down with it
-    try { places = await searchGoogle(q, { key: GOOGLE_PLACES_KEY, base: GOOGLE_PLACES_URL }); source = 'google'; }
-    catch (e) { console.warn('[places] google failed, using openstreetmap: ' + e.message); }
+    try { places = await searchGoogle(q, { key: GOOGLE_PLACES_KEY, base: GOOGLE_PLACES_URL }); source = 'google'; googleLast = 'working (last search ' + new Date().toISOString().slice(0, 16) + ' UTC)'; }
+    catch (e) { console.warn('[places] google failed, using openstreetmap: ' + e.message); googleLast = 'NOT working — ' + e.message + ' (' + new Date().toISOString().slice(0, 16) + ' UTC); OpenStreetMap is answering instead. A 403 usually means the key is restricted to websites, lacks Places API (New), or the project has no billing'; }
   }
   if (!places) places = await searchOsm(q, { base: OSM_URL });
   const out = { places: places.slice(0, 8), source };
@@ -229,6 +229,7 @@ async function handle(req, res) {
       key: process.env.ANTHROPIC_API_KEY ? 'set' : 'MISSING — /chat and /plan will fail',
       workspace: WORKSPACE_ID || 'not pinned (fine for a workspace-scoped key)',
       placeSearch: GOOGLE_PLACES_KEY ? 'google places (key set), then the web on request' : 'openstreetmap (no key needed), then the web on request',
+      ...(GOOGLE_PLACES_KEY ? { google: googleLast } : {}),
       port: String(PORT),
       origins: ORIGIN_OPEN ? 'any' : ALLOW_ORIGINS,
       limits: { perAddress: RATE_PER_IP + ' / ' + RATE_WINDOW_S + 's', perDay: RATE_PER_DAY, usedToday: dayHits.length,

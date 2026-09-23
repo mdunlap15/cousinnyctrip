@@ -32,6 +32,8 @@ for (const [label, device, locale] of [['iPhone 13', devices['iPhone 13'], 'en-U
 const ctx = await browser.newContext({ ...device, locale });
 const page = await ctx.newPage();
 page.on('pageerror', e => bad('page threw: ' + e.message));
+// the tour shows the search, it never runs one
+let searches = 0; page.on('request', (r) => { if (/\/places$/.test(r.url())) searches++; });
 const before = failures;
 
 // ---------- 1) it starts by itself on a first visit ----------
@@ -56,6 +58,7 @@ for (let n = 0; n < steps.length + 3; n++) {
     return {
       i, key: st.key, sel: st.sel || '', tab: document.body.dataset.tab, open: st.open || '',
       sheetUp: !document.getElementById('sheet').hidden, inSheet: !!(el && el.closest('#sheet')),
+      searchBox: document.getElementById('exsearch').value, lookBtn: !!document.querySelector('#exlook [data-lkgo]'),
       title: document.getElementById('tourtitle').textContent.trim(),
       body: document.getElementById('tourbody').textContent.trim(),
       spotHidden: spot.hidden, spot: spot.hidden ? null : box(spot), card: box(card),
@@ -87,6 +90,7 @@ for (let n = 0; n < steps.length + 3; n++) {
       if (overlap) bad(`${where}: the card covers the thing it is pointing at`);
     }
   } else if (!s.spotHidden) bad(`${where}: a spotlight is shown but the step points at nothing`);
+  if (s.key === 'exlookup' && (s.searchBox !== 'Nami Nori' || !s.lookBtn)) bad(`${where}: the example is not typed in, or the search button is not showing (box "${s.searchBox}")`);
   // a step that opens a sheet has it up, pointing inside it; every other step has none
   if (s.open && (!s.sheetUp || !s.inSheet)) bad(`${where}: the ${s.open} sheet is not open around ${s.sel}`);
   if (!s.open && s.sheetUp) bad(`${where}: a sheet the tour opened earlier is still up`);
@@ -100,6 +104,10 @@ if (missed.length) bad(`${label}: these steps never appeared: ${missed.join(', '
 else if (failures === before) ok(`all ${steps.length} steps spotlight a real element, card on screen and clear of it`);
 if (await page.evaluate(() => window.NYC.tourOn)) bad(`${label}: the tour was still open after the last step`);
 else ok('the last step closes the tour');
+const after = await page.evaluate(() => ({ box: document.getElementById('exsearch').value, look: document.getElementById('exlook').textContent.trim() }));
+if (after.box || after.look) bad(`${label}: after the tour the Explore search still shows the tour's example ("${after.box}" / "${after.look.slice(0, 60)}")`);
+else if (searches) bad(`${label}: the tour ran ${searches} real search(es)`);
+else ok('the search step types an example without searching, and the search box is put back afterwards');
 const sheetSteps = steps.filter(s => s.open).map(s => s.key);
 if (sheetSteps.length < 2) bad(`${label}: expected the Replan and place steps to open sheets, found ${sheetSteps.join(', ') || 'none'}`);
 if (label !== 'iPhone 13') { await ctx.close(); continue; }

@@ -3,7 +3,8 @@
 // explains it. `sel` is the element to highlight (the first match wins);
 // `tab` is the tab to switch to first; `day` opens a day page; `open` opens a
 // sheet ('replan' for the day, 'place' for the first place in Explore) that is
-// closed again when the tour moves on.
+// closed again when the tour moves on; `demo: 'lookup'` types `example` into the
+// Explore search (without searching) and restores the search box afterwards.
 // A step whose element is missing is skipped rather than shown pointing at
 // nothing, so the tour survives layout changes.
 // ============================================================================
@@ -94,9 +95,20 @@ window.TOUR = {
       title: 'Narrow it down',
       titleRu: 'Сузьте выбор',
       titleDe: 'Eingrenzen',
-      body: 'Search by name, dish or neighbourhood; the chips pick a category, and Filters adds the rest — free, near home, good on a rainy day. Somewhere you want is not in here? Type its name and tap 🔎 Search all of New York.',
-      bodyRu: 'Ищите по названию, блюду или району; кнопки выбирают категорию, а «Фильтры» добавляют остальное — бесплатно, рядом с домом, на дождливый день. Нужного места нет? Наберите название и нажмите «🔎 Искать по всему Нью-Йорку».',
-      bodyDe: 'Sucht nach Namen, Gericht oder Viertel; die Chips wählen eine Kategorie, „Filter“ ergänzt den Rest — kostenlos, nah bei uns, gut bei Regen. Ein Ort fehlt? Namen eintippen und auf „🔎 In ganz New York suchen“ tippen.' },
+      body: 'Search by name, dish or neighbourhood; the chips pick a category, and Filters adds the rest — free, near home, good on a rainy day. Sort by your votes, or by how close things are to home.',
+      bodyRu: 'Ищите по названию, блюду или району; кнопки выбирают категорию, а «Фильтры» добавляют остальное — бесплатно, рядом с домом, на дождливый день. Сортируйте по вашим голосам или по тому, насколько близко к дому.',
+      bodyDe: 'Sucht nach Namen, Gericht oder Viertel; die Chips wählen eine Kategorie, „Filter“ ergänzt den Rest — kostenlos, nah bei uns, gut bei Regen. Sortiert nach euren Stimmen oder danach, wie nah etwas an der Wohnung liegt.' },
+
+    // `demo` sets the page up for the step: here, an example typed into the
+    // Explore search so its "search all of New York" button is showing. Nothing
+    // is actually searched, and the search box is put back afterwards.
+    { key: 'exlookup', tab: 'explore', demo: 'lookup', example: 'Nami Nori', sel: '#exlook .lookup', icon: '🌐',
+      title: 'Not in the app? Find it anyway',
+      titleRu: 'Нет в приложении? Найдите всё равно',
+      titleDe: 'Nicht in der App? Trotzdem finden',
+      body: 'Type the name of any place in New York — a restaurant someone mentioned, a bar, a shop — and tap 🔎 Search all of New York. If the map does not know it, 🌐 Search the web finds it online. Tap a result to put it in your ideas or straight onto a day.',
+      bodyRu: 'Наберите название любого места в Нью-Йорке — ресторана, который вам посоветовали, бара, магазина — и нажмите кнопку 🔎 поиска по всему Нью-Йорку. Если на карте его нет, кнопка 🌐 найдёт его в интернете. Нажмите на результат — и место попадёт в ваши идеи или сразу в нужный день.',
+      bodyDe: 'Tippt den Namen eines beliebigen Ortes in New York ein — ein Restaurant, das euch jemand empfohlen hat, eine Bar, einen Laden — und dann auf 🔎 „In ganz New York … suchen“. Kennt die Karte ihn nicht, findet 🌐 „Im Web suchen“ ihn online. Ein Tipp auf ein Ergebnis legt ihn zu euren Ideen oder direkt auf einen Tag.' },
 
     { key: 'explace', tab: 'explore', open: 'place', sel: '#sheet .shdecide', icon: '❤️',
       title: 'Vote, then put it on a day',

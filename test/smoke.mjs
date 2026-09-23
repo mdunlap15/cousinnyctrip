@@ -724,6 +724,30 @@ if (booted) {
   const h3 = (document.querySelector('#sheet h3') || {}).textContent || '';
   if (document.getElementById('sheet').hidden || /Our favourite idea/.test(h3) || document.getElementById('sh-cmap')) fail('the vote step opened your own idea rather than a place from the library: ' + h3);
   else ok('the vote step opens a place from the library even when one of your ideas tops the list ("' + h3 + '")');
+  // the search step types an example without searching, and puts back what was there
+  {
+    const box = document.getElementById('exsearch');
+    const priorFetch = window.fetch; let ran = 0;
+    window.fetch = (url, opts) => { if (String(url).endsWith('/places')) { ran++; return Promise.resolve({ ok: true, status: 200, json: async () => ({ places: [{ name: 'Before the tour', cat: 'eat', lat: 40.72, lng: -73.99, src: 'osm' }], source: 'openstreetmap' }) }); } return priorFetch(url, opts); };
+    NYC.tourEnd(true); await settle();
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'explore'));
+    box.value = 'zz before'; box.dispatchEvent(new window.Event('input', { bubbles: true }));
+    click(document.querySelector('#exlook [data-lkgo]')); await settle();
+    const ranBefore = ran;
+    NYC.tourStart(); NYC.tourGo(stepIx('exlookup'), 1); await settle();
+    const during = { box: box.value, btn: !!document.querySelector('#exlook [data-lkgo]') };
+    NYC.tourGo(stepIx('explace'), 1); await settle();
+    const back = { box: box.value, kept: /Before the tour/.test(document.getElementById('exlook').textContent) };
+    NYC.tourGo(stepIx('exlookup'), 1); await settle(); NYC.tourEnd(false); await settle();
+    const ended = { box: box.value, kept: /Before the tour/.test(document.getElementById('exlook').textContent) };
+    window.fetch = priorFetch;
+    if (during.box !== 'Nami Nori' || !during.btn) fail('the search step does not show the example and its button: ' + JSON.stringify(during));
+    else if (ran !== ranBefore) fail('the tour ran a real search');
+    else if (back.box !== 'zz before' || !back.kept || ended.box !== 'zz before' || !ended.kept) fail('the tour did not put back the search box and what it had found: ' + JSON.stringify([back, ended]));
+    else ok('the search step types "Nami Nori" without searching, and moving on or ending the tour puts back your own search and its results');
+    box.value = ''; box.dispatchEvent(new window.Event('input', { bubbles: true }));
+    NYC.tourStart();
+  }
   NYC.tourGo(stepIx('replanask'), 1); await settle();
   click(document.getElementById('langbtn')); await settle();
   const sheetRu = (document.querySelector('#sheet h3') || {}).textContent || '';

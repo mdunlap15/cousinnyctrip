@@ -485,6 +485,8 @@ body.tour-on.show-install .install{display:none}
 @media(prefers-reduced-motion:reduce){.tourspot{transition:none}}
 /* a sheet the tour opens appears at once, so the spotlight measures it where it lands */
 body.tour-on .sheet{animation:none}
+/* room to scroll anything the tour points at up to where its card fits, however short the page (Explore with no matches) */
+body.tour-on::after{content:"";display:block;height:70vh}
 
 /* ---------- places the concierge recommends ---------- */
 .msgtext{white-space:pre-wrap}

@@ -28,7 +28,7 @@ gets its own icon and works offline.
   reservations, and a calendar export of the live plan
 - **Guide** — airport, subway from 7th Avenue, money, tipping, phones, weather, safety
 - **English, Russian and German** — the language button switches the whole app; the choice sticks
-- **Shows itself around** — a seventeen-step walkthrough runs on the first visit and
+- **Shows itself around** — an eighteen-step walkthrough runs on the first visit and
   can be replayed from More → Settings; edit the copy in `data/tour.js`
 
 ## Repo layout
@@ -85,7 +85,8 @@ Bump `CACHE` in `sw.js` whenever `trip.ics` or the icons change.
    most `GOOGLE_PER_DAY` (default 150) Google calls a day and uses OpenStreetMap
    after that; for a hard stop on Google's side too, set a per-day quota on the
    Places API in the Cloud console. Restrict the key by API, not by website: it is
-   used by the server, not the browser.
+   used by the server, not the browser. `/health` says whether Google's last
+   search worked, and why not if it did not.
 
 ## A caveat worth repeating
 

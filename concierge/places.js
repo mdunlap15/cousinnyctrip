@@ -40,7 +40,7 @@ function dedupe(list) {
 // ---------------------------------------------------------------- OpenStreetMap
 // Nominatim's rules: identify the application, at most one request a second,
 // cache what you get, and no search-as-you-type (the app searches on a tap).
-export const OSM_UA = 'TatyanaInNewYork-trip-app/1.0 (+https://github.com/mdunlap15/cousinnyctrip)';
+export const OSM_UA = 'TanyaInNewYork-trip-app/1.0 (+https://github.com/mdunlap15/cousinnyctrip)';
 let osmNext = 0;
 async function osmTurn() {
   const now = Date.now(), at = Math.max(now, osmNext);

@@ -1,5 +1,5 @@
 /* ============================================================================
-   Tatyana in New York — app engine.
+   Tanya in New York — app engine.
    Reads: window.TRIP (data/plan.js), window.PLACES (data/places.js),
    window.GEO (data/geo.js), window.GUIDE (data/guide.js), window.TRIP_CONFIG.
    Everything trip-specific lives in those files; this engine is generic.
@@ -1612,7 +1612,7 @@ function renderBookings() {
   $$('#resvlist [data-rdel]').forEach(b => { b.onclick = () => put('resv', b.dataset.rdel, Object.assign({}, state.resv[b.dataset.rdel], { deleted: true })); });
 }
 function buildICS() {
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Tatyana in New York//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + (T.TITLE || 'NYC'), 'X-WR-TIMEZONE:America/New_York',
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Tanya in New York//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + (T.TITLE || 'NYC'), 'X-WR-TIMEZONE:America/New_York',
     'BEGIN:VTIMEZONE', 'TZID:America/New_York', 'BEGIN:DAYLIGHT', 'DTSTART:19700308T020000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU', 'TZOFFSETFROM:-0500', 'TZOFFSETTO:-0400', 'TZNAME:EDT', 'END:DAYLIGHT', 'BEGIN:STANDARD', 'DTSTART:19701101T020000', 'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU', 'TZOFFSETFROM:-0400', 'TZOFFSETTO:-0500', 'TZNAME:EST', 'END:STANDARD', 'END:VTIMEZONE'];
   const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
   const escI = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
@@ -1629,7 +1629,7 @@ function buildICS() {
 }
 function exportICS() {
   const blob = new Blob([buildICS()], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'tatyana-nyc-2026.ics'; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
+  const a = document.createElement('a'); a.href = url; a.download = 'tanya-nyc-2026.ics'; document.body.appendChild(a); a.click(); setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1500);
   toast(t('icsDone'));
 }
 

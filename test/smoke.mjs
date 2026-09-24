@@ -1030,14 +1030,14 @@ if (booted) {
     if (document.body.dataset.lang !== 'en') fail('the language did not come back to English: ' + document.body.dataset.lang);
   }
 
-  // ---- three members: Yulia, Tatyana and Mike ----
+  // ---- three members: Yulia, Tanya and Mike ----
   console.log('three members:');
   {
     const realFetchM = window.fetch, savedVotes = NYC.state.vote, savedMe = NYC.me;
     click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home')); NYC.renderAll(); await settle();
     const whoBtns = [...document.querySelectorAll('#home .whoslot .who button[data-who]')];
     const whoSeen = whoBtns.map(b => b.dataset.who + ' ' + b.textContent.trim()).join(' | ');
-    if (whoSeen !== 'Y 🌸 Yulia | T 🌻 Tatyana | M 🎷 Mike') fail('"Whose phone is this?" does not offer Yulia, Tatyana and Mike: ' + whoSeen);
+    if (whoSeen !== 'Y 🌸 Yulia | T 🌻 Tanya | M 🎷 Mike') fail('"Whose phone is this?" does not offer Yulia, Tanya and Mike: ' + whoSeen);
     else if ([...document.querySelectorAll('#plan .whoslot .who button[data-who]')].map(b => b.dataset.who).join('') !== 'YTM') fail('the Plan tab\'s "Whose phone is this?" does not offer all three');
     else ok('"Whose phone is this?" offers ' + whoSeen);
     NYC.me = null; click(whoBtns[2]); await settle();
@@ -1170,10 +1170,10 @@ if (booted) {
   Object.entries(T.SEED).forEach(([d, arr]) => arr.forEach(([ref]) => { if (!ref.startsWith('p:')) return; const p = PLACES.find(x => x.id === ref.slice(2)); if (p && !G2.areaOf(p.lat, p.lng)) noArea.push(ref); }));
   if (noArea.length) fail('seeded places with no neighbourhood name: ' + noArea.join(', ')); else ok('every seeded place has a neighbourhood name, and every titled stop is on its day');
   const TRV = (T.TRAVELERS || []).map(t => t[0] + ':' + t[1] + ':' + t[2] + ':' + t[4]).join(',');
-  if (TRV !== 'Y:Yulia:Юля:Yulia,T:Tatyana:Таня:Tatyana,M:Mike:Майк:Mike' || JSON.stringify(T.VOTERS) !== '["Y","T","M"]') fail('the members are not Yulia, Tatyana and Mike, all three voting: ' + TRV + ' ' + JSON.stringify(T.VOTERS));
-  else ok('Yulia, Tatyana and Mike are all members, and all three vote');
+  if (TRV !== 'Y:Yulia:Юля:Yulia,T:Tanya:Таня:Tanya,M:Mike:Майк:Mike' || JSON.stringify(T.VOTERS) !== '["Y","T","M"]') fail('the members are not Yulia, Tanya and Mike, all three voting: ' + TRV + ' ' + JSON.stringify(T.VOTERS));
+  else ok('Yulia, Tanya and Mike are all members, and all three vote');
   // Mike plans and votes, but the "joins tonight" toggle stays gone and the
-  // place library and guide are written for Yulia and Tatyana's outings.
+  // place library and guide are written for Yulia and Tanya's outings.
   const mikeIn = (f) => /\bmikes?\b|🎷/i.test(read(f)) || /(^|[^а-яё])майк(?!елсон)/i.test(read(f));   // (Sarah Michelson, «Майкелсон», is not him)
   const mikeLib = ['data/places.js', 'data/guide.js'].filter(mikeIn);
   const brief = read('concierge/index.js');
@@ -1183,6 +1183,15 @@ if (booted) {
   else if (!/Yulia's husband Mike/.test(brief) || !/table for two/.test(brief) || !/Mike \(Yulia's husband[^)]*\) helps build their week/.test(brief)) fail('the concierge brief does not say who Mike is and that the outings are for two');
   else if (!['index.html', 'manifest.webmanifest', 'README.md'].every(mikeIn)) fail('the page, the manifest or the README leaves Mike out');
   else ok('Mike is on the page, in the manifest and in the concierge brief; the bookings, the library and the guide stay written for two');
+  {
+    // she is Tanya everywhere; only the id the synced data is stored under keeps "tatyana"
+    const files = ['index.html', 'app.js', 'app.css', 'sw.js', 'manifest.webmanifest', 'data/plan.js', 'data/places.js', 'data/guide.js', 'data/tour.js', 'concierge/index.js', 'concierge/places.js', 'README.md', 'trip.ics'];
+    const left = files.filter(f => /tatyana|tatjana/i.test(read(f).replace(/nyc-2026-tatyana/g, '')) || /(^|[^«])Татьян(а|ы|е|у|ой)(?![а-яё»])/.test(read(f)));
+    if (left.length) fail('"Tatyana" is still shown in: ' + left.join(', '));
+    else if (!/nyc-2026-tatyana/.test(read('config.js'))) fail('the trip id changed: every phone would lose the synced votes and plan');
+    else if (T.TITLE !== 'Tanya in New York' || !/<title>Tanya in New York/.test(read('index.html')) || !/"name": "Tanya in New York/.test(read('manifest.webmanifest'))) fail('the app is not called "Tanya in New York"');
+    else ok('she is Tanya everywhere (title, home-screen name, names, library, guide, concierge, calendar); the synced data keeps its id');
+  }
   const tourSrc = read('data/tour.js');
   const twoOnly = tourSrc.match(/the two of you|you both|both (?:said|love|want)|the other phone\b|\bобе\b|обеим|вдвоём|одна (?:может|из вас)|другая|каждой|ihr beide|eine von euch|die andere\b|dem anderen Handy/gi);
   if (twoOnly) fail('the tour still speaks to two people: ' + twoOnly.join(', '));

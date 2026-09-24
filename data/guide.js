@@ -87,7 +87,7 @@ window.GUIDE = {
 
 **Zeitumstellung bei der Landung:** München ist New York 6 Stunden voraus. Schlaf im Flugzeug nach dem Essen; der Anschluss am Montag ist knapp.` },
     { key: 'subway', icon: '🚇', title: 'The subway from 7th Avenue', titleRu: 'Метро от 7-й авеню',
-      en: `**Pay with OMNY:** tap any contactless Visa/Mastercard, Apple Pay or Google Pay at the turnstile — no MetroCard, no app. Each ride is **$3.00** (fare rose in January 2026; confirm) and after **12 paid rides in a Monday–Sunday week on the same card**, the rest of the week is free. Use the *same* card or phone every time so the cap counts; Tatyana's German contactless card works fine.
+      en: `**Pay with OMNY:** tap any contactless Visa/Mastercard, Apple Pay or Google Pay at the turnstile — no MetroCard, no app. Each ride is **$3.00** (fare rose in January 2026; confirm) and after **12 paid rides in a Monday–Sunday week on the same card**, the rest of the week is free. Use the *same* card or phone every time so the cap counts; Tanya's German contactless card works fine.
 
 **Stations near home (490A 7th Ave, at 16th St):**
 - **15th St–Prospect Park (F/G)** — 6 min walk east along 16th St to Bartel-Pritchard Square. The F goes straight to Manhattan: Delancey/LES 25 min, Broadway-Lafayette/SoHo 28, W 4th/Village 30, 14th/Chelsea 33, 42nd–Bryant Park 38, Rockefeller Center 42, Lexington–63rd for the Upper East Side 48. The G goes to Carroll Gardens, Williamsburg (Metropolitan Av, 25 min) and Greenpoint.
@@ -112,7 +112,7 @@ window.GUIDE = {
 
 **Этикет:** сначала выпускайте выходящих, на эскалаторе стойте справа, в полном вагоне снимайте рюкзак, смотреть в глаза необязательно. Спрашивайте в будке или любого ньюйоркца — на вопрос люди отвечают охотно.`,
       titleDe: 'Die U-Bahn ab der 7th Avenue',
-      de: `**Bezahlen mit OMNY:** Halte einfach eine kontaktlose Visa/Mastercard, Apple Pay oder Google Pay ans Drehkreuz — keine MetroCard, keine App. Jede Fahrt kostet **$3.00** (Tariferhöhung im Januar 2026; bitte prüfen), und nach **12 bezahlten Fahrten in einer Woche von Montag bis Sonntag mit derselben Karte** ist der Rest der Woche frei. Nimm jedes Mal *dieselbe* Karte oder dasselbe Handy, damit das Limit mitzählt; Tatyanas deutsche Kontaktlos-Karte funktioniert einwandfrei.
+      de: `**Bezahlen mit OMNY:** Halte einfach eine kontaktlose Visa/Mastercard, Apple Pay oder Google Pay ans Drehkreuz — keine MetroCard, keine App. Jede Fahrt kostet **$3.00** (Tariferhöhung im Januar 2026; bitte prüfen), und nach **12 bezahlten Fahrten in einer Woche von Montag bis Sonntag mit derselben Karte** ist der Rest der Woche frei. Nimm jedes Mal *dieselbe* Karte oder dasselbe Handy, damit das Limit mitzählt; Tanyas deutsche Kontaktlos-Karte funktioniert einwandfrei.
 
 **Stationen in der Nähe der Wohnung (490A 7th Ave, Ecke 16th St):**
 - **15th St–Prospect Park (F/G)** — 6 Min. zu Fuß Richtung Osten die 16th St entlang bis zum Bartel-Pritchard Square. Die F fährt direkt nach Manhattan: Delancey/Lower East Side 25 Min., Broadway-Lafayette/SoHo 28, W 4th/Village 30, 14th/Chelsea 33, 42nd–Bryant Park 38, Rockefeller Center 42, Lexington–63rd für die Upper East Side 48. Die G fährt nach Carroll Gardens, Williamsburg (Metropolitan Av, 25 Min.) und Greenpoint.
@@ -220,7 +220,7 @@ window.GUIDE = {
 
 **Broadway for less:** the **TKTS booth** under the red steps in Times Square sells same-day seats at 20–50% off from 3 pm (11 am for matinees; show the app's list before queuing). **TodayTix** runs digital lotteries and rush tickets released each morning. Most shows are dark on Monday; Tuesday and Wednesday evenings are the easiest to get into.
 
-**Museums for free:** MoMA is free on Friday evenings (UNIQLO Free Fridays, timed tickets released online at 4 pm), the Whitney on Friday evenings and second Sundays, the Brooklyn Museum on First Saturday (Oct 3, 5–11 pm), and the Met, Natural History and Brooklyn Museum are pay-what-you-wish for New York State residents — Yulia pays what she likes, Tatyana pays full price (confirm current rules on each site).`,
+**Museums for free:** MoMA is free on Friday evenings (UNIQLO Free Fridays, timed tickets released online at 4 pm), the Whitney on Friday evenings and second Sundays, the Brooklyn Museum on First Saturday (Oct 3, 5–11 pm), and the Met, Natural History and Brooklyn Museum are pay-what-you-wish for New York State residents — Yulia pays what she likes, Tanya pays full price (confirm current rules on each site).`,
       ru: `**Пакеты не нужны.** CityPASS (около $150 за пять достопримечательностей) окупается, только если платных мест четыре и больше; в этом плане их два-три (паром к Статуе ~$25 с пьедесталом, Top of the Rock ~$45–60, Метрополитен $30), так что покупайте по отдельности — каждая карточка в приложении ведёт прямо на официальную страницу билетов.
 
 **Бронировать заранее, в таком порядке:** Statue City Cruises с пьедесталом (распродаётся), закатный слот Top of the Rock, ужин в среду (Resy открывается за 30 дней), Village Vanguard, Comedy Cellar, прощальный ужин. Всё остальное — без брони.
@@ -235,7 +235,7 @@ window.GUIDE = {
 
 **Broadway günstiger:** Der **TKTS-Stand** unter den roten Stufen am Times Square verkauft ab 15:00 Uhr Karten für denselben Tag mit 20–50 % Rabatt (für Matineen ab 11:00 Uhr; schau dir die Liste in der App an, bevor du dich anstellst). **TodayTix** veranstaltet digitale Verlosungen und gibt jeden Morgen Restkarten frei. Die meisten Shows spielen montags nicht; dienstag- und mittwochabends kommt man am leichtesten hinein.
 
-**Museen umsonst:** Das MoMA ist freitagabends frei (UNIQLO Free Fridays, die Zeitfenster-Tickets erscheinen um 16:00 Uhr online), das Whitney freitagabends und an jedem zweiten Sonntag, das Brooklyn Museum am First Saturday (3. Oktober, 17:00–23:00 Uhr), und im Met, im Naturkundemuseum und im Brooklyn Museum zahlen Einwohner des Staates New York, so viel sie mögen — Yulia zahlt also nach Gefühl, Tatyana den vollen Preis (die aktuellen Regeln bitte auf der jeweiligen Seite prüfen).` },
+**Museen umsonst:** Das MoMA ist freitagabends frei (UNIQLO Free Fridays, die Zeitfenster-Tickets erscheinen um 16:00 Uhr online), das Whitney freitagabends und an jedem zweiten Sonntag, das Brooklyn Museum am First Saturday (3. Oktober, 17:00–23:00 Uhr), und im Met, im Naturkundemuseum und im Brooklyn Museum zahlen Einwohner des Staates New York, so viel sie mögen — Yulia zahlt also nach Gefühl, Tanya den vollen Preis (die aktuellen Regeln bitte auf der jeweiligen Seite prüfen).` },
     { key: 'home', icon: '🏡', title: 'Home turf: Park Slope', titleRu: 'Свой район: Парк-Слоуп',
       en: `The apartment sits at the quiet end of 7th Avenue, six blocks below the F/G at 9th Street and a five-minute walk from Prospect Park at Bartel-Pritchard Square. **7th Avenue** is the daily street (bagels, pharmacies, a Key Food, Winner bakery a few blocks north); **5th Avenue**, one long block downhill, is the restaurant and bar street (al di là, Fonda, Stone Park Cafe, Miriam, Union Hall, Blueprint). **Prospect Park West** and the brownstone side streets between 1st and 9th are the postcard.
 

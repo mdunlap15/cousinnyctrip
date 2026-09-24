@@ -6,9 +6,9 @@
 // custom stops defined in STOPS below ('x:<key>').
 // ============================================================================
 window.TRIP = {
-  TITLE: 'Tatyana in New York',
+  TITLE: 'Tanya in New York',
   TITLE_RU: 'Таня в Нью-Йорке',
-  TITLE_DE: 'Tatyana in New York',
+  TITLE_DE: 'Tanya in New York',
   SHORT: 'NYC 2026',
   SUB: 'Nine autumn days, one Park Slope apartment, the whole city within reach. The big sights are pencilled in; the tables, the shopping and the pace are yours to decide together.',
   SUB_RU: 'Девять осенних дней, квартира в Парк-Слоуп и весь город в шаговой доступности. Главное уже намечено карандашом — столики, шопинг и темп выбираете вместе.',
@@ -24,19 +24,19 @@ window.TRIP = {
 
   // [key, name, russian name, emoji, german name]. Keys are stored in the shared votes/plan.
   // Everyone listed here can pick their phone, rate places and edit the plan.
-  // The trip is Yulia and Tatyana's (bookings are for two); Mike, Yulia's
+  // The trip is Yulia and Tanya's (bookings are for two); Mike, Yulia's
   // husband, helps build it from his own phone.
-  TRAVELERS: [['Y', 'Yulia', 'Юля', '🌸', 'Yulia'], ['T', 'Tatyana', 'Таня', '🌻', 'Tatyana'], ['M', 'Mike', 'Майк', '🎷', 'Mike']],
+  TRAVELERS: [['Y', 'Yulia', 'Юля', '🌸', 'Yulia'], ['T', 'Tanya', 'Таня', '🌻', 'Tanya'], ['M', 'Mike', 'Майк', '🎷', 'Mike']],
   // Who votes on places: all three. A place is a top pick when most of them
   // say yes and nobody says no.
   VOTERS: ['Y', 'T', 'M'],
 
   FLIGHTS: [
-    { key: 'out', who: 'Tatyana', date: '2026-09-26', legs: [
+    { key: 'out', who: 'Tanya', date: '2026-09-26', legs: [
       { flight: 'LH 41', from: 'HAJ Hannover', to: 'FRA Frankfurt', dep: '08:40', arr: '09:40', note: '1 h 00' },
       { flight: 'LH 400', from: 'FRA Frankfurt', to: 'JFK New York (Terminal 1)', dep: '10:55', arr: '13:35', note: '8 h 40 · Economy' },
     ] },
-    { key: 'back', who: 'Tatyana', date: '2026-10-04', legs: [
+    { key: 'back', who: 'Tanya', date: '2026-10-04', legs: [
       { flight: 'LH 411', from: 'JFK New York (Terminal 1)', to: 'MUC Munich', dep: '17:30', arr: '07:20 +1', note: '7 h 50 · Economy' },
       { flight: 'LH 4072', from: 'MUC Munich', to: 'HAJ Hannover', dep: '11:15', arr: '12:25', note: '1 h 10 · Lufthansa City Airlines' },
     ] },

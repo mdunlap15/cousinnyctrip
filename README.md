@@ -1,6 +1,6 @@
-# Tatyana in New York — Sep 26 – Oct 4, 2026
+# Tanya in New York — Sep 26 – Oct 4, 2026
 
-A single-page, installable trip app for Tatyana's first week in New York, hosted by
+A single-page, installable trip app for Tanya's first week in New York, hosted by
 Yulia and Mike in Park Slope. Live at **https://mdunlap15.github.io/cousinnyctrip/**
 (GitHub Pages). Open it in Safari on the iPhone → Share → **Add to Home Screen**; it
 gets its own icon and works offline.
@@ -19,7 +19,7 @@ gets its own icon and works offline.
   found by name: **Search all of New York** (in Explore and in "Add a stop") looks
   it up on the map, or on the web, and adds it with its exact spot, address,
   website and hours
-- **Plan** — everyone's votes sync between phones (Yulia's, Tatyana's and Mike's);
+- **Plan** — everyone's votes sync between phones (Yulia's, Tanya's and Mike's);
   what most of them want and nobody vetoed floats up, and **Build my week** slots
   the winners into the days that actually fit them
 - **Map** — every pin, filterable by category or by day, with "near me" and a

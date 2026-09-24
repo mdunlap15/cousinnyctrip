@@ -1,9 +1,9 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Tatyana in New York//EN
+PRODID:-//Tanya in New York//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:Tatyana in New York
+X-WR-CALNAME:Tanya in New York
 X-WR-TIMEZONE:America/New_York
 BEGIN:VTIMEZONE
 TZID:America/New_York
@@ -24,7 +24,7 @@ END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d0-0-xland@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260926T133500
 DTEND;TZID=America/New_York:20260926T145000
 SUMMARY:✈️ LH 400 lands at JFK Terminal 1 — passport control + bags
@@ -33,7 +33,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d0-1-xtaxihome@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260926T145000
 DTEND;TZID=America/New_York:20260926T160000
 SUMMARY:🚕 Taxi or Uber to Park Slope (~50–70 min · ~$85–100 with tolls & tip)
@@ -42,7 +42,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d0-2-xsettle@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260926T160000
 DTEND;TZID=America/New_York:20260926T180000
 SUMMARY:🏠 Home: shower\, unpack\, a slow coffee walk down 7th Avenue
@@ -51,7 +51,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d0-3-paldila@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260926T183000
 DTEND;TZID=America/New_York:20260926T200000
 SUMMARY:🍽 al di là Trattoria
@@ -60,7 +60,7 @@ DESCRIPTION:The Park Slope institution since 1998: candlelit Venetian home cooki
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d0-4-xearlynight@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260926T210000
 DTEND;TZID=America/New_York:20260926T213000
 SUMMARY:🛏 Early night — it is 3 a.m. in Hannover
@@ -69,7 +69,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-0-pgrandcentralterminal@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T104500
 DTEND;TZID=America/New_York:20260927T112500
 SUMMARY:🗽 Grand Central Terminal
@@ -78,7 +78,7 @@ DESCRIPTION:The 1913 Beaux-Arts concourse with its turquoise zodiac ceiling is a
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-1-pstpatrickscathedral@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T113600
 DTEND;TZID=America/New_York:20260927T120100
 SUMMARY:🗽 St. Patrick's Cathedral
@@ -87,7 +87,7 @@ DESCRIPTION:James Renwick's 1879 Neo-Gothic cathedral facing Rockefeller Center 
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-2-prockefellercenter@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T120500
 DTEND;TZID=America/New_York:20260927T123500
 SUMMARY:🗽 Rockefeller Center
@@ -96,7 +96,7 @@ DESCRIPTION:The Art Deco heart of Midtown: Prometheus over the sunken plaza\, th
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-3-plodi@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T124500
 DTEND;TZID=America/New_York:20260927T135500
 SUMMARY:🍽 Lodi
@@ -105,7 +105,7 @@ DESCRIPTION:The Estela chef's chic Milanese café on the plaza at Rockefeller Ce
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-4-pbergdorfgoodman@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T141000
 DTEND;TZID=America/New_York:20260927T153000
 SUMMARY:🛍 Bergdorf Goodman
@@ -114,7 +114,7 @@ DESCRIPTION:The most beautiful department store in America: nine floors of the b
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-5-pgoodmansbarbergdorf@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T154000
 DTEND;TZID=America/New_York:20260927T162500
 SUMMARY:🍸 Goodman’s Bar at Bergdorf Goodman
@@ -123,7 +123,7 @@ DESCRIPTION:A sleek\, clubby Martini bar hidden in the basement of the men’s s
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-6-ptopoftherock@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T174500
 DTEND;TZID=America/New_York:20260927T185500
 SUMMARY:🗽 Top of the Rock
@@ -132,16 +132,16 @@ DESCRIPTION:The best classic view in New York: Empire State Building straight ah
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d1-7-psangennarofinalday@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260927T193000
 DTEND;TZID=America/New_York:20260927T211500
 SUMMARY:🎭 Feast of San Gennaro — final day
 LOCATION:Feast of San Gennaro — final day\, Mulberry St between Canal & Houston\, New York\, NY 10013
-DESCRIPTION:Eleven days of Little Italy in full costume — sausage and peppers\, zeppole\, lights strung over Mulberry Street — and Sep 27 is the closing day. Pure noisy New York\, and it happens to be Tatyana's first full day.\nHours: Sun Sep 27 2026\, 11:30am–11:30pm — the last day of the feast\nPrice: free to walk in\nhttps://www.sangennaro.nyc/\nhttps://mdunlap15.github.io/cousinnyctrip/
+DESCRIPTION:Eleven days of Little Italy in full costume — sausage and peppers\, zeppole\, lights strung over Mulberry Street — and Sep 27 is the closing day. Pure noisy New York\, and it happens to be Tanya's first full day.\nHours: Sun Sep 27 2026\, 11:30am–11:30pm — the last day of the feast\nPrice: free to walk in\nhttps://www.sangennaro.nyc/\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-0-plittleisland@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T103000
 DTEND;TZID=America/New_York:20260928T110000
 SUMMARY:🌳 Little Island
@@ -150,7 +150,7 @@ DESCRIPTION:Barry Diller's tulip-pot island park on the Hudson: hilly paths\, an
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-1-pwhitney@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T111500
 DTEND;TZID=America/New_York:20260928T131500
 SUMMARY:🖼 Whitney Museum of American Art
@@ -159,7 +159,7 @@ DESCRIPTION:MUST — Renzo Piano's building at the foot of the High Line has out
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-2-pchelseamarket@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T132500
 DTEND;TZID=America/New_York:20260928T142500
 SUMMARY:🍽 Chelsea Market
@@ -168,7 +168,7 @@ DESCRIPTION:The former Nabisco factory (where the Oreo was invented) is now the 
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-3-pthehighline@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T143500
 DTEND;TZID=America/New_York:20260928T153000
 SUMMARY:🚶 The High Line
@@ -177,7 +177,7 @@ DESCRIPTION:A 1.45-mile garden on an old freight railway with planting by Piet O
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-4-xsubwaytovillage@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T155900
 DTEND;TZID=America/New_York:20260928T161900
 SUMMARY:🚇 A/C/E from 34th St–Hudson Yards to 14th St (~10 min)
@@ -186,7 +186,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-5-pbleeckerstreet@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T162900
 DTEND;TZID=America/New_York:20260928T172400
 SUMMARY:🛍 Bleecker Street (West Village)
@@ -195,7 +195,7 @@ DESCRIPTION:The West Village's postcard shopping street — brownstones\, Magnol
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-6-pbarpisellino@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T172700
 DTEND;TZID=America/New_York:20260928T181200
 SUMMARY:🍸 Bar Pisellino
@@ -204,7 +204,7 @@ DESCRIPTION:Rita Sodi and Jody Williams’ (Via Carota) tiny Venetian-style bar:
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-7-plartusi@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T182000
 DTEND;TZID=America/New_York:20260928T195500
 SUMMARY:🍽 L'Artusi
@@ -213,7 +213,7 @@ DESCRIPTION:The polished\, buzzy West Village Italian that is easier to love tha
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d2-8-pvillagevanguard@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260928T200000
 DTEND;TZID=America/New_York:20260928T212000
 SUMMARY:🎭 Village Vanguard
@@ -222,7 +222,7 @@ DESCRIPTION:The holy basement of jazz since 1935 — Coltrane\, Bill Evans and S
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-0-xrtowhitehall@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T081000
 DTEND;TZID=America/New_York:20260929T084500
 SUMMARY:🚇 R from 4th Ave–9th St to Whitehall St (~30 min) — be at Battery security by 8:50
@@ -231,7 +231,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-1-pstatueofliberty@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T093000
 DTEND;TZID=America/New_York:20260929T130000
 SUMMARY:🗽 Statue of Liberty (Liberty Island)
@@ -240,7 +240,7 @@ DESCRIPTION:The first-timer icon: the ferry ride itself gives the classic skylin
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-2-pwallstreetchargingbull@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T133500
 DTEND;TZID=America/New_York:20260929T140000
 SUMMARY:🗽 Wall Street\, Charging Bull & Fearless Girl
@@ -249,7 +249,7 @@ DESCRIPTION:A 45-minute loop through the birthplace of the city: the bull (still
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-3-ptinbuilding@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T141600
 DTEND;TZID=America/New_York:20260929T152100
 SUMMARY:🍽 Tin Building by Jean-Georges (South Street Seaport)
@@ -258,7 +258,7 @@ DESCRIPTION:Jean-Georges Vongerichten's 53\,000 sq ft reconstruction of the old 
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-4-p911memorial@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T154000
 DTEND;TZID=America/New_York:20260929T163000
 SUMMARY:🗽 9/11 Memorial (reflecting pools)
@@ -267,7 +267,7 @@ DESCRIPTION:Two acre-sized voids where the towers stood\, water falling into the
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-5-xcoffeefidi@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T164500
 DTEND;TZID=America/New_York:20260929T171000
 SUMMARY:☕ Coffee break — La Colombe or Blue Bottle at Brookfield Place
@@ -276,7 +276,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-6-pbrooklynbridge@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T173100
 DTEND;TZID=America/New_York:20260929T182600
 SUMMARY:🚶 Brooklyn Bridge (pedestrian walk)
@@ -285,7 +285,7 @@ DESCRIPTION:The 1883 Gothic-arched bridge is the most beautiful walk in the city
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-7-pdumbowashingtonstreet@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T184900
 DTEND;TZID=America/New_York:20260929T190400
 SUMMARY:🗽 DUMBO — Washington Street viewpoint
@@ -294,16 +294,16 @@ DESCRIPTION:The cobblestone street that frames the Manhattan Bridge with the Emp
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d3-8-pcecconisdumbo@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260929T191500
 DTEND;TZID=America/New_York:20260929T210000
 SUMMARY:🍽 Cecconi's Dumbo
 LOCATION:Cecconi's Dumbo\, 55 Water St\, Brooklyn\, NY 11201
-DESCRIPTION:Soho House's glossy Venetian-style brasserie with a terrace facing the Brooklyn Bridge — the most scenic dinner in Brooklyn for a three-person evening.\nHours: Daily ~12–11\; brunch Sat–Sun\nPrice: $$$ (~$85pp)\nhttps://www.cecconisdumbo.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+DESCRIPTION:Soho House's glossy Venetian-style brasserie with a terrace facing the Brooklyn Bridge — the most scenic dinner in Brooklyn for an evening for two.\nHours: Daily ~12–11\; brunch Sat–Sun\nPrice: $$$ (~$85pp)\nhttps://www.cecconisdumbo.com\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-0-pmiriam@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T103000
 DTEND;TZID=America/New_York:20260930T114500
 SUMMARY:🍽 Miriam
@@ -312,7 +312,7 @@ DESCRIPTION:Park Slope's favourite brunch — shakshuka\, Israeli breakfast plat
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-1-pprospectpark@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T121800
 DTEND;TZID=America/New_York:20260930T134800
 SUMMARY:🌳 Prospect Park
@@ -321,7 +321,7 @@ DESCRIPTION:Olmsted and Vaux built Central Park first\, then came here and did i
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-2-xresthome@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T141500
 DTEND;TZID=America/New_York:20260930T153000
 SUMMARY:🏠 Home for a rest — tea\, feet up\, change for the evening
@@ -330,7 +330,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-3-pbrooklynheightspromenade@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T163000
 DTEND;TZID=America/New_York:20260930T170500
 SUMMARY:🗽 Brooklyn Heights Promenade
@@ -339,7 +339,7 @@ DESCRIPTION:A third of a mile of benches cantilevered over the BQE with the whol
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-4-pbrooklynbridgepark@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T171500
 DTEND;TZID=America/New_York:20260930T181000
 SUMMARY:🌳 Brooklyn Bridge Park (Pier 1\, Jane's Carousel\, Pebble Beach)
@@ -348,7 +348,7 @@ DESCRIPTION:1.3 miles of reclaimed piers under the Brooklyn Bridge with the best
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-5-xsunsetpier1@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T183000
 DTEND;TZID=America/New_York:20260930T190000
 SUMMARY:🌇 Sunset from Pebble Beach / Pier 1 (sun sets 6:42 pm)
@@ -357,7 +357,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d4-6-pcolonie@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20260930T193000
 DTEND;TZID=America/New_York:20260930T211500
 SUMMARY:🍽 Colonie
@@ -366,7 +366,7 @@ DESCRIPTION:Elegant\, candlelit Atlantic Ave dining room with a living green wal
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d5-0-pthemet@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261001T104500
 DTEND;TZID=America/New_York:20261001T132500
 SUMMARY:🖼 The Metropolitan Museum of Art (The Met Fifth Avenue)
@@ -375,7 +375,7 @@ DESCRIPTION:MUST — the one museum no first-timer skips: Temple of Dendur\, the
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d5-1-pcafesabarsky@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261001T133100
 DTEND;TZID=America/New_York:20261001T144100
 SUMMARY:☕ Café Sabarsky (Neue Galerie)
@@ -384,7 +384,7 @@ DESCRIPTION:The most beautiful café in New York: a wood-panelled 1914 Vanderbil
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d5-2-pcentralpark@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261001T151900
 DTEND;TZID=America/New_York:20261001T163400
 SUMMARY:🌳 Central Park (south-end loop)
@@ -393,7 +393,7 @@ DESCRIPTION:The essential slow morning: the Mall's elm allée\, Bethesda Terrace
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d5-3-pbemelmansbar@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261001T170200
 DTEND;TZID=America/New_York:20261001T180200
 SUMMARY:🍸 Bemelmans Bar at The Carlyle
@@ -402,7 +402,7 @@ DESCRIPTION:The most romantic room in New York: Ludwig Bemelmans’ 1947 “Made
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d5-4-xpreshowbite@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261001T183200
 DTEND;TZID=America/New_York:20261001T191700
 SUMMARY:🍕 Quick pre-show bite near the theater (Joe's Pizza on Broadway\, or Urbanspace)
@@ -411,7 +411,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d5-5-xbroadwayshow@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261001T200000
 DTEND;TZID=America/New_York:20261001T224000
 SUMMARY:🎭 Broadway show\, 8 pm curtain — pick it on the Plan tab (TKTS same-day or book ahead)
@@ -420,7 +420,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-0-plafayettegrandcafe@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T101500
 DTEND;TZID=America/New_York:20261002T110000
 SUMMARY:☕ Lafayette Grand Café & Bakery
@@ -429,7 +429,7 @@ DESCRIPTION:Andrew Carmellini's grand Parisian brasserie whose bakery window lau
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-1-psohoshopping@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T111000
 DTEND;TZID=America/New_York:20261002T132500
 SUMMARY:🛍 SoHo Shopping Walk
@@ -438,7 +438,7 @@ DESCRIPTION:The densest shopping neighborhood in America under cast-iron facades
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-2-pbalthazar@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T133500
 DTEND;TZID=America/New_York:20261002T145000
 SUMMARY:🍽 Balthazar
@@ -447,7 +447,7 @@ DESCRIPTION:Keith McNally's 1997 recreation of a Paris grand brasserie — red b
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-3-pelizabethstreetnolita@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T150000
 DTEND;TZID=America/New_York:20261002T155500
 SUMMARY:🛍 Elizabeth Street & Nolita
@@ -456,7 +456,7 @@ DESCRIPTION:The prettiest shopping walk in Manhattan for women in their 40s: low
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-4-xdropbags@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T163500
 DTEND;TZID=America/New_York:20261002T171500
 SUMMARY:🏠 Home to drop the shopping and change for the concert
@@ -465,16 +465,16 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-5-psofreh@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T175000
 DTEND;TZID=America/New_York:20261002T184500
 SUMMARY:🍽 Sofreh
 LOCATION:Sofreh\, 75 St Marks Ave\, Brooklyn\, NY 11217
-DESCRIPTION:Nasim Alikhani's celebrated Persian dining room — saffron tahdig\, herb stews\, rosewater desserts — flavours Tatyana will half-recognise from the Caucasus\, in a beautiful room.\nHours: Dinner Tue–Sun ~5:30–10\nPrice: $$$ (~$80pp)\nhttps://www.sofrehnyc.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+DESCRIPTION:Nasim Alikhani's celebrated Persian dining room — saffron tahdig\, herb stews\, rosewater desserts — flavours Tanya will half-recognise from the Caucasus\, in a beautiful room.\nHours: Dinner Tue–Sun ~5:30–10\nPrice: $$$ (~$80pp)\nhttps://www.sofrehnyc.com\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d6-6-xteddyswims@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261002T190000
 DTEND;TZID=America/New_York:20261002T223000
 SUMMARY:🎤 Teddy Swims · The UGLY Tour — Barclays Center\, Sec 222 Row 13 · 2 tickets
@@ -483,7 +483,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-0-pdevocion@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T103000
 DTEND;TZID=America/New_York:20261003T112000
 SUMMARY:☕ Devoción (Williamsburg)
@@ -492,7 +492,7 @@ DESCRIPTION:A skylit warehouse full of plants and leather sofas serving coffee f
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-1-pbedfordavenue@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T114000
 DTEND;TZID=America/New_York:20261003T125500
 SUMMARY:🛍 Bedford Avenue & North Williamsburg
@@ -501,16 +501,16 @@ DESCRIPTION:Brooklyn's main street for style: Catbird's tiny jewelry shop\, Moci
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-2-psmorgasburgwilliamsburg@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T130400
 DTEND;TZID=America/New_York:20261003T140900
 SUMMARY:🍽 Smorgasburg Williamsburg
 LOCATION:Smorgasburg Williamsburg\, Marsha P. Johnson State Park\, 90 Kent Ave\, Brooklyn\, NY 11249
-DESCRIPTION:The original Saturday waterfront edition with the Manhattan skyline behind the stalls — pairs with Bedford Ave shopping\, Artists & Fleas and Domino Park\; Sat Oct 3 is Tatyana's last full day.\nHours: Saturdays 11–6\, April–late October (2026 season end date: confirm)\nPrice: $ (~$15–25pp)\nhttps://www.smorgasburg.com\nhttps://mdunlap15.github.io/cousinnyctrip/
+DESCRIPTION:The original Saturday waterfront edition with the Manhattan skyline behind the stalls — pairs with Bedford Ave shopping\, Artists & Fleas and Domino Park\; Sat Oct 3 is Tanya's last full day.\nHours: Saturdays 11–6\, April–late October (2026 season end date: confirm)\nPrice: $ (~$15–25pp)\nhttps://www.smorgasburg.com\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-3-pdominopark@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T142300
 DTEND;TZID=America/New_York:20261003T145300
 SUMMARY:🌳 Domino Park
@@ -519,7 +519,7 @@ DESCRIPTION:Built on the bones of the Domino Sugar refinery: salvaged cranes and
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-4-xtobrooklynmuseum@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T151000
 DTEND;TZID=America/New_York:20261003T155500
 SUMMARY:🚇 G to Hoyt–Schermerhorn\, then 2/3 to Eastern Pkwy–Brooklyn Museum (~40 min)
@@ -528,7 +528,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-5-pbrooklynmuseum@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T160000
 DTEND;TZID=America/New_York:20261003T183000
 SUMMARY:🖼 Brooklyn Museum
@@ -537,7 +537,7 @@ DESCRIPTION:MUST and 20 minutes from home — Iris van Herpen: Sculpting the Sen
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-6-polmsted@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T190000
 DTEND;TZID=America/New_York:20261003T205000
 SUMMARY:🍽 Olmsted
@@ -546,7 +546,7 @@ DESCRIPTION:Greg Baxtrom's playful farm-to-table with a backyard garden where he
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d7-7-pweatherup@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261003T210000
 DTEND;TZID=America/New_York:20261003T215500
 SUMMARY:🍸 Weather Up (Prospect Heights)
@@ -555,7 +555,7 @@ DESCRIPTION:Dark\, subway-tiled\, no sign\, with a lovely back garden — the Pr
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d8-0-xpack@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261004T093000
 DTEND;TZID=America/New_York:20261004T103000
 SUMMARY:🧳 Pack — 23 kg checked bag on Lufthansa\, boarding pass in the app
@@ -564,7 +564,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d8-1-pwinnerparkslope@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261004T104500
 DTEND;TZID=America/New_York:20261004T113500
 SUMMARY:☕ Winner
@@ -573,7 +573,7 @@ DESCRIPTION:Daniel Eddy's beloved bakery five blocks from the apartment — sour
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d8-2-pgreenwoodcemetery@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261004T115700
 DTEND;TZID=America/New_York:20261004T132200
 SUMMARY:🌳 Green-Wood Cemetery
@@ -582,7 +582,7 @@ DESCRIPTION:478 acres of hills\, ponds and Victorian monuments\, with wild parro
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d8-3-xleaveforjfk@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261004T140000
 DTEND;TZID=America/New_York:20261004T150000
 SUMMARY:🚕 Leave for JFK Terminal 1 (Sunday traffic ~45 min · be there 3 h before LH 411)
@@ -591,7 +591,7 @@ DESCRIPTION:\nhttps://mdunlap15.github.io/cousinnyctrip/
 END:VEVENT
 BEGIN:VEVENT
 UID:nyc-2026-tatyana-d8-4-xdepart@nyc
-DTSTAMP:20260922T162707Z
+DTSTAMP:20260924T072721Z
 DTSTART;TZID=America/New_York:20261004T173000
 DTEND;TZID=America/New_York:20261004T180000
 SUMMARY:✈️ LH 411 to Munich\, then LH 4072 to Hannover (12:25 Monday)

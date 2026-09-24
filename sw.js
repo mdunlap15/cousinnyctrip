@@ -1,4 +1,4 @@
-// Tatyana in New York — offline support
+// Tanya in New York — offline support
 // Strategy: network-first for the app shell (index.html, app.js, app.css, data/*, config.js)
 // so pushed edits go live on next launch; cache-first for fonts, icons and map tiles' CSS.
 // ██ Bump CACHE whenever trip.ics or the icons change. ██

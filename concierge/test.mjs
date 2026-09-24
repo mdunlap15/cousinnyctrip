@@ -317,7 +317,7 @@ const PL = await import('./places.js');
   const gap = Date.now() - t0;
   const q = seen.url.searchParams;
   if (q.get('bounded') !== '1' || !/^-74\.27,40\.92,-73\.68,40\.49$/.test(q.get('viewbox') || '') || q.get('extratags') !== '1') bad('the search is not held to New York or does not ask for websites and hours: ' + seen.url.search);
-  else if (!/TatyanaInNewYork/.test(seen.ua || '')) bad('the requests do not identify the app to OpenStreetMap');
+  else if (!/TanyaInNewYork/.test(seen.ua || '')) bad('the requests do not identify the app to OpenStreetMap');
   else if (r[0].name !== 'Nami Nori' || r[0].cat !== 'eat' || r[0].hood !== 'Williamsburg' || r[0].addr !== '236 North 12th Street, Brooklyn' || r[0].web !== 'https://www.naminori.nyc/' || r[0].hours !== 'Mo-Su 17:00-22:00' || r[0].approx) bad('Nami Nori did not come back as a restaurant with its address, website and hours: ' + JSON.stringify(r[0]));
   else if (r.length !== 2 || r[1].name !== 'Nami Nori Way') bad('places should come before streets, and a result outside New York is dropped: ' + JSON.stringify(r));
   else if (gap < 1000) bad(`two OpenStreetMap searches went out ${gap} ms apart; its rules allow one a second`);

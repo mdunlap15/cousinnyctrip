@@ -1,7 +1,7 @@
 {
   "name": "nyc-2026-concierge",
   "version": "1.0.0",
-  "description": "Claude concierge proxy for the Tatyana-in-New-York trip app (deploy on Railway, root directory = concierge)",
+  "description": "Claude concierge proxy for the Tanya-in-New-York trip app (deploy on Railway, root directory = concierge)",
   "main": "index.js",
   "type": "module",
   "scripts": { "start": "node index.js" },

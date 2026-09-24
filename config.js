@@ -10,4 +10,5 @@ window.TRIP_CONFIG = {
 
   TRIP_KEY: "nyc-2026",          // must match the TRIP_KEY env var on Railway
   TRIP_ID: "nyc-2026-tatyana"    // scopes rows in the shared Supabase table — never reuse an old trip's id
+                                   // (it keeps her full name on purpose: renaming it would strand the synced votes and plan)
 };

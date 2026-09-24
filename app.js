@@ -50,14 +50,19 @@ function fldIn(o, base, lg) {
 }
 const S = {
   runningOrder: ['Running order', 'Расписание дня', 'Tagesablauf'], stops: ['stops', 'пункт(ов)', 'Stopps'],
-  dragHint: ['hold a stop to drag it · tap a time to pin it · ⋯ moves, retimes or removes', 'зажмите пункт и тяните · нажмите на время, чтобы закрепить · ⋯ — перенести, изменить или убрать', 'Stopp halten und ziehen · auf die Zeit tippen, um sie festzusetzen · ⋯ verschiebt, ändert oder entfernt'],
+  dragHint: ['hold a stop to drag it · tap a time to change its start or end · ⋯ moves or removes', 'зажмите пункт и тяните · нажмите на время, чтобы изменить начало или конец · ⋯ — перенести или убрать', 'Stopp halten und ziehen · auf die Zeit tippen, um Beginn oder Ende zu ändern · ⋯ verschiebt oder entfernt'],
   resetDay: ['↺ reset to the plan', '↺ вернуть план', '↺ Plan wiederherstellen'], homeBy: ['Home by', 'Дома к', 'Zu Hause gegen'], anchors: ['anchors', 'точек', 'Programmpunkte'], transit: ['in transit', 'в пути', 'unterwegs'],
   paceRelaxed: ['🟢 Relaxed', '🟢 Спокойно', '🟢 Entspannt'], paceComfy: ['🟢 Comfortable', '🟢 Комфортно', '🟢 Angenehm'], paceFull: ['🟡 Full day', '🟡 Насыщенно', '🟡 Voller Tag'], paceCrammed: ['🔴 Crammed', '🔴 Перегружено', '🔴 Zu voll'],
   paceHint: ['Too much for one day — the ⋯ menu on any stop moves it to a lighter day.', 'Слишком много для одного дня — через ⋯ у любого пункта его можно перенести в более свободный день.', 'Zu viel für einen Tag — über das ⋯-Menü lässt sich ein Stopp auf einen ruhigeren Tag schieben.'],
   addStop: ['＋ Add a stop', '＋ Добавить пункт', '＋ Stopp hinzufügen'], suggestBreak: ['☕ Suggest a break', '☕ Предложить паузу', '☕ Pause vorschlagen'], replan: ['✨ Replan', '✨ Перепланировать', '✨ Neu planen'], shareDay: ['↗ Share day', '↗ Поделиться днём', '↗ Tag teilen'], rainPlan: ['🌧 Rain plan', '🌧 План на дождь', '🌧 Regenplan'],
   dayNotes: ['Day notes — shared with the others', 'Заметки к дню — видят все', 'Notizen zum Tag — für alle sichtbar'],
   walk: ['min walk', 'мин пешком', 'Min zu Fuß'], subway: ['min by subway', 'мин на метро', 'Min mit der U-Bahn'], free: ['min free', 'мин свободно', 'Min frei'], travel: ['min travel', 'мин в пути', 'Min Fahrt'], slack: ['min slack', 'мин запаса', 'Min Puffer'],
-  fixed: ['Fixed-time anchor', 'Фиксированное время', 'Feste Uhrzeit'], drag: ['Drag', 'Перетащить', 'Ziehen'], moveOrRemove: ['Move, retime or remove', 'Перенести, изменить или убрать', 'Verschieben, umlegen oder entfernen'], tapTime: ['Tap to pin a time', 'Нажмите, чтобы закрепить время', 'Tippen, um die Zeit festzusetzen'],
+  fixed: ['Fixed-time anchor', 'Фиксированное время', 'Feste Uhrzeit'], drag: ['Drag', 'Перетащить', 'Ziehen'], moveOrRemove: ['Move or remove', 'Перенести или убрать', 'Verschieben oder entfernen'], tapTime: ['Tap to change when it starts or ends', 'Нажмите, чтобы изменить начало или конец', 'Tippen, um Beginn oder Ende zu ändern'],
+  teStart: ['Starts', 'Начало', 'Beginn'], teEnd: ['Ends', 'Конец', 'Ende'], teSave: ['✓ Save', '✓ Сохранить', '✓ Speichern'],
+  teReset: ['↺ Back to the planned time', '↺ Вернуть время по плану', '↺ Zurück zur geplanten Zeit'],
+  teBad: ['The end has to come after the start, on the same day.', 'Конец должен быть позже начала, в тот же день.', 'Das Ende muss nach dem Beginn liegen, am selben Tag.'],
+  teLong: ['A stop can last up to 12 hours.', 'Пункт может длиться не больше 12 часов.', 'Ein Stopp dauert höchstens 12 Stunden.'],
+  teHint: ['A new start fixes the stop at that time, and the stops after it move to make room. The end sets how long you stay.', 'Новое начало закрепляет пункт на этом времени, а следующие сдвигаются. Конец задаёт, сколько вы там пробудете.', 'Ein neuer Beginn legt den Stopp auf diese Zeit fest, die folgenden rücken nach. Das Ende bestimmt, wie lange ihr bleibt.'],
   remove: ['✕ Remove from this day', '✕ Убрать из этого дня', '✕ Aus diesem Tag entfernen'], removed: ['Removed — "↺ reset" brings the plan back', 'Убрано — «↺ вернуть план» всё восстановит', 'Entfernt — «↺ Plan wiederherstellen» holt alles zurück'], moved: ['Moved to', 'Перенесено на', 'Verschoben auf'],
   closedThatDay: ['closed that day', 'в этот день закрыто', 'an dem Tag geschlossen'], recommended: ['best fit', 'лучше всего', 'passt am besten'],
   wantIt: ['❤️ Want', '❤️ Хочу', '❤️ Will ich'], maybeIt: ['🤔 Maybe', '🤔 Может быть', '🤔 Vielleicht'], skipIt: ['✕ Skip', '✕ Нет', '✕ Nein'],
@@ -187,7 +192,7 @@ async function put(kind, k, v) {
   w.n--; w.t = Date.now();
 }
 async function sbInit() {
-  const setupCards = () => $$('#plansetup,#notesetup').forEach(el => { el.hidden = false; el.innerHTML = L('<b>Sync is off</b> (saving on this phone only). Check <code>config.js</code>.', '<b>Синхронизация выключена</b> (данные только на этом телефоне). Проверьте <code>config.js</code>.'); });
+  const setupCards = () => $$('#plansetup,#notesetup').forEach(el => { el.hidden = false; el.innerHTML = L('<b>Sync is off</b> (saving on this phone only). Check <code>config.js</code>.', '<b>Синхронизация выключена</b> (данные только на этом телефоне). Проверьте <code>config.js</code>.', '<b>Sync ist aus</b> (nur auf diesem Handy gespeichert). <code>config.js</code> prüfen.'); });
   if (!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY) { setupCards(); return; }
   try {
     await new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'; s.onload = res; s.onerror = rej; document.head.appendChild(s); });
@@ -458,6 +463,51 @@ function agSave(day, ids) { agWrite(day, { ids, t: agOv(day), d: agDurs(day), se
 // away, and writing it back against today's plan would pin them here again.
 function agSetTime(day, id, val) { const tt = agOv(day); if (val) tt[id] = val; else delete tt[id]; agWrite(day, { ids: agIds(day), t: tt, d: agDurs(day), seen: (AGDAYS[day] || []).slice() }); }
 function agSetDur(day, id, val) { const dd = agDurs(day); if (val) dd[id] = val; else delete dd[id]; agWrite(day, { ids: agIds(day), t: agOv(day), d: dd, seen: (AGDAYS[day] || []).slice() }); }
+function fmtLen(m) { const h = Math.floor(m / 60), mm = m % 60; return (h ? h + ' ' + L('h', 'ч', 'Std.') : '') + (h && mm ? ' ' : '') + (mm || !h ? mm + ' ' + L('min', 'мин', 'Min.') : ''); }
+// Start and end of one stop, in one sheet. The start pins the stop only if it
+// changed; the end sets its length. Both are saved in a single write.
+function editTimes(day, id) {
+  const r = agReflow(day, agIds(day)).find(x => x.it.id === id); if (!r) return;
+  const custom = hasOwn(agOv(day), id) || hasOwn(agDurs(day), id);
+  const html = '<h3>🕐 ' + esc(stopLabel(r.it)) + '</h3><p class="meta">' + esc(dayLabel(day)) + ' · ' + esc(dayTitle(DAYBYKEY[day])) + '</p>' +
+    '<div class="timeedit"><label><span>' + t('teStart') + '</span><input type="time" class="ag-tin" id="te-start" step="300" value="' + agPad(r.start) + '" /></label>' +
+    '<label><span>' + t('teEnd') + '</span><input type="time" id="te-end" step="300" value="' + agPad(r.end) + '" /></label></div>' +
+    '<p class="telen" id="te-len" aria-live="polite"></p>' +
+    '<div class="vchips small">' + [30, 45, 60, 90, 120, 180].map(m => '<button type="button" class="vchip" data-len="' + m + '">' + fmtLen(m) + '</button>').join('') + '</div>' +
+    '<p class="gsub">' + t('teHint') + '</p>' +
+    '<div class="sheetacts"><button class="act site" type="button" id="te-save">' + t('teSave') + '</button>' + (custom ? '<button class="act" type="button" id="te-reset">' + t('teReset') + '</button>' : '') + '</div>';
+  openSheet(html, () => {
+    const si = $('#te-start'), ei = $('#te-end'), out = $('#te-len'), sv = $('#te-save');
+    const val = (el) => /^\d{1,2}:\d{2}/.test(el.value) ? agMin(el.value) : null;
+    let len = r.d;
+    const paint = () => {
+      const s0 = val(si), e0 = val(ei); len = (s0 != null && e0 != null) ? e0 - s0 : NaN;
+      const ok = len >= 5 && len <= 720;
+      out.textContent = ok ? '= ' + fmtLen(len) : (len > 720 ? t('teLong') : t('teBad'));
+      out.classList.toggle('bad', !ok); sv.disabled = !ok;
+      $$('#sheet [data-len]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.len) === len)));
+    };
+    // Moving the start keeps the length, as a calendar does; `want` is the last
+    // good length (from the end field or a chip).
+    let want = r.d;
+    const follow = () => { const s0 = val(si); if (s0 != null) ei.value = agPad(Math.min(1439, s0 + want)); paint(); };
+    const fromEnd = () => { paint(); if (len >= 5 && len <= 720) want = len; };
+    ['input', 'change'].forEach(ev => { si.addEventListener(ev, follow); ei.addEventListener(ev, fromEnd); });
+    $$('#sheet [data-len]').forEach(b => { b.onclick = () => { want = Number(b.dataset.len); follow(); }; });
+    sv.onclick = () => {
+      paint(); if (sv.disabled) return;
+      const s0 = val(si), tt = agOv(day), dd = agDurs(day);
+      const moved = s0 !== r.start, resized = len !== r.d;
+      closeSheet(); if (!moved && !resized) return;
+      if (moved) tt[id] = agPad(s0);
+      if (resized) dd[id] = len;
+      agWrite(day, { ids: agIds(day), t: tt, d: dd, seen: (AGDAYS[day] || []).slice() });
+    };
+    const rs = $('#te-reset');
+    if (rs) rs.onclick = () => { const tt = agOv(day), dd = agDurs(day); delete tt[id]; delete dd[id]; closeSheet(); agWrite(day, { ids: agIds(day), t: tt, d: dd, seen: (AGDAYS[day] || []).slice() }); };
+    paint();
+  });
+}
 function agInsert(day, ref, opts) {
   opts = opts || {};
   const it = seedFor(ref); if (!it) return;
@@ -770,17 +820,8 @@ function renderAgenda(day) {
   // pace pill + hint
   const pp = document.querySelector('[data-pace="' + day + '"]'); if (pp) { pp.className = 'pace p' + st.lvl; pp.textContent = paceLabel(st.lvl); }
   const ph = document.querySelector('[data-pacehint="' + day + '"]'); if (ph) { ph.hidden = st.lvl < 3; ph.textContent = t('paceHint'); }
-  // time picker
-  box.querySelectorAll('.ag-time').forEach(tb => {
-    tb.onclick = (e) => {
-      e.stopPropagation(); const row = tb.closest('.agrow'); const id = row.dataset.id; if (row.querySelector('.ag-tin')) return;
-      const inp = document.createElement('input'); inp.type = 'time'; inp.className = 'ag-tin'; inp.value = row.dataset.start; inp.step = 300;
-      tb.replaceWith(inp); inp.focus(); try { if (inp.showPicker) inp.showPicker(); } catch (err) {}
-      let done = false;
-      const commit = () => { if (done) return; done = true; const v = inp.value; if (v && v !== row.dataset.start) agSetTime(day, id, v); else renderAgenda(day); };
-      inp.addEventListener('change', commit); inp.addEventListener('blur', () => setTimeout(commit, 150));
-    };
-  });
+  // a stop's time: tap it to set when it starts and when it ends
+  box.querySelectorAll('.ag-time').forEach(tb => { tb.onclick = (e) => { e.stopPropagation(); editTimes(day, tb.closest('.agrow').dataset.id); }; });
   box.querySelector('[data-agtoggle]').onclick = () => { box.classList.toggle('open'); };
   box.querySelectorAll('[data-gap]').forEach(gp => { gp.onclick = (e) => { e.stopPropagation(); fillGap(day, Number(gp.dataset.gap)); }; });
   const rst = box.querySelector('[data-agreset]'); if (rst) rst.onclick = (e) => { e.stopPropagation(); agWrite(day, null); toast(L('Day reset to the plan', 'День возвращён к плану', 'Tag auf den Plan zurückgesetzt')); };
@@ -788,7 +829,7 @@ function renderAgenda(day) {
   box.querySelectorAll('[data-goguide]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); goGuide(b.dataset.goguide); }; });
   box.querySelectorAll('[data-goexplore]').forEach(b => { b.onclick = (e) => { e.stopPropagation(); EX.cat = b.dataset.goexplore; setTab('explore'); }; });
   const list = box.querySelector('.aglist');
-  // ⋯ menus: move to day / duration / remove
+  // ⋯ menus: move to another day, or remove (the length is set from the time)
   box.querySelectorAll('.ag-mv').forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation(); const row = btn.closest('.agrow'); const id = row.dataset.id;
@@ -807,9 +848,6 @@ function renderAgenda(day) {
           b.onclick = (ev) => { ev.stopPropagation(); agSave(day, agIds(day).filter(x => x !== id)); agInsert(d, id); toast(t('moved') + ' ' + dayLabel(d)); };
           menu.appendChild(b);
         });
-        const dur = document.createElement('div'); dur.className = 'agmenu ag-dur'; dur.style.position = 'static'; dur.style.boxShadow = 'none'; dur.style.border = '0'; dur.style.padding = '0'; dur.style.gridTemplateColumns = 'repeat(6,1fr)';
-        [30, 45, 60, 90, 120, 180].forEach(m => { const b = document.createElement('button'); b.type = 'button'; b.textContent = m + '′'; if (agDur(day, id) === m) b.classList.add('rec'); b.onclick = (ev) => { ev.stopPropagation(); agSetDur(day, id, m); }; dur.appendChild(b); });
-        menu.appendChild(dur);
       }
       const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'ag-rm'; rm.textContent = t('remove');
       rm.onclick = (ev) => { ev.stopPropagation(); agSave(day, agIds(day).filter(x => x !== id)); toast(t('removed')); };
@@ -867,11 +905,11 @@ function rankDays(p, opts) {
     const d = DAYBYKEY[day]; const dow = dowOf(day);
     const closed = Array.isArray(p.closed) && p.closed.indexOf(dow) >= 0;
     let score = 0, why = '';
-    if (dated) { if (dated === d.date) { score += 100; why = L('on that date', 'в эту дату'); } else score -= 100; }
+    if (dated) { if (dated === d.date) { score += 100; why = L('on that date', 'в эту дату', 'an diesem Datum'); } else score -= 100; }
     const hubs = dayHubs(day);
     if (hub && hubs.length) {
-      if (hubs.indexOf(hub) >= 0) { score += 10; why = why || L('same neighborhood that day', 'в тот же район в этот день'); }
-      else { const m = Math.min.apply(null, hubs.map(h => G.hubToHub(h, hub))); score += Math.max(0, (60 - m) / 6); if (!why && m <= 20) why = L('a short hop from that day\'s area', 'недалеко от района того дня'); }
+      if (hubs.indexOf(hub) >= 0) { score += 10; why = why || L('same neighborhood that day', 'в тот же район в этот день', 'dasselbe Viertel an dem Tag'); }
+      else { const m = Math.min.apply(null, hubs.map(h => G.hubToHub(h, hub))); score += Math.max(0, (60 - m) / 6); if (!why && m <= 20) why = L('a short hop from that day\'s area', 'недалеко от района того дня', 'nicht weit vom Viertel des Tages'); }
     }
     const rows = agReflow(day, agIds(day)); const st = dayStats(day, rows);
     score -= Math.max(0, st.anchors - 4) * 2; if (st.lvl >= 3) score -= 20;
@@ -1429,7 +1467,7 @@ function renderDeck() {
   const left = DECK.queue.length - DECK.i;
   if (left <= 0) { host.innerHTML = '<div class="deckdone">' + t('deckDone') + '</div>'; return; }
   const p = DECK.queue[DECK.i]; const nx = DECK.queue[DECK.i + 1];
-  const card = (q, top) => { const hm = fromHomeMin(q); return '<div class="dcard" ' + (top ? 'id="dtop"' : 'style="transform:scale(.96) translateY(10px);opacity:.8"') + '><div class="stamp yes">' + L('WANT', 'ХОЧУ') + '</div><div class="stamp no">' + L('SKIP', 'НЕТ') + '</div><div class="stamp maybe">' + L('MAYBE', 'МОЖЕТ') + '</div><div class="cat">' + catLabel(q.cat) + (q.sub ? ' · ' + esc(placeSub(q)) : '') + '</div><h4>' + esc(placeName(q)) + '</h4><div class="meta">' + esc([q.hood, hm != null ? '~' + hm + ' ' + t('minutes') + ' ' + t('fromHome') : '', placePrice(q)].filter(Boolean).join(' · ')) + '</div><div class="why">' + esc(placeWhy(q)) + (placeTips(q)[0] ? '<br><br><i>' + esc(placeTips(q)[0]) + '</i>' : '') + '</div><div class="votes">' + voteBadges('p:' + q.id) + '</div></div>'; };
+  const card = (q, top) => { const hm = fromHomeMin(q); return '<div class="dcard" ' + (top ? 'id="dtop"' : 'style="transform:scale(.96) translateY(10px);opacity:.8"') + '><div class="stamp yes">' + L('WANT', 'ХОЧУ', 'WILL ICH') + '</div><div class="stamp no">' + L('SKIP', 'НЕТ', 'NEIN') + '</div><div class="stamp maybe">' + L('MAYBE', 'МОЖЕТ', 'VIELLEICHT') + '</div><div class="cat">' + catLabel(q.cat) + (q.sub ? ' · ' + esc(placeSub(q)) : '') + '</div><h4>' + esc(placeName(q)) + '</h4><div class="meta">' + esc([q.hood, hm != null ? '~' + hm + ' ' + t('minutes') + ' ' + t('fromHome') : '', placePrice(q)].filter(Boolean).join(' · ')) + '</div><div class="why">' + esc(placeWhy(q)) + (placeTips(q)[0] ? '<br><br><i>' + esc(placeTips(q)[0]) + '</i>' : '') + '</div><div class="votes">' + voteBadges('p:' + q.id) + '</div></div>'; };
   host.innerHTML = '<div class="deckmeta"><span>' + left + ' ' + t('left') + '</span><span>' + esc(whoName(me)) + '</span></div><div class="deckhold">' + (nx ? card(nx, false) : '') + card(p, true) + '</div>' +
     '<div class="deckbtns"><button class="b-no" type="button" data-d="no">✕</button><button class="b-maybe" type="button" data-d="maybe">🤔</button><button class="b-yes" type="button" data-d="yes">❤️</button></div><p class="gsub" style="text-align:center">' + t('swipeHint') + '</p>';
   host.querySelectorAll('[data-d]').forEach(b => { b.onclick = () => deckDecide(b.dataset.d); });
@@ -1514,7 +1552,7 @@ function renderHome() {
   if (d0 < start) {
     const n = Math.round((start - d0) / 864e5);
     html = '<div class="today"><div class="eyebrow">' + n + ' ' + t('daysToGo') + '</div><h3>' + esc(fld(T, 'TITLE_') || T.TITLE) + '</h3><p>' + t('beforeIntro') + '</p>' +
-      '<div class="acts wrap2"><button class="act site" type="button" data-go="explore">' + L('Rate places', 'Оценить места') + '</button><button class="act" type="button" data-go="bookings">' + (pending ? pending + ' ' + t('toBook') : t('allBooked')) + '</button><button class="act" type="button" data-goday="' + DAYKEYS[0] + '">' + L('See the plan', 'Смотреть план') + '</button></div></div>';
+      '<div class="acts wrap2"><button class="act site" type="button" data-go="explore">' + L('Rate places', 'Оценить места', 'Orte bewerten') + '</button><button class="act" type="button" data-go="bookings">' + (pending ? pending + ' ' + t('toBook') : t('allBooked')) + '</button><button class="act" type="button" data-goday="' + DAYKEYS[0] + '">' + L('See the plan', 'Смотреть план', 'Zum Plan') + '</button></div></div>';
   } else if (d0 <= end) {
     const dk = DAYS.find(d => d.date === tk); const dayKey = dk ? dk.key : DAYKEYS[0];
     const rows = agReflow(dayKey, agIds(dayKey)); const nowMin = now.getHours() * 60 + now.getMinutes();
@@ -1524,7 +1562,7 @@ function renderHome() {
     const d = DAYBYKEY[useKey]; const w = WX[useKey];
     html = '<div class="today"><div class="eyebrow">' + (showTomorrow ? t('tomorrow') : t('today')) + ' · ' + dayLabel(useKey) + (w ? ' · ' + w.ico + ' ' + w.hi + '°/' + w.lo + '°' : '') + '</div><h3>' + esc(dayTitle(d)) + '</h3>' +
       useRows.map((r, i) => '<div class="trow' + (!showTomorrow && i === nextIdx ? ' next' : '') + '"><span class="tt">' + agHM(r.start) + '</span><span>' + (!showTomorrow && i === nextIdx ? '▶ ' : '') + esc(stopLabel(r.it)) + '</span></div>').join('') +
-      '<div class="acts wrap2"><button class="act site" type="button" data-goday="' + useKey + '">' + t('openDay') + '</button><a class="act" href="' + esc(G.mapsDir(null, HOMEPT)) + '" target="_blank" rel="noopener">' + t('getHome') + '</a><button class="act" type="button" data-go="chat">✨ ' + L('Ask', 'Спросить') + '</button></div></div>';
+      '<div class="acts wrap2"><button class="act site" type="button" data-goday="' + useKey + '">' + t('openDay') + '</button><a class="act" href="' + esc(G.mapsDir(null, HOMEPT)) + '" target="_blank" rel="noopener">' + t('getHome') + '</a><button class="act" type="button" data-go="chat">✨ ' + L('Ask', 'Спросить', 'Fragen') + '</button></div></div>';
   } else {
     html = '<div class="today"><div class="eyebrow">' + esc(fld(T, 'TITLE_') || T.TITLE) + '</div><h3>🗽</h3><p>' + t('wrap') + '</p><div class="acts"><button class="act site" type="button" data-goday="' + DAYKEYS[0] + '">' + t('openDay') + '</button></div></div>';
   }
@@ -1539,12 +1577,12 @@ function renderHome() {
   }
   const hm = $('#homemenu');
   if (hm) {
-    const items = [['days', L('Days', 'Дни'), L('The running order, day by day', 'Расписание по дням')], ['explore', L('Explore', 'Места'), L('Sights, tables, bars, shops', 'Места, столики, бары, магазины')], ['plan', L('Plan', 'План'), L('Votes → build the week', 'Голоса → собрать неделю')], ['map', L('Map', 'Карта'), L('Pins, routes, near me', 'Точки, маршруты, рядом')], ['bookings', L('Bookings', 'Брони'), L('Flights, tickets, tables', 'Рейсы, билеты, столики')], ['guide', L('Guide', 'Гид'), L('Airport, subway, money', 'Аэропорт, метро, деньги')]];
+    const items = [['days', L('Days', 'Дни', 'Tage'), L('The running order, day by day', 'Расписание по дням', 'Der Ablauf, Tag für Tag')], ['explore', L('Explore', 'Места', 'Entdecken'), L('Sights, tables, bars, shops', 'Места, столики, бары, магазины', 'Sehenswertes, Tische, Bars, Läden')], ['plan', L('Plan', 'План', 'Plan'), L('Votes → build the week', 'Голоса → собрать неделю', 'Stimmen → Woche bauen')], ['map', L('Map', 'Карта', 'Karte'), L('Pins, routes, near me', 'Точки, маршруты, рядом', 'Pins, Routen, in der Nähe')], ['bookings', L('Bookings', 'Брони', 'Buchungen'), L('Flights, tickets, tables', 'Рейсы, билеты, столики', 'Flüge, Tickets, Tische')], ['guide', L('Guide', 'Гид', 'Infos'), L('Airport, subway, money', 'Аэропорт, метро, деньги', 'Flughafen, U-Bahn, Geld')]];
     hm.innerHTML = items.map(x => '<button class="mitem" type="button" data-go="' + x[0] + '"><b>' + x[1] + '</b><span>' + x[2] + '</span></button>').join('');
     hm.querySelectorAll('[data-go]').forEach(b => { b.onclick = () => { if (b.dataset.go === 'days') setDay(currentDay, null); else setTab(b.dataset.go); }; });
   }
   const hb = $('#homebook');
-  if (hb) { const list = bookItems().filter(b => !(state.check[b.key] && state.check[b.key].on)).slice(0, 4); hb.innerHTML = list.length ? '<h3>' + L('Book next', 'Забронировать') + '</h3>' + list.map(b => '<div class="exrow"><span>' + (b.url ? '<a href="' + esc(b.url) + '" target="_blank" rel="noopener">' : '') + esc(b.title) + (b.url ? '</a>' : '') + '<small>' + esc(b.sub) + '</small></span></div>').join('') : ''; }
+  if (hb) { const list = bookItems().filter(b => !(state.check[b.key] && state.check[b.key].on)).slice(0, 4); hb.innerHTML = list.length ? '<h3>' + L('Book next', 'Забронировать', 'Als Nächstes buchen') + '</h3>' + list.map(b => '<div class="exrow"><span>' + (b.url ? '<a href="' + esc(b.url) + '" target="_blank" rel="noopener">' : '') + esc(b.title) + (b.url ? '</a>' : '') + '<small>' + esc(b.sub) + '</small></span></div>').join('') : ''; }
   [['en', T.SUB], ['ru', T.SUB_RU || T.SUB], ['de', T.SUB_DE || T.SUB]].forEach(([k, v]) => { const el = $('#hero-sub-' + k); if (el) el.textContent = v || ''; });
 }
 
@@ -1604,7 +1642,7 @@ function renderGuide() {
   const ev = $('#eventlist');
   if (ev) {
     const list = PLACES.map(p => ({ p, date: eventDate(p) })).filter(x => x.date).sort((a, b) => a.date.localeCompare(b.date));
-    ev.innerHTML = list.length ? list.map(x => '<div class="ecard" data-open="' + esc(x.p.id) + '"><div class="et">' + esc(placeHours(x.p)) + '</div><div class="ev">' + esc(placeName(x.p)) + '</div><div class="es">' + esc(placeWhy(x.p)) + '</div></div>').join('') : '<p class="gsub">' + L('Dated events appear here once the library has them.', 'События с датами появятся здесь, когда будут в библиотеке.') + '</p>';
+    ev.innerHTML = list.length ? list.map(x => '<div class="ecard" data-open="' + esc(x.p.id) + '"><div class="et">' + esc(placeHours(x.p)) + '</div><div class="ev">' + esc(placeName(x.p)) + '</div><div class="es">' + esc(placeWhy(x.p)) + '</div></div>').join('') : '<p class="gsub">' + L('Dated events appear here once the library has them.', 'События с датами появятся здесь, когда будут в библиотеке.', 'Termine erscheinen hier, sobald die Bibliothek sie kennt.') + '</p>';
     ev.querySelectorAll('[data-open]').forEach(b => { b.onclick = () => openPlace(b.dataset.open); });
   }
 }
@@ -1654,7 +1692,7 @@ function drawMarkers() {
     const color = x.p ? catColor(x.p.cat) : '#5D6170';
     const m = window.L.marker(x.pt, { icon: window.L.divIcon({ className: '', html: '<div class="pin" style="background:' + color + '"></div>', iconSize: [14, 14], iconAnchor: [7, 7] }) }).addTo(map);
     const name = x.p ? placeName(x.p) : stopLabel(x.it);
-    m.bindPopup('<b>' + esc(name) + '</b><br>' + (x.p ? esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + '<br><a href="#" data-mopen="' + esc(x.p.id) + '">' + L('Open', 'Открыть') + ' →</a>' : (x.start != null ? agHM(x.start) : '') + (x.it && x.it.approx ? ' · ' + esc(t('approxShort')) : '') + (x.it && x.it.custom ? '<br><a href="#" data-mopen="' + esc(x.it.id) + '">' + L('Open', 'Открыть', 'Öffnen') + ' →</a>' : '')));
+    m.bindPopup('<b>' + esc(name) + '</b><br>' + (x.p ? esc([placeSub(x.p), x.p.hood].filter(Boolean).join(' · ')) + '<br><a href="#" data-mopen="' + esc(x.p.id) + '">' + L('Open', 'Открыть', 'Öffnen') + ' →</a>' : (x.start != null ? agHM(x.start) : '') + (x.it && x.it.approx ? ' · ' + esc(t('approxShort')) : '') + (x.it && x.it.custom ? '<br><a href="#" data-mopen="' + esc(x.it.id) + '">' + L('Open', 'Открыть', 'Öffnen') + ' →</a>' : '')));
     m.on('popupopen', (e) => { const a = e.popup.getElement().querySelector('[data-mopen]'); if (a) a.onclick = (ev) => { ev.preventDefault(); openPlace(a.dataset.mopen); }; });
     markers.push(m);
   });
@@ -1665,7 +1703,7 @@ function renderMapControls() {
   mf.innerHTML = ['see', 'museum', 'show', 'eat', 'drink', 'cafe', 'shop', 'park'].map(c => '<button class="act mfilter" type="button" data-cat="' + c + '" aria-pressed="' + String(activeCats.has(c)) + '">' + catLabel(c) + '</button>').join('');
   mf.querySelectorAll('.mfilter').forEach(b => { b.onclick = () => { const c = b.dataset.cat; const group = c === 'park' ? ['park', 'walk'] : [c]; if (activeCats.has(c)) group.forEach(g => activeCats.delete(g)); else group.forEach(g => activeCats.add(g)); mapDay = 'all'; renderMapControls(); drawMarkers(); }; });
   const md2 = $('#mapdays');
-  md2.innerHTML = '<button class="act mfilter" type="button" data-day="all" aria-pressed="' + String(mapDay === 'all') + '">' + L('All pins', 'Все точки') + '</button>' + DAYKEYS.map(d => '<button class="act mfilter" type="button" data-day="' + d + '" aria-pressed="' + String(mapDay === d) + '">' + dayLabel(d) + '</button>').join('');
+  md2.innerHTML = '<button class="act mfilter" type="button" data-day="all" aria-pressed="' + String(mapDay === 'all') + '">' + L('All pins', 'Все точки', 'Alle Pins') + '</button>' + DAYKEYS.map(d => '<button class="act mfilter" type="button" data-day="' + d + '" aria-pressed="' + String(mapDay === d) + '">' + dayLabel(d) + '</button>').join('');
   md2.querySelectorAll('.mfilter').forEach(b => { b.onclick = () => { mapDay = b.dataset.day; renderMapControls(); drawMarkers(); }; });
 }
 function nearMe() {

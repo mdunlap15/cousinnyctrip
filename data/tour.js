@@ -46,9 +46,9 @@ window.TOUR = {
       title: 'This is the part you edit',
       titleRu: 'Вот это вы и редактируете',
       titleDe: 'Das hier ist der Teil, den ihr bearbeitet',
-      body: 'Hold a stop and drag it to reorder the day. Tap its time to pin it. Tap ⋯ to change how long you stay, move it to another day, or take it out. Everything recalculates as you go.',
-      bodyRu: 'Зажмите пункт и перетащите, чтобы изменить порядок дня. Нажмите на время, чтобы закрепить его. Нажмите ⋯, чтобы изменить длительность, перенести в другой день или убрать. Всё пересчитывается на ходу.',
-      bodyDe: 'Haltet einen Stopp gedrückt und zieht ihn, um den Tag umzusortieren. Tippt auf die Uhrzeit, um sie festzusetzen. Über ⋯ ändert ihr die Dauer, verschiebt ihn auf einen anderen Tag oder nehmt ihn heraus. Alles rechnet sich sofort neu.' },
+      body: 'Hold a stop and drag it to reorder the day. Tap its time to change when it starts and ends. Tap ⋯ to move it to another day or take it out. Everything recalculates as you go.',
+      bodyRu: 'Зажмите пункт и перетащите, чтобы изменить порядок дня. Нажмите на время, чтобы изменить начало и конец. Нажмите ⋯, чтобы перенести в другой день или убрать. Всё пересчитывается на ходу.',
+      bodyDe: 'Haltet einen Stopp gedrückt und zieht ihn, um den Tag umzusortieren. Tippt auf die Uhrzeit, um Beginn und Ende zu ändern. Über ⋯ verschiebt ihr ihn auf einen anderen Tag oder nehmt ihn heraus. Alles rechnet sich sofort neu.' },
 
     { key: 'travel', tab: 'days', day: 'd1', sel: '.panel.is-active .aggap', icon: '🚇',
       title: 'The gaps are real travel time',

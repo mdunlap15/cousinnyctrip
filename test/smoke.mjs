@@ -514,10 +514,10 @@ if (booted) {
   NYC.renderAll(); await settle();
   const tb = document.querySelector('.agwrap[data-agday="d2"] .agrow[data-id="p:the-high-line"] .ag-time');
   click(tb);
-  const tin2 = document.querySelector('.agwrap[data-agday="d2"] .ag-tin');
+  const tin2 = document.querySelector('#sheet:not([hidden]) .ag-tin');
   if (!tin2) fail('tapping a time on Monday gave no time picker');
   else {
-    tin2.value = '14:50'; tin2.dispatchEvent(new window.Event('change', { bubbles: true })); await settle();
+    tin2.value = '14:50'; tin2.dispatchEvent(new window.Event('change', { bubbles: true })); click(document.getElementById('te-save')); await settle();
     const mon3 = NYC.agIds('d2'), tue3 = NYC.agIds('d3');
     if (mon3.join() !== planOf('d2').join()) fail('pinning a time on Monday put the old Liberty stops back on it: ' + mon3.join(', '));
     else if (!tue3.includes('c:kold') || tue3.includes('p:wall-street-charging-bull')) fail('pinning a time on Monday lost Tuesday\'s edits: ' + tue3.join(', '));
@@ -535,8 +535,8 @@ if (booted) {
   else ok('when the plan moves one stop after a day was edited, the stop follows the plan and the edit stays');
   NYC.renderAll(); await settle();
   click(document.querySelector('.agwrap[data-agday="d5"] .agrow[data-id="p:the-met"] .ag-time'));
-  const tin5 = document.querySelector('.agwrap[data-agday="d5"] .ag-tin');
-  if (tin5) { tin5.value = '10:30'; tin5.dispatchEvent(new window.Event('change', { bubbles: true })); await settle(); }
+  const tin5 = document.querySelector('#sheet:not([hidden]) .ag-tin');
+  if (tin5) { tin5.value = '10:30'; tin5.dispatchEvent(new window.Event('change', { bubbles: true })); click(document.getElementById('te-save')); await settle(); }
   if (!tin5) fail('tapping a time on Thursday gave no time picker');
   else if (NYC.agIds('d5').includes('p:balthazar') || !NYC.agIds('d6').includes('p:balthazar')) fail('pinning a time wrote a stop the plan had moved back onto the old day');
   else ok('pinning a time afterwards does not write the moved stop back');
@@ -965,6 +965,71 @@ if (booted) {
     click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'home'));
   }
 
+  // ---- a stop's start and end ----
+  console.log('start and end of a stop:');
+  {
+    NYC.state.agenda = {}; NYC.renderAll(); await settle();
+    const id = 'p:the-high-line';
+    const rowOf = () => NYC.agReflow('d2', NYC.agIds('d2')).find(r => r.it.id === id);
+    const hm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+    const set = (el, v) => { el.value = v; el.dispatchEvent(new window.Event('input', { bubbles: true })); el.dispatchEvent(new window.Event('change', { bubbles: true })); };
+    const tap = async () => { click(document.querySelector('.agwrap[data-agday="d2"] .agrow[data-id="' + id + '"] .ag-time')); await settle(); return { si: document.getElementById('te-start'), ei: document.getElementById('te-end'), sv: document.getElementById('te-save'), len: document.getElementById('te-len') }; };
+    const shut = () => { const c = document.querySelector('#sheet .closebtn'); if (c && !document.getElementById('sheet').hidden) click(c); };
+    const r0 = rowOf();
+    let f = await tap();
+    if (!f.si || !f.ei || f.si.value !== hm(r0.start) || f.ei.value !== hm(r0.end)) fail('tapping a stop\'s time does not show its start and end: ' + JSON.stringify({ start: f.si && f.si.value, end: f.ei && f.ei.value, want: [hm(r0.start), hm(r0.end)] }));
+    else {
+      ok('tapping a stop\'s time shows its start and its end (' + f.si.value + '–' + f.ei.value + ')');
+      set(f.ei, hm(r0.end + 30)); click(f.sv); await settle();
+      const r1 = rowOf(), st1 = NYC.state.agenda.d2 || {};
+      if (r1.d !== r0.d + 30 || r1.end !== r0.end + 30) fail('changing the end did not make the stop longer: ' + JSON.stringify({ was: [r0.start, r0.end], now: [r1.start, r1.end] }));
+      else if (st1.t && st1.t[id]) fail('changing only the end pinned the start as well');
+      else ok('changing only the end makes the stop 30 minutes longer and leaves its start free to follow the day');
+      f = await tap(); set(f.si, hm(r1.start + 60));
+      const carried = f.ei.value;
+      click(f.sv); await settle();
+      const r2 = rowOf(), st2 = NYC.state.agenda.d2 || {};
+      if (carried !== hm(r1.end + 60)) fail('moving the start did not carry the end along: ' + carried);
+      else if (r2.start !== r1.start + 60 || r2.d !== r1.d || !(st2.t && st2.t[id] === hm(r1.start + 60))) fail('the new start was not saved as a pinned time with the same length: ' + JSON.stringify({ start: r2.start, d: r2.d, t: st2.t }));
+      else ok('moving the start carries the end along, pins the new start and keeps the length');
+      f = await tap(); set(f.ei, hm(r2.start - 30));
+      const refused = f.sv.disabled && /after the start/.test(f.len.textContent);
+      click(f.sv); await settle(); shut();
+      if (!refused || rowOf().d !== r2.d) fail('an end before the start was not refused: ' + f.len.textContent);
+      else ok('an end before the start is refused, and the sheet says why');
+      f = await tap(); click(document.querySelector('#sheet [data-len="90"]'));
+      const chip = { end: f.ei.value, len: f.len.textContent };
+      click(f.sv); await settle();
+      if (chip.end !== hm(r2.start + 90) || !/1 h 30 min/.test(chip.len) || rowOf().d !== 90) fail('the length buttons did not set the end: ' + JSON.stringify(chip));
+      else ok('a length button sets the end for you ("' + chip.len + '")');
+      f = await tap(); const rb = document.getElementById('te-reset');
+      if (!rb) { fail('the time sheet has no way back to the planned time'); shut(); }
+      else { click(rb); await settle(); const r3 = rowOf(); if (r3.start !== r0.start || r3.d !== r0.d) fail('"Back to the planned time" did not undo the start and the length'); else ok('"Back to the planned time" undoes both the start and the length'); }
+      if (document.querySelector('.agmenu .ag-dur')) fail('the ⋯ menu still has its own length buttons');
+    }
+    // the sheet speaks Russian and German too
+    const words = [];
+    for (let i = 0; i < 2; i++) { click(document.getElementById('langbtn')); await settle(); f = await tap(); words.push([...document.querySelectorAll('#sheet .timeedit label span')].map(x => x.textContent).join('/') + ' ' + f.len.textContent); shut(); }
+    click(document.getElementById('langbtn')); await settle();
+    if (!/^Начало\/Конец = \d/.test(words[0]) || !/^Beginn\/Ende = \d/.test(words[1]) || /min\b|\bh\b/.test(words[0])) fail('the time sheet is not translated: ' + JSON.stringify(words));
+    else ok('the time sheet reads «' + words[0] + '» and „' + words[1] + '“');
+    NYC.state.agenda = {}; NYC.renderAll(); await settle();
+  }
+
+  // ---- the swipe cards' stamps, in German ----
+  {
+    NYC.me = 'Y';
+    click([...document.querySelectorAll('.tbtn')].find(b => b.dataset.tabbtn === 'explore'));
+    click(document.getElementById('langbtn')); click(document.getElementById('langbtn')); await settle();
+    click(document.getElementById('swipebtn')); await settle();
+    const stamps = [...document.querySelectorAll('#dtop .stamp')].map(x => x.textContent).join('/');
+    click(document.getElementById('swipebtn')); await settle();
+    click(document.getElementById('langbtn')); await settle();
+    if (stamps !== 'WILL ICH/NEIN/VIELLEICHT') fail('the swipe stamps are not in German: ' + stamps);
+    else ok('in German the swipe cards stamp WILL ICH / NEIN / VIELLEICHT');
+    if (document.body.dataset.lang !== 'en') fail('the language did not come back to English: ' + document.body.dataset.lang);
+  }
+
   // ---- three members: Yulia, Tatyana and Mike ----
   console.log('three members:');
   {
@@ -1122,6 +1187,17 @@ if (booted) {
   const twoOnly = tourSrc.match(/the two of you|you both|both (?:said|love|want)|the other phone\b|\bобе\b|обеим|вдвоём|одна (?:может|из вас)|другая|каждой|ihr beide|eine von euch|die andere\b|dem anderen Handy/gi);
   if (twoOnly) fail('the tour still speaks to two people: ' + twoOnly.join(', '));
   else ok('the tour speaks to three people in all three languages');
+  {
+    // every L(en, ru, de) call in the engine gives all three languages
+    const src = read('app.js'), short = []; const re = /[^A-Za-z_$.]L\(/g; let m;
+    while ((m = re.exec(src))) {
+      let i = m.index + 3, depth = 1, args = 1, q = null;
+      for (; i < src.length && depth > 0; i++) { const c = src[i]; if (q) { if (c === '\\') { i++; continue; } if (c === q) q = null; continue; } if (c === "'" || c === '"' || c === '`') { q = c; continue; } if ('([{'.includes(c)) depth++; else if (')]}'.includes(c)) depth--; else if (c === ',' && depth === 1) args++; }
+      if (args < 3) short.push(src.slice(m.index + 1, Math.min(i, m.index + 70)));
+    }
+    if (short.length) fail('these show English in German, with no German given: ' + short.join(' | '));
+    else ok('every phrase written in the engine has its German, not just English and Russian');
+  }
   const appSrc = read('app.js');
   if (/cartocdn\.com\/[^'"]*\{z\}/.test(appSrc) || !/tile\.openstreetmap\.org\/\{z\}\/\{x\}\/\{y\}\.png/.test(appSrc) || !/OpenStreetMap<\/a> contributors/.test(appSrc)) fail('the map does not use keyless OpenStreetMap tiles with their credit line');
   else ok('the map uses OpenStreetMap\'s keyless tiles, credited, with a keyless fallback');
